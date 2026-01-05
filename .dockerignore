@@ -1,0 +1,33 @@
+# 프론트엔드 (별도 배포)
+web/
+
+# Git
+.git/
+.gitignore
+
+# Python 캐시
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.eggs/
+
+# 환경 변수 (Railway에서 설정)
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 기타
+*.md
+*.log
+.DS_Store
+Reference/
+.claude/

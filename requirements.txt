@@ -1,0 +1,32 @@
+# ForceTeller Dependencies
+
+# 천문/달력 계산
+ephem>=4.1.0
+korean-lunar-calendar>=0.3.1
+
+# 데이터 모델링
+pydantic>=2.0
+pydantic-settings>=2.0
+python-dateutil>=2.8.2
+
+# CLI
+click>=8.0
+rich>=13.0
+
+# LLM API
+openai>=1.0
+google-genai>=0.5.0
+
+# HTTP 서버
+fastapi>=0.110.0
+uvicorn>=0.27.0
+
+# 비동기
+httpx>=0.25
+aiofiles>=23.0
+
+# 도시 데이터
+geonamescache>=2.0.0
+
+# 기타
+python-dotenv>=1.0
