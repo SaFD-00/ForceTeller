@@ -4,6 +4,9 @@ from typing import Dict, List, Optional
 from agents.base_agent import BaseAgent, AgentResponse
 from agents.prompts.system_prompts import SYNTHESIS_SYSTEM_PROMPT, format_saju_context
 from agents.schemas import get_interpretation_schema
+from config.logging_config import get_logger
+
+logger = get_logger(__name__)
 
 
 class SynthesisAgent(BaseAgent):
@@ -12,7 +15,7 @@ class SynthesisAgent(BaseAgent):
     def __init__(
         self,
         llm_provider: str = "openai",
-        model: str = None,
+        model: Optional[str] = None,
         reasoning_effort: str = "medium"  # gpt-5.2-chat-latest는 medium까지만 지원
     ):
         super().__init__(
@@ -95,7 +98,7 @@ class SynthesisAgent(BaseAgent):
                     "name": "agent_interpretation",
                     "schema": schema
                 }
-                print(f"[DEBUG Synthesis] 스키마: {schema}")
+                logger.debug(f"스키마: {schema}")
 
             if self.llm_provider == "openai":
                 response = await self.llm_client.chat(
@@ -111,7 +114,7 @@ class SynthesisAgent(BaseAgent):
                     thinking_level=self.reasoning_effort
                 )
 
-            print(f"[DEBUG Synthesis] 응답 타입: {type(response)}")
+            logger.debug(f"응답 타입: {type(response)}")
 
             # Structured Outputs 응답 처리 (dict) 또는 일반 텍스트 응답
             if isinstance(response, dict):

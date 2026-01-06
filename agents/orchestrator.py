@@ -5,60 +5,33 @@
 
 import json
 import asyncio
-from typing import Dict, List, Optional, Any
+from typing import Dict, List, Optional, Any, TYPE_CHECKING
 
 from utils.llm_client import LLMClient
-from agents.base_agent import AgentResponse
+from agents.base_agent import BaseAgent, AgentResponse
 from agents.prompts.system_prompts import ORCHESTRATOR_SYSTEM_PROMPT
-from agents.interpreters import (
-    PersonalityAgent,
-    CareerAgent,
-    RelationshipAgent,
-    HealthAgent,
-    FortuneAgent,
-    SynthesisAgent,
-    YongsinAgent,
-    SchoolCompareAgent,
-)
+from agents.factory import AgentFactory
+
+if TYPE_CHECKING:
+    from utils.protocols import LLMClientProtocol
 
 
 class Orchestrator:
     """에이전트 오케스트레이터"""
 
-    # 에이전트 매핑
-    AGENT_CLASSES = {
-        "personality": PersonalityAgent,
-        "career": CareerAgent,
-        "relationship": RelationshipAgent,
-        "health": HealthAgent,
-        "fortune": FortuneAgent,
-        "synthesis": SynthesisAgent,
-        "yongsin": YongsinAgent,
-        "school_compare": SchoolCompareAgent,
-    }
-
-    # 키워드 기반 에이전트 매핑 (간단한 규칙 기반)
-    KEYWORD_MAPPING = {
-        "personality": ["성격", "기질", "성향", "특성", "장단점", "강점", "약점"],
-        "career": ["직업", "일", "직장", "취업", "사업", "재물", "돈", "부", "투자", "경력"],
-        "relationship": ["연애", "결혼", "배우자", "인연", "이성", "사랑", "대인관계", "친구", "가족"],
-        "health": ["건강", "질병", "아픈", "체질", "몸", "운동", "음식"],
-        "fortune": ["운세", "대운", "올해", "내년", "언제", "시기", "때", "미래", "앞으로"],
-        "yongsin": ["용신", "희신", "기신", "개운", "강약", "신강", "신약"],
-        "school_compare": ["유파", "비교", "자평", "적천수", "궁통보감", "현대명리", "신살"],
-    }
-
     def __init__(
         self,
         llm_provider: str = "openai",
-        model: str = None,
-        use_llm_routing: bool = False
+        model: Optional[str] = None,
+        use_llm_routing: bool = False,
+        agent_factory: Optional[AgentFactory] = None
     ):
         """
         Args:
             llm_provider: LLM 제공자
             model: 모델명
             use_llm_routing: LLM 기반 라우팅 사용 여부 (False면 키워드 기반)
+            agent_factory: 에이전트 팩토리 (None이면 기본 팩토리 사용)
         """
         self.llm_provider = llm_provider
         self.model = model
@@ -67,18 +40,26 @@ class Orchestrator:
         if use_llm_routing:
             self.llm_client = LLMClient(provider=llm_provider)
 
+        # 에이전트 팩토리
+        self._factory = agent_factory or AgentFactory()
+
         # 에이전트 인스턴스 캐시
         self._agents: Dict[str, Any] = {}
+
+        # 키워드 매핑 (팩토리에서 가져옴)
+        self.KEYWORD_MAPPING = self._factory.get_keyword_mapping()
 
     def _get_agent(self, agent_name: str) -> Any:
         """에이전트 인스턴스 가져오기 (캐시 사용)"""
         if agent_name not in self._agents:
-            agent_class = self.AGENT_CLASSES.get(agent_name)
-            if agent_class:
-                self._agents[agent_name] = agent_class(
+            try:
+                self._agents[agent_name] = self._factory.create(
+                    agent_type=agent_name,
                     llm_provider=self.llm_provider,
                     model=self.model
                 )
+            except ValueError:
+                return None
         return self._agents.get(agent_name)
 
     def _select_agents_by_keyword(self, question: str) -> List[str]:

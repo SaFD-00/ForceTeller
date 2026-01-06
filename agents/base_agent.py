@@ -4,12 +4,17 @@
 """
 
 from abc import ABC, abstractmethod
-from typing import Dict, List, Optional, Any
+from typing import Dict, List, Optional, Any, TYPE_CHECKING
 from dataclasses import dataclass, field
 
-from utils.llm_client import LLMClient
 from agents.prompts.system_prompts import format_saju_context
 from agents.schemas import get_interpretation_schema
+from config.logging_config import get_logger
+
+if TYPE_CHECKING:
+    from utils.protocols import LLMClientProtocol
+
+logger = get_logger(__name__)
 
 
 @dataclass
@@ -18,7 +23,7 @@ class AgentResponse:
     agent_name: str
     interpretation: str
     confidence: float = 1.0
-    metadata: Dict[str, Any] = None
+    metadata: Optional[Dict[str, Any]] = None
     suggested_questions: List[str] = field(default_factory=list)
 
     def to_dict(self) -> Dict:
@@ -39,8 +44,9 @@ class BaseAgent(ABC):
         name: str,
         system_prompt: str,
         llm_provider: str = "openai",
-        model: str = None,
-        reasoning_effort: str = "medium"
+        model: Optional[str] = None,
+        reasoning_effort: str = "medium",
+        llm_client: Optional["LLMClientProtocol"] = None
     ):
         """
         Args:
@@ -49,6 +55,7 @@ class BaseAgent(ABC):
             llm_provider: LLM 제공자 ("openai" | "gemini")
             model: 모델명 (None이면 기본값)
             reasoning_effort: 추론 강도 (OpenAI) / thinking_level (Gemini)
+            llm_client: LLM 클라이언트 (DI용, None이면 자동 생성)
         """
         self.name = name
         self.system_prompt = system_prompt
@@ -56,7 +63,12 @@ class BaseAgent(ABC):
         self.model = model
         self.reasoning_effort = reasoning_effort
 
-        self.llm_client = LLMClient(provider=llm_provider)
+        # 의존성 주입: llm_client가 제공되면 사용, 아니면 새로 생성
+        if llm_client is not None:
+            self.llm_client = llm_client
+        else:
+            from utils.llm_client import LLMClient
+            self.llm_client = LLMClient(provider=llm_provider)
 
     @abstractmethod
     def get_interpretation_focus(self) -> str:
@@ -119,7 +131,7 @@ class BaseAgent(ABC):
                     "name": "agent_interpretation",
                     "schema": schema
                 }
-                print(f"[DEBUG Agent] 스키마: {schema}")
+                logger.debug(f"스키마: {schema}")
 
             if self.llm_provider == "openai":
                 response = await self.llm_client.chat(
@@ -135,7 +147,7 @@ class BaseAgent(ABC):
                     thinking_level=self.reasoning_effort
                 )
 
-            print(f"[DEBUG Agent] 응답 타입: {type(response)}")
+            logger.debug(f"응답 타입: {type(response)}")
 
             # Structured Outputs 응답 처리 (dict) 또는 일반 텍스트 응답
             if isinstance(response, dict):

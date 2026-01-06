@@ -3,14 +3,15 @@ BaseAgent 단위 테스트
 """
 
 import pytest
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock
 from typing import Dict, Any
 
 from agents.base_agent import BaseAgent, AgentResponse
+from utils.protocols import LLMClientProtocol
 
 
 # 테스트용 구체 에이전트 클래스
-class TestableAgent(BaseAgent):
+class ConcreteTestableAgent(BaseAgent):
     """테스트용 구체 에이전트"""
 
     def get_interpretation_focus(self) -> str:
@@ -83,19 +84,22 @@ class TestBaseAgent:
 
     @pytest.fixture
     def mock_llm_client(self):
-        """LLMClient 모킹"""
-        with patch('agents.base_agent.LLMClient') as mock_class:
-            mock_instance = MagicMock()
-            mock_class.return_value = mock_instance
-            yield mock_instance
+        """Mock LLM 클라이언트 (DI 방식)"""
+        mock = MagicMock(spec=LLMClientProtocol)
+        mock.chat = AsyncMock(return_value={
+            "interpretation": "테스트 해석 결과",
+            "suggested_questions": ["질문1", "질문2"]
+        })
+        return mock
 
     @pytest.fixture
     def agent(self, mock_llm_client):
-        """테스트용 에이전트"""
-        return TestableAgent(
+        """테스트용 에이전트 (DI로 mock 주입)"""
+        return ConcreteTestableAgent(
             name="test_agent",
             system_prompt="테스트 시스템 프롬프트",
-            llm_provider="openai"
+            llm_provider="openai",
+            llm_client=mock_llm_client
         )
 
     def test_agent_creation(self, agent):
@@ -107,12 +111,13 @@ class TestBaseAgent:
 
     def test_agent_creation_with_custom_settings(self, mock_llm_client):
         """커스텀 설정으로 에이전트 생성"""
-        agent = TestableAgent(
+        agent = ConcreteTestableAgent(
             name="custom",
             system_prompt="커스텀 프롬프트",
             llm_provider="gemini",
             model="gemini-pro",
-            reasoning_effort="high"
+            reasoning_effort="high",
+            llm_client=mock_llm_client
         )
 
         assert agent.llm_provider == "gemini"
@@ -129,7 +134,7 @@ class TestBaseAgent:
         """에이전트 문자열 표현"""
         repr_str = repr(agent)
 
-        assert "TestableAgent" in repr_str
+        assert "ConcreteTestableAgent" in repr_str
         assert "test_agent" in repr_str
         assert "openai" in repr_str
 
@@ -218,9 +223,15 @@ class TestBaseAgent:
         assert len(messages) == 12
 
     @pytest.mark.asyncio
-    async def test_interpret_error_handling(self, agent, sample_saju_data):
+    async def test_interpret_error_handling(self, mock_llm_client, sample_saju_data):
         """interpret 에러 처리 테스트"""
-        agent.llm_client.chat = AsyncMock(side_effect=Exception("API 오류"))
+        mock_llm_client.chat = AsyncMock(side_effect=Exception("API 오류"))
+
+        agent = ConcreteTestableAgent(
+            name="error_test",
+            system_prompt="프롬프트",
+            llm_client=mock_llm_client
+        )
 
         response = await agent.interpret(saju_data=sample_saju_data)
 
@@ -229,9 +240,15 @@ class TestBaseAgent:
         assert response.metadata.get("error") == "API 오류"
 
     @pytest.mark.asyncio
-    async def test_interpret_text_response(self, agent, sample_saju_data):
+    async def test_interpret_text_response(self, mock_llm_client, sample_saju_data):
         """텍스트 응답 처리 (dict가 아닌 경우)"""
-        agent.llm_client.chat = AsyncMock(return_value="단순 텍스트 응답")
+        mock_llm_client.chat = AsyncMock(return_value="단순 텍스트 응답")
+
+        agent = ConcreteTestableAgent(
+            name="text_test",
+            system_prompt="프롬프트",
+            llm_client=mock_llm_client
+        )
 
         response = await agent.interpret(saju_data=sample_saju_data)
 
@@ -254,43 +271,41 @@ class TestBaseAgent:
     @pytest.mark.asyncio
     async def test_interpret_openai_with_schema(self, sample_saju_data, mock_llm_response):
         """OpenAI 프로바이더에서 스키마 사용 확인"""
-        with patch('agents.base_agent.LLMClient') as mock_class:
-            mock_instance = MagicMock()
-            mock_instance.chat = AsyncMock(return_value=mock_llm_response)
-            mock_class.return_value = mock_instance
+        mock_client = MagicMock(spec=LLMClientProtocol)
+        mock_client.chat = AsyncMock(return_value=mock_llm_response)
 
-            agent = TestableAgent(
-                name="test",
-                system_prompt="프롬프트",
-                llm_provider="openai"
-            )
+        agent = ConcreteTestableAgent(
+            name="test",
+            system_prompt="프롬프트",
+            llm_provider="openai",
+            llm_client=mock_client
+        )
 
-            await agent.interpret(saju_data=sample_saju_data)
+        await agent.interpret(saju_data=sample_saju_data)
 
-            # response_schema가 전달되었는지 확인
-            call_kwargs = mock_instance.chat.call_args.kwargs
-            assert "response_schema" in call_kwargs
-            assert call_kwargs["response_schema"] is not None
+        # response_schema가 전달되었는지 확인
+        call_kwargs = mock_client.chat.call_args.kwargs
+        assert "response_schema" in call_kwargs
+        assert call_kwargs["response_schema"] is not None
 
     @pytest.mark.asyncio
     async def test_interpret_gemini_without_schema(self, sample_saju_data, mock_llm_response):
         """Gemini 프로바이더에서는 스키마 없음"""
-        with patch('agents.base_agent.LLMClient') as mock_class:
-            mock_instance = MagicMock()
-            mock_instance.chat = AsyncMock(return_value=mock_llm_response)
-            mock_class.return_value = mock_instance
+        mock_client = MagicMock(spec=LLMClientProtocol)
+        mock_client.chat = AsyncMock(return_value=mock_llm_response)
 
-            agent = TestableAgent(
-                name="test",
-                system_prompt="프롬프트",
-                llm_provider="gemini"
-            )
+        agent = ConcreteTestableAgent(
+            name="test",
+            system_prompt="프롬프트",
+            llm_provider="gemini",
+            llm_client=mock_client
+        )
 
-            await agent.interpret(saju_data=sample_saju_data)
+        await agent.interpret(saju_data=sample_saju_data)
 
-            # thinking_level이 전달되었는지 확인
-            call_kwargs = mock_instance.chat.call_args.kwargs
-            assert "thinking_level" in call_kwargs
+        # thinking_level이 전달되었는지 확인
+        call_kwargs = mock_client.chat.call_args.kwargs
+        assert "thinking_level" in call_kwargs
 
 
 class TestBaseAgentAbstract:

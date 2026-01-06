@@ -138,9 +138,12 @@ print(chat_response.json()["message"])
 app = create_app()
 
 
+from typing import Optional
+
+
 def run_server(
-    host: str = None,
-    port: int = None,
+    host: Optional[str] = None,
+    port: Optional[int] = None,
     reload: bool = False
 ):
     """서버 실행"""

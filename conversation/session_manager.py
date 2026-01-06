@@ -17,7 +17,7 @@ class Message:
     timestamp: datetime = field(default_factory=datetime.now)
     metadata: Dict[str, Any] = field(default_factory=dict)
 
-    def to_dict(self) -> Dict:
+    def to_dict(self) -> Dict[str, Any]:
         return {
             "role": self.role,
             "content": self.content,
@@ -46,7 +46,7 @@ class Session:
     last_activity: datetime = field(default_factory=datetime.now)
     metadata: Dict[str, Any] = field(default_factory=dict)
 
-    def add_message(self, role: str, content: str, metadata: Dict = None) -> Message:
+    def add_message(self, role: str, content: str, metadata: Optional[Dict[str, Any]] = None) -> Message:
         """메시지 추가"""
         message = Message(
             role=role,
@@ -61,7 +61,7 @@ class Session:
         """사용자 메시지 추가"""
         return self.add_message("user", content)
 
-    def add_assistant_message(self, content: str, agent_name: str = None) -> Message:
+    def add_assistant_message(self, content: str, agent_name: Optional[str] = None) -> Message:
         """어시스턴트 메시지 추가"""
         metadata = {"agent": agent_name} if agent_name else {}
         return self.add_message("assistant", content, metadata)
@@ -90,7 +90,7 @@ class Session:
         age = datetime.now() - self.last_activity
         return age > timedelta(hours=max_age_hours)
 
-    def to_dict(self) -> Dict:
+    def to_dict(self) -> Dict[str, Any]:
         return {
             "session_id": self.session_id,
             "saju_data": self.saju_data,
@@ -127,7 +127,7 @@ class SessionManager:
         self.max_sessions = max_sessions
         self.session_ttl_hours = session_ttl_hours
 
-    def create_session(self, saju_data: Dict, metadata: Dict = None) -> Session:
+    def create_session(self, saju_data: Dict[str, Any], metadata: Optional[Dict[str, Any]] = None) -> Session:
         """
         새 세션 생성
 
@@ -191,7 +191,7 @@ class SessionManager:
         session_id: str,
         role: str,
         content: str,
-        metadata: Dict = None
+        metadata: Optional[Dict[str, Any]] = None
     ) -> Optional[Message]:
         """
         세션에 메시지 추가

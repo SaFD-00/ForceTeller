@@ -15,6 +15,9 @@ ForceTeller/
 │   │   ├── chat.py               # 채팅/대화 엔드포인트
 │   │   ├── manseol.py            # 사주 계산 엔드포인트
 │   │   └── analysis.py           # 분석 엔드포인트
+│   ├── converters.py             # 데이터 변환 유틸
+│   ├── dependencies.py           # 의존성 주입
+│   ├── formatters.py             # 응답 포맷팅
 │   ├── schemas.py                # Pydantic 데이터 모델
 │   └── server.py                 # FastAPI 앱 설정
 │
@@ -36,6 +39,7 @@ ForceTeller/
 │   │   ├── stems_branches.py     # 천간/지지 데이터
 │   │   ├── lunar_data.py         # 음력 데이터
 │   │   ├── city_coordinates.py   # 도시 좌표
+│   │   ├── korean_names.py       # 한글 이름 데이터
 │   │   └── kst_history.py        # 한국 표준시 역사
 │   ├── analysis/                 # 해석 엔진
 │   │   ├── fortune/analyzer.py   # 운세 분석
@@ -48,6 +52,7 @@ ForceTeller/
 │   │   │   ├── modern.py         # 현대 학파
 │   │   │   └── comparator.py     # 학파 비교
 │   │   └── yongsin/              # 용신(用神) 분석
+│   │       ├── base.py           # 용신 기본 클래스
 │   │       ├── strength.py       # 일간 강도
 │   │       ├── selector.py       # 용신 선정
 │   │       ├── seasonal.py       # 계절 조정
@@ -71,7 +76,10 @@ ForceTeller/
 │   │   ├── yongsin_agent.py      # 용신 분석
 │   │   ├── school_compare_agent.py # 학파 비교
 │   │   └── synthesis_agent.py    # 종합 분석
+│   ├── agent_configs.py          # 에이전트 설정
 │   ├── base_agent.py             # 추상 기본 클래스
+│   ├── config.py                 # 전역 설정
+│   ├── factory.py                # 에이전트 팩토리
 │   ├── orchestrator.py           # 에이전트 라우팅/조율
 │   ├── prompts/
 │   │   └── system_prompts.py     # LLM 시스템 프롬프트
@@ -83,10 +91,20 @@ ForceTeller/
 │
 ├── config/                       # 설정
 │   ├── settings.py               # Pydantic 환경 설정
-│   └── constants.py              # 도메인 상수 (627줄)
+│   ├── constants.py              # 도메인 상수
+│   └── logging_config.py         # 로깅 설정
 │
 ├── utils/
-│   └── llm_client.py             # OpenAI/Gemini 클라이언트
+│   ├── llm_client.py             # OpenAI/Gemini 클라이언트
+│   └── protocols.py              # 타입 프로토콜 정의
+│
+├── tests/                        # 테스트
+│   ├── unit/                     # 단위 테스트
+│   ├── integration/              # 통합 테스트
+│   └── e2e/                      # E2E 테스트
+│
+├── docs/                         # 문서
+│   └── plans/                    # 프로젝트 계획
 │
 ├── web/                          # Next.js 14 프론트엔드
 │   ├── app/
@@ -98,14 +116,17 @@ ForceTeller/
 │   ├── components/
 │   │   ├── hero/                 # 랜딩 히어로 섹션
 │   │   ├── features/             # 기능 그리드
-│   │   ├── result/               # 결과 표시 (17개 컴포넌트)
-│   │   ├── chat/                 # 채팅 UI (9개 컴포넌트)
-│   │   └── ui/                   # 재사용 UI (7개 컴포넌트)
+│   │   ├── result/               # 결과 표시 (14개 컴포넌트)
+│   │   ├── chat/                 # 채팅 UI (10개 컴포넌트)
+│   │   └── ui/                   # 재사용 UI (8개 컴포넌트)
+│   ├── data/
+│   │   └── saju-glossary.ts      # 사주 용어 사전
 │   ├── stores/
 │   │   └── sajuStore.ts          # Zustand 상태관리
 │   ├── lib/
 │   │   ├── api/                  # API 클라이언트
 │   │   ├── constants/            # 프론트엔드 상수
+│   │   ├── transforms.ts         # 데이터 변환
 │   │   └── utils.ts              # 유틸리티
 │   ├── types/
 │   │   └── saju.ts               # TypeScript 타입
@@ -113,7 +134,9 @@ ForceTeller/
 │   └── tailwind.config.ts
 │
 ├── main.py                       # CLI 진입점
+├── pytest.ini                    # 테스트 설정
 ├── requirements.txt              # Python 의존성
+├── requirements-dev.txt          # 개발용 의존성
 └── README.md
 ```
 
@@ -369,7 +392,7 @@ NEXT_PUBLIC_API_URL=http://localhost:1118
 
 ## 프론트엔드 컴포넌트
 
-### 결과 표시 컴포넌트 (17개)
+### 결과 표시 컴포넌트 (14개)
 - `FourPillarsDisplay` - 사주팔자 시각화
 - `PillarCard`, `PillarTable` - 주별 카드/테이블
 - `PentagonChart` - 오각형 강도 차트
@@ -384,16 +407,17 @@ NEXT_PUBLIC_API_URL=http://localhost:1118
 - `FortuneCycleSlider` - 대운 슬라이더
 - `StrengthDistributionChart` - 강도 분포
 
-### 채팅 컴포넌트 (9개)
+### 채팅 컴포넌트 (10개)
 - `ChatContainer` - 메인 채팅 컨테이너
 - `MessageList`, `MessageBubble` - 메시지 표시
 - `ChatInput` - 사용자 입력
 - `MarkdownRenderer` - 마크다운 렌더링
+- `ReasoningDisplay` - AI 추론 과정 표시
 - `SuggestedQuestions` - 추천 질문
 - `AnalysisButtons` - 빠른 분석 버튼
 - `AgentSelector` - 에이전트 선택
 
-### UI 컴포넌트 (7개)
+### UI 컴포넌트 (8개)
 - `Button`, `Input` - 기본 입력
 - `GlassCard` - 글래스모피즘 카드
 - `Icon` - 아이콘 래퍼

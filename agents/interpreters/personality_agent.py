@@ -1,5 +1,7 @@
 """성격/기질 해석 에이전트"""
 
+from typing import Optional
+
 from agents.base_agent import BaseAgent
 from agents.prompts.system_prompts import PERSONALITY_SYSTEM_PROMPT
 
@@ -10,7 +12,7 @@ class PersonalityAgent(BaseAgent):
     def __init__(
         self,
         llm_provider: str = "openai",
-        model: str = None,
+        model: Optional[str] = None,
         reasoning_effort: str = "medium"
     ):
         super().__init__(

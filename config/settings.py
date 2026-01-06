@@ -43,6 +43,18 @@ class Settings(BaseSettings):
     # 세션 설정
     SESSION_MAX_HISTORY: int = 20
     SESSION_TIMEOUT_MINUTES: int = 60
+    MAX_SESSIONS: int = 100  # 최대 세션 수
+    SESSION_CLEANUP_PERCENTAGE: float = 0.2  # 세션 정리 시 삭제 비율
+
+    # 대화 설정
+    CONVERSATION_HISTORY_LIMIT: int = 10  # LLM에 전달할 대화 히스토리 최대 개수
+
+    # 에이전트 설정
+    DEFAULT_REASONING_EFFORT: str = "medium"  # "none" | "low" | "medium" | "high" | "xhigh"
+
+    # 로깅 설정
+    LOG_LEVEL: str = "INFO"  # "DEBUG" | "INFO" | "WARNING" | "ERROR" | "CRITICAL"
+    LOG_FORMAT: str = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 
     # 만세력 설정
     DEFAULT_CITY: str = "Seoul"

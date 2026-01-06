@@ -8,6 +8,8 @@ from typing import Dict, Any, List
 
 from agents.orchestrator import Orchestrator
 from agents.base_agent import AgentResponse
+from agents.factory import AgentFactory
+from agents.agent_configs import AGENT_CONFIGS
 
 
 def create_mock_agent(name: str = "test", interpretation: str = "테스트 해석"):
@@ -34,6 +36,12 @@ def create_orchestrator_with_mock_agents():
     orchestrator.model = None
     orchestrator.use_llm_routing = False
     orchestrator._agents = {}
+
+    # AgentFactory 설정
+    orchestrator._factory = AgentFactory()
+
+    # 키워드 매핑 설정 (팩토리에서 가져옴)
+    orchestrator.KEYWORD_MAPPING = orchestrator._factory.get_keyword_mapping()
 
     # 모든 에이전트에 대해 mock 주입
     agent_names = ["personality", "career", "relationship", "health",
@@ -317,6 +325,8 @@ class TestOrchestratorLLMRouting:
         orchestrator.use_llm_routing = True
         orchestrator.llm_client = mock_llm_client
         orchestrator._agents = {}
+        orchestrator._factory = AgentFactory()
+        orchestrator.KEYWORD_MAPPING = orchestrator._factory.get_keyword_mapping()
 
         result = await orchestrator._select_agents_by_llm("성격과 직업운")
 
@@ -337,6 +347,8 @@ class TestOrchestratorLLMRouting:
         orchestrator.use_llm_routing = True
         orchestrator.llm_client = mock_llm_client
         orchestrator._agents = {}
+        orchestrator._factory = AgentFactory()
+        orchestrator.KEYWORD_MAPPING = orchestrator._factory.get_keyword_mapping()
 
         result = await orchestrator._select_agents_by_llm("성격 분석")
 
@@ -356,6 +368,8 @@ class TestOrchestratorLLMRouting:
         orchestrator.use_llm_routing = True
         orchestrator.llm_client = mock_llm_client
         orchestrator._agents = {}
+        orchestrator._factory = AgentFactory()
+        orchestrator.KEYWORD_MAPPING = orchestrator._factory.get_keyword_mapping()
 
         result = await orchestrator._select_agents_by_llm("성격 분석")
 

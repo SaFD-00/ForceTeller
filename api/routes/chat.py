@@ -13,25 +13,14 @@ from api.schemas import (
     SessionListResponse, SessionDetailResponse,
     ErrorResponse, InterpretationType
 )
-from conversation.session_manager import SessionManager
+from api.dependencies import get_session_manager, get_orchestrator
+from api.formatters import SuggestedQuestionsGenerator
+from utils.protocols import SessionManagerProtocol
 from agents.orchestrator import Orchestrator
 from utils.llm_client import get_llm_client
 
 
 router = APIRouter(prefix="/api/chat", tags=["chat"])
-
-# 전역 세션 매니저 (실제 환경에서는 의존성 주입 사용)
-session_manager = SessionManager()
-
-
-def get_session_manager() -> SessionManager:
-    """세션 매니저 의존성"""
-    return session_manager
-
-
-def get_orchestrator(provider: str = "openai") -> Orchestrator:
-    """오케스트레이터 의존성"""
-    return Orchestrator(llm_provider=provider)
 
 
 @router.post(
@@ -47,7 +36,7 @@ def get_orchestrator(provider: str = "openai") -> Orchestrator:
 )
 async def chat(
     request: ChatRequest,
-    sm: SessionManager = Depends(get_session_manager)
+    sm: SessionManagerProtocol = Depends(get_session_manager)
 ) -> ChatResponse:
     """
     대화 엔드포인트
@@ -166,7 +155,7 @@ async def chat(
     description="활성 세션 목록을 반환합니다."
 )
 async def list_sessions(
-    sm: SessionManager = Depends(get_session_manager)
+    sm: SessionManagerProtocol = Depends(get_session_manager)
 ) -> SessionListResponse:
     """세션 목록 조회"""
     sessions = sm.list_sessions()
@@ -186,7 +175,7 @@ async def list_sessions(
 )
 async def get_session(
     session_id: str,
-    sm: SessionManager = Depends(get_session_manager)
+    sm: SessionManagerProtocol = Depends(get_session_manager)
 ) -> SessionDetailResponse:
     """세션 상세 조회"""
     session_data = sm.export_session(session_id)
@@ -210,7 +199,7 @@ async def get_session(
 )
 async def delete_session(
     session_id: str,
-    sm: SessionManager = Depends(get_session_manager)
+    sm: SessionManagerProtocol = Depends(get_session_manager)
 ):
     """세션 삭제"""
     success = sm.delete_session(session_id)
@@ -231,7 +220,7 @@ async def delete_session(
 )
 async def clear_session_history(
     session_id: str,
-    sm: SessionManager = Depends(get_session_manager)
+    sm: SessionManagerProtocol = Depends(get_session_manager)
 ):
     """세션 대화 기록 초기화"""
     session = sm.get_session(session_id)
@@ -248,63 +237,6 @@ async def clear_session_history(
     return {"success": True, "message": "대화 기록이 초기화되었습니다."}
 
 
-def _generate_suggested_questions(user_question: str, ai_response: str) -> List[str]:
-    """
-    사용자 질문과 AI 응답을 기반으로 후속 질문을 생성합니다.
-    """
-    # 응답 내용에서 주제 추출 (첫 50자 내외)
-    topic_hint = ai_response[:50].replace('\n', ' ').strip()
-    if len(topic_hint) > 30:
-        topic_hint = topic_hint[:30] + "..."
-
-    # 기본 추천 질문 템플릿
-    questions = [
-        "이 내용에 대해 더 자세히 설명해주세요.",
-        "다른 관점에서도 분석해주실 수 있나요?",
-        "실생활에서 어떻게 활용할 수 있을까요?",
-    ]
-
-    # 사용자 질문에 따라 맞춤형 질문 추가
-    if "성격" in user_question or "기질" in user_question:
-        questions = [
-            "제 성격의 장점을 극대화하려면 어떻게 해야 할까요?",
-            "대인관계에서 주의할 점은 무엇인가요?",
-            "성격적으로 맞는 직업은 무엇인가요?",
-        ]
-    elif "직업" in user_question or "재물" in user_question or "사업" in user_question:
-        questions = [
-            "올해 재물운은 어떤가요?",
-            "사업을 시작하기 좋은 시기는 언제인가요?",
-            "투자에 유리한 방향은 무엇인가요?",
-        ]
-    elif "연애" in user_question or "결혼" in user_question or "인연" in user_question:
-        questions = [
-            "좋은 인연을 만나는 시기는 언제인가요?",
-            "어떤 스타일의 사람과 잘 맞나요?",
-            "연애운을 높이려면 어떻게 해야 할까요?",
-        ]
-    elif "건강" in user_question or "체질" in user_question:
-        questions = [
-            "건강을 위해 특별히 주의해야 할 점은요?",
-            "저에게 맞는 운동이나 식이요법이 있나요?",
-            "건강운이 좋아지는 시기는 언제인가요?",
-        ]
-    elif "운세" in user_question or "올해" in user_question or "내년" in user_question:
-        questions = [
-            "이번 달 특별히 주의할 점은 무엇인가요?",
-            "행운을 높이기 위한 방법이 있을까요?",
-            "중요한 결정을 하기 좋은 시기는 언제인가요?",
-        ]
-    elif "용신" in user_question or "기신" in user_question:
-        questions = [
-            "용신을 강화하는 방법은 무엇인가요?",
-            "일상에서 용신을 활용하는 법을 알려주세요.",
-            "기신을 피하는 방법이 있나요?",
-        ]
-
-    return questions[:3]
-
-
 @router.post(
     "/stream",
     summary="스트리밍 대화 (Reasoning 포함)",
@@ -312,7 +244,7 @@ def _generate_suggested_questions(user_question: str, ai_response: str) -> List[
 )
 async def chat_stream(
     request: ChatRequest,
-    sm: SessionManager = Depends(get_session_manager)
+    sm: SessionManagerProtocol = Depends(get_session_manager)
 ):
     """
     스트리밍 대화 엔드포인트 (Server-Sent Events)
@@ -429,7 +361,7 @@ async def chat_stream(
                 session.add_assistant_message(full_output)
 
                 # 추천 질문 생성 및 전송
-                suggested_questions = _generate_suggested_questions(request.message, full_output)
+                suggested_questions = SuggestedQuestionsGenerator.from_context(request.message, full_output)
                 yield f"data: {json.dumps({'type': 'suggested_questions', 'content': suggested_questions}, ensure_ascii=False)}\n\n"
 
         except Exception as e:

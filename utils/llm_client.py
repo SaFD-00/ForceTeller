@@ -10,6 +10,9 @@ from abc import ABC, abstractmethod
 import asyncio
 
 from config.settings import settings
+from config.logging_config import get_logger
+
+logger = get_logger(__name__)
 
 
 class BaseLLMClient(ABC):
@@ -114,15 +117,15 @@ class OpenAIClient(BaseLLMClient):
             output_text = response.output_text
 
             # 디버깅: 응답 확인
-            print(f"[DEBUG LLM] output_text 길이: {len(output_text) if output_text else 0}")
+            logger.debug(f"output_text 길이: {len(output_text) if output_text else 0}")
             if output_text:
-                print(f"[DEBUG LLM] output_text 앞 200자: {output_text[:200]}")
+                logger.debug(f"output_text 앞 200자: {output_text[:200]}")
 
             # Structured Outputs인 경우 JSON 파싱하여 반환
             if response_schema:
                 if not output_text or not output_text.strip():
                     # 빈 응답인 경우 기본값 반환
-                    print("[DEBUG LLM] 빈 응답 - 기본값 반환")
+                    logger.debug("빈 응답 - 기본값 반환")
                     return {
                         "interpretation": "응답을 생성할 수 없습니다. 다시 시도해주세요.",
                         "suggested_questions": ["다시 질문해 주세요", "다른 주제로 질문해 주세요", "더 구체적으로 질문해 주세요"]
@@ -144,8 +147,8 @@ class OpenAIClient(BaseLLMClient):
                 try:
                     return json.loads(text_to_parse)
                 except json.JSONDecodeError as e:
-                    print(f"[DEBUG LLM] JSON 파싱 실패: {e}")
-                    print(f"[DEBUG LLM] 원본 응답: {text_to_parse[:500] if text_to_parse else 'None'}")
+                    logger.debug(f"JSON 파싱 실패: {e}")
+                    logger.debug(f"원본 응답: {text_to_parse[:500] if text_to_parse else 'None'}")
 
                     # JSON처럼 보이면 raw JSON을 표시하지 않고 에러 메시지 반환
                     if text_to_parse.strip().startswith("{"):
@@ -171,7 +174,7 @@ class OpenAIClient(BaseLLMClient):
             )
             return response.choices[0].message.content
         except Exception as e:
-            print(f"[DEBUG LLM] API 호출 오류: {type(e).__name__}: {e}")
+            logger.error(f"API 호출 오류: {type(e).__name__}: {e}")
             raise
 
     async def chat_stream(
@@ -278,7 +281,7 @@ class OpenAIClient(BaseLLMClient):
 
         except AttributeError as e:
             # Responses API가 없는 경우 일반 스트리밍으로 폴백
-            print(f"[DEBUG] Responses API not available, falling back: {e}")
+            logger.debug(f"Responses API not available, falling back: {e}")
             async for chunk in self.chat_stream(messages, instructions, **kwargs):
                 yield {"type": "output", "content": chunk}
             yield {"type": "done", "content": ""}
