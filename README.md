@@ -66,24 +66,20 @@ ForceTeller/
 │   │   └── json_exporter.py      # JSON 출력
 │   └── cli.py                    # CLI 인터페이스
 │
-├── agents/                       # AI 해석 에이전트
-│   ├── interpreters/             # 8개 전문 에이전트
-│   │   ├── personality_agent.py  # 성격/특성 분석
-│   │   ├── career_agent.py       # 직업/재물 분석
-│   │   ├── relationship_agent.py # 인연/궁합 분석
-│   │   ├── health_agent.py       # 건강/체질 분석
-│   │   ├── fortune_agent.py      # 운세/시운 분석
-│   │   ├── yongsin_agent.py      # 용신 분석
-│   │   ├── school_compare_agent.py # 학파 비교
-│   │   └── synthesis_agent.py    # 종합 분석
-│   ├── agent_configs.py          # 에이전트 설정
-│   ├── base_agent.py             # 추상 기본 클래스
-│   ├── config.py                 # 전역 설정
-│   ├── factory.py                # 에이전트 팩토리
-│   ├── orchestrator.py           # 에이전트 라우팅/조율
-│   ├── prompts/
-│   │   └── system_prompts.py     # LLM 시스템 프롬프트
-│   └── schemas.py                # 에이전트 응답 모델
+├── agents/                       # AI 해석 에이전트 (LangGraph 기반)
+│   ├── graph.py                  # LangGraph StateGraph 빌드
+│   ├── nodes.py                  # 노드 함수 (supervisor, interpreter, synthesis)
+│   ├── state.py                  # TypedDict 기반 상태 정의
+│   ├── schemas.py                # Pydantic 응답 스키마
+│   ├── llm.py                    # LangChain LLM 추상화
+│   ├── orchestrator.py           # Orchestrator (레거시 호환)
+│   ├── factory.py                # NodeFactory / AgentFactory
+│   ├── agent_configs.py          # 8개 에이전트 설정
+│   ├── config.py                 # AgentConfig 데이터클래스
+│   ├── base_agent.py             # 레거시 BaseAgent (deprecated)
+│   ├── interpreters/             # 레거시 에이전트 (deprecated)
+│   └── prompts/
+│       └── system_prompts.py     # LLM 시스템 프롬프트
 │
 ├── conversation/                 # 세션 관리
 │   ├── session_manager.py        # 멀티턴 세션 핸들링
