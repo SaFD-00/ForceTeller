@@ -21,6 +21,7 @@ from manseol.calculator.twelve_phases import TwelvePhasesCalculator
 from manseol.calculator.hidden_stems import HiddenStemsCalculator
 from manseol.calculator.shensha import ShenshaCalculator
 from manseol.calculator.fortune_cycle import FortuneCycleCalculator
+from manseol.calculator.interactions import InteractionsCalculator
 from manseol.core.time_correction import TimeCorrector
 from manseol.core.calendar_converter import CalendarConverter
 from config.constants import STEMS, BRANCHES, SIXTY_JIAZI_METAPHORS, STEM_ELEMENT_COLORS
@@ -129,6 +130,9 @@ class JsonExporter:
                 calc_datetime, pillars_raw
             )
 
+        # 7.5 천간/지지 상호작용 (합·충·형·파·해·공망)
+        interactions = self._build_interactions(pillars_raw)
+
         # 8. 최종 결과 조립
         return SajuResult(
             meta=MetaInfo(
@@ -158,8 +162,19 @@ class JsonExporter:
             adjusted_time=time_correction,
             pillars=pillars,
             analysis=analysis,
-            fortune_cycles=fortune_cycles
+            fortune_cycles=fortune_cycles,
+            interactions=interactions
         )
+
+    def _build_interactions(self, pillars_raw: Dict) -> Dict[str, list]:
+        """천간/지지 상호작용 계산 (합·충·형·파·해·공망)"""
+        calc = InteractionsCalculator(
+            year_pillar=pillars_raw["year"],
+            month_pillar=pillars_raw["month"],
+            day_pillar=pillars_raw["day"],
+            hour_pillar=pillars_raw.get("hour"),
+        )
+        return calc.calculate_all_interactions()
 
     def _build_pillars(
         self,

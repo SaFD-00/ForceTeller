@@ -356,7 +356,7 @@ export default function ResultPage() {
             <PillarTable pillars={pillarTableData} />
 
             {/* 천간 지지 작용 */}
-            <InteractionsTabs interactions={{}} />
+            <InteractionsTabs interactions={result.interactions ?? {}} />
 
             {/* 신살 카드 */}
             <ShenshaDetailCard

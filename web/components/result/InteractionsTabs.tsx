@@ -3,32 +3,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Icon, GlassCard } from '@/components/ui';
-
-interface InteractionItem {
-  type: string;
-  positions?: string[];
-  stems?: number[];
-  branches?: number[];
-  result?: string;
-  description: string;
-  name?: string;
-  position?: string;
-  branch?: number;
-}
-
-interface InteractionsData {
-  천간합?: InteractionItem[];
-  천간충극?: InteractionItem[];
-  지지육합?: InteractionItem[];
-  지지삼합?: InteractionItem[];
-  지지방합?: InteractionItem[];
-  지지반합?: InteractionItem[];
-  지지충?: InteractionItem[];
-  지지형?: InteractionItem[];
-  지지파?: InteractionItem[];
-  지지해?: InteractionItem[];
-  공망?: InteractionItem[];
-}
+import type { InteractionsData } from '@/types/saju';
 
 interface InteractionsTabsProps {
   interactions: InteractionsData;

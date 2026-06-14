@@ -131,6 +131,33 @@ export interface FortuneCycleData {
   current_cycle_index: number | null;
 }
 
+// 천간/지지 상호작용 (합·충·형·파·해·공망)
+export interface InteractionItem {
+  type: string;
+  positions?: string[];
+  stems?: number[];
+  branches?: number[];
+  result?: string;
+  description: string;
+  name?: string;
+  position?: string;
+  branch?: number;
+}
+
+export interface InteractionsData {
+  천간합?: InteractionItem[];
+  천간충극?: InteractionItem[];
+  지지육합?: InteractionItem[];
+  지지삼합?: InteractionItem[];
+  지지방합?: InteractionItem[];
+  지지반합?: InteractionItem[];
+  지지충?: InteractionItem[];
+  지지형?: InteractionItem[];
+  지지파?: InteractionItem[];
+  지지해?: InteractionItem[];
+  공망?: InteractionItem[];
+}
+
 export interface SajuAnalysis {
   day_master: DayMasterAnalysis;
   five_elements: FiveElementsAnalysis;
@@ -173,6 +200,7 @@ export interface SajuResult {
   pillars: FourPillars;
   analysis: SajuAnalysis;
   fortune_cycles: FortuneCycleData | null;
+  interactions?: InteractionsData;
 }
 
 // API 요청/응답 타입
@@ -321,6 +349,7 @@ export interface SajuResultDisplay {
   fortune_cycles?: FortuneCycleDisplay[];
   shensha?: ShenshaDisplay[];
   adjusted_time?: TimeCorrection | null;
+  interactions?: InteractionsData;
 }
 
 // 유틸리티: 백엔드 응답을 프론트엔드 타입으로 변환하는 함수 타입
