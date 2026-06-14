@@ -127,9 +127,8 @@ ForceTeller는 정확한 만세력 계산과 AI 해석을 결합한 사주팔자
 │   └── tailwind.config.ts
 │
 ├── main.py                       # CLI 진입점
-├── pytest.ini                    # 테스트 설정
-├── requirements.txt              # Python 의존성
-├── requirements-dev.txt          # 개발용 의존성
+├── pyproject.toml                # 프로젝트 메타데이터·의존성·도구 설정
+├── uv.lock                       # 의존성 잠금 파일 (uv)
 └── README.md
 ```
 
@@ -139,6 +138,7 @@ ForceTeller는 정확한 만세력 계산과 AI 해석을 결합한 사주팔자
 | 기술 | 버전 | 용도 |
 |------|------|------|
 | Python | 3.11+ | 런타임 |
+| uv | 0.11+ | 패키지·가상환경 관리 |
 | FastAPI | 0.110 | REST API 프레임워크 |
 | Pydantic | 2.0 | 데이터 검증 |
 | Uvicorn | 0.27 | ASGI 서버 |
@@ -219,27 +219,43 @@ ForceTeller는 정확한 만세력 계산과 AI 해석을 결합한 사주팔자
 
 ### 사전 요구사항
 - Python 3.11+
+- [uv](https://docs.astral.sh/uv/) (패키지·가상환경 관리)
 - Node.js 18+
 - OpenRouter API Key (https://openrouter.ai/keys)
 
 ### 백엔드 설치 및 실행
 
 ```bash
-# Conda 환경 생성 및 활성화
-conda create -n forceteller python=3.11 -y
-conda activate forceteller
+# uv 설치 (최초 1회, 이미 설치되어 있으면 생략)
+curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# 의존성 설치
-pip install -r requirements.txt
+# 가상환경(.venv) 생성 + 의존성 설치 (dev 포함, 잠금 파일 기준)
+uv sync
 
 # 환경 설정
 cp .env.example .env
 # .env 파일 편집 (API 키 설정)
 
-# 서버 실행
-python -m api.server
+# 서버 실행 (uv run은 .venv를 자동 활성화)
+uv run python -m api.server
 # 또는
-uvicorn api.server:app --reload --host 0.0.0.0 --port 8000
+uv run uvicorn api.server:app --reload --host 0.0.0.0 --port 8000
+```
+
+> `uv sync`가 프로젝트 루트에 `.venv`를 생성합니다. 셸에서 직접 활성화하려면 `source .venv/bin/activate`를 사용하세요.
+
+### 개발 (테스트·코드 품질)
+
+```bash
+# dev 의존성은 uv sync 시 기본 포함 (프로덕션만 원하면 uv sync --no-dev)
+uv run pytest              # 테스트 실행
+uv run ruff check .        # 린트
+uv run black .             # 포맷
+uv run mypy .              # 타입 체크
+
+# 의존성 추가/제거
+uv add <패키지>            # 런타임 의존성
+uv add --dev <패키지>      # 개발 의존성
 ```
 
 ### 프론트엔드 설치 및 실행
@@ -262,16 +278,16 @@ npm run dev
 
 ```bash
 # 사주 계산
-python main.py cli --name "홍길동" --birth-date "1990-01-15" --birth-time "14:30" --gender male
+uv run python main.py cli --name "홍길동" --birth-date "1990-01-15" --birth-time "14:30" --gender male
 
 # 대화형 모드
-python main.py interactive
+uv run python main.py interactive
 
 # 서버 실행
-python main.py server --host 0.0.0.0 --port 8000 --reload
+uv run python main.py server --host 0.0.0.0 --port 8000 --reload
 
 # 시스템 정보
-python main.py info
+uv run python main.py info
 ```
 
 ## API 엔드포인트
