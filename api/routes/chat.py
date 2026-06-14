@@ -15,9 +15,11 @@ from api.schemas import (
 )
 from api.dependencies import get_session_manager, get_orchestrator
 from api.formatters import SuggestedQuestionsGenerator
-from config.settings import get_allowed_models
+from config.settings import get_allowed_models, settings
 from utils.protocols import SessionManagerProtocol
 from utils.llm_client import get_llm_client
+from agents.agent_configs import AGENT_CONFIGS, get_agent_config
+from agents.nodes import route_question
 
 
 router = APIRouter(prefix="/api/chat", tags=["chat"])
@@ -306,15 +308,54 @@ async def chat_stream(
 - 일운: {daily.get('stem', '')}{daily.get('branch', '')} - {daily.get('ten_god', '')}
 """
 
-            # 시스템 프롬프트
-            system_prompt = f"""당신은 전문 사주명리학 상담사입니다.
-사용자의 사주팔자를 바탕으로 정확하고 통찰력 있는 해석을 제공합니다.
+            # 에이전트 선택: focus 명시 시 해당 전문 에이전트, 아니면 경량 라우팅
+            focus = request.focus
+            agent_name = (
+                focus if (focus and focus in AGENT_CONFIGS and focus != "synthesis") else None
+            )
+            user_selected = agent_name is not None
+            if agent_name is None:
+                agent_name = await route_question(
+                    request.message, model=settings.OPENROUTER_ROUTING_MODEL
+                )
 
+            agent_config = get_agent_config(agent_name)
+            if agent_config:
+                base_prompt = agent_config.system_prompt
+                display_name = agent_config.display_name
+            else:
+                agent_name = "general"
+                base_prompt = (
+                    "당신은 전문 사주명리학 상담사입니다.\n"
+                    "사용자의 사주팔자를 바탕으로 정확하고 통찰력 있는 해석을 제공합니다."
+                )
+                display_name = "종합 상담"
+
+            # 신뢰도: 사용자가 직접 선택하면 높음, 자동 라우팅이면 보통 상향
+            confidence = 0.9 if user_selected else 0.8
+
+            # 선택된 에이전트 정보 전송 (출처·신뢰도 배지용)
+            yield (
+                "data: "
+                + json.dumps(
+                    {
+                        "type": "agent_selected",
+                        "agent": agent_name,
+                        "display_name": display_name,
+                        "confidence": confidence,
+                    },
+                    ensure_ascii=False,
+                )
+                + "\n\n"
+            )
+
+            # 시스템 프롬프트 (에이전트별 전문 프롬프트 + 사주 컨텍스트)
+            system_prompt = f"""{base_prompt}
+
+아래는 상담 대상자의 사주 정보입니다. 이 정보에 근거하여 답변하세요.
 {saju_context}
 
-위 사주 정보를 바탕으로 사용자의 질문에 친절하고 상세하게 답변해주세요.
-한국어로 답변하며, 전문적이면서도 이해하기 쉽게 설명해주세요.
-사주 분석 시 오행의 균형, 십성의 배치, 현재 운세 흐름을 종합적으로 고려하세요."""
+한국어로 답변하며, 전문적이면서도 이해하기 쉽게 설명해주세요."""
 
             # 대화 이력
             history = session.get_messages_for_llm(limit=10)

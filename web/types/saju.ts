@@ -249,6 +249,10 @@ export interface ChatMessage {
   content: string;
   timestamp?: string;
   suggested_questions?: string[];
+  // 응답을 담당한 에이전트 출처·신뢰도 (어시스턴트 메시지)
+  agent?: string;
+  agent_display_name?: string;
+  confidence?: number;
 }
 
 // 컴포넌트용 호환 타입 (백엔드 응답을 프론트엔드에서 사용하기 위한 변환 타입)

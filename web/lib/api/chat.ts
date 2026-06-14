@@ -14,8 +14,20 @@ interface ChatMessageRequest {
 
 // 스트리밍 청크 타입
 export interface StreamChunk {
-  type: 'reasoning' | 'output' | 'reasoning_done' | 'done' | 'error' | 'session' | 'suggested_questions';
-  content: string | string[];
+  type:
+    | 'reasoning'
+    | 'output'
+    | 'reasoning_done'
+    | 'done'
+    | 'error'
+    | 'session'
+    | 'suggested_questions'
+    | 'agent_selected';
+  content?: string | string[];
+  // agent_selected 이벤트 필드 (출처·신뢰도 배지)
+  agent?: string;
+  display_name?: string;
+  confidence?: number;
 }
 
 export async function sendChatMessage(data: ChatMessageRequest): Promise<ChatResponse> {

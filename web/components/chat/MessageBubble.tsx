@@ -11,6 +11,12 @@ interface MessageBubbleProps {
   onSuggestedQuestionClick?: (question: string) => void;
 }
 
+function confidenceLabel(confidence: number): string {
+  if (confidence >= 0.85) return '신뢰도 높음';
+  if (confidence >= 0.7) return '신뢰도 보통';
+  return '신뢰도 참고';
+}
+
 export function MessageBubble({ message, onSuggestedQuestionClick }: MessageBubbleProps) {
   const isUser = message.role === 'user';
 
@@ -48,6 +54,21 @@ export function MessageBubble({ message, onSuggestedQuestionClick }: MessageBubb
             : 'bg-muted border border-border rounded-tl-md'
         )}
       >
+        {/* 에이전트 출처·신뢰도 배지 (어시스턴트) */}
+        {!isUser && message.agent_display_name && (
+          <div className="flex items-center gap-1.5 mb-2 pb-2 border-b border-border">
+            <Icon name="solar:verified-check-bold" size={14} className="text-primary" />
+            <span className="text-xs font-medium text-primary">
+              {message.agent_display_name} 에이전트
+            </span>
+            {typeof message.confidence === 'number' && (
+              <span className="text-xs px-1.5 py-0.5 rounded-full bg-primary/10 text-muted-foreground">
+                {confidenceLabel(message.confidence)}
+              </span>
+            )}
+          </div>
+        )}
+
         {isUser ? (
           <p className="text-foreground whitespace-pre-wrap leading-relaxed">
             {message.content}

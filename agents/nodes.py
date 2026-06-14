@@ -103,6 +103,49 @@ async def supervisor_node(state: AgentState, config: RunnableConfig) -> dict:
         }
 
 
+async def route_question(question: str, model: str | None = None) -> str:
+    """단발 라우팅: 질문에 가장 적합한 인터프리터 에이전트 1개 선택
+
+    스트리밍 채팅 경로처럼 LangGraph 그래프를 거치지 않고
+    가벼운 라우팅 모델로 에이전트만 빠르게 결정할 때 사용한다.
+
+    Args:
+        question: 사용자 질문
+        model: 라우팅에 사용할 모델 ID (None이면 설정 기본값)
+
+    Returns:
+        선택된 에이전트 이름 (실패 시 'personality')
+    """
+    available_agents = [
+        f"- {name}: {cfg.interpretation_focus}"
+        for name, cfg in AGENT_CONFIGS.items()
+        if name != "synthesis"
+    ]
+    system_content = f"""{ORCHESTRATOR_SYSTEM_PROMPT}
+
+## 사용 가능한 에이전트
+{chr(10).join(available_agents)}
+
+## 선택 규칙
+사용자 질문에 가장 적합한 에이전트 하나를 선택하세요.
+synthesis나 FINISH는 선택하지 마세요."""
+
+    llm = create_structured_llm(RouterDecision, model=model)
+    messages = [
+        SystemMessage(content=system_content),
+        HumanMessage(content=question),
+    ]
+
+    try:
+        decision = await ainvoke_structured(llm, messages)
+        agent = decision.next_agent
+        if agent in AGENT_CONFIGS and agent != "synthesis":
+            return agent
+    except Exception:
+        pass
+    return "personality"
+
+
 async def interpreter_node(
     state: AgentState,
     agent_name: str,

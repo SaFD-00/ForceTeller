@@ -211,6 +211,9 @@ export function ChatContainer() {
         let fullOutput = '';
         let newSessionId = sessionId;
         let suggestedQuestions: string[] = [];
+        let respondingAgent: string | undefined;
+        let respondingAgentName: string | undefined;
+        let respondingConfidence: number | undefined;
 
         // 스트리밍으로 메시지 수신
         for await (const chunk of streamChatMessage({
@@ -226,6 +229,12 @@ export function ChatContainer() {
                 newSessionId = chunk.content as string;
                 setSessionId(chunk.content as string);
               }
+              break;
+            case 'agent_selected':
+              // 응답을 담당한 에이전트 출처·신뢰도
+              respondingAgent = chunk.agent;
+              respondingAgentName = chunk.display_name;
+              respondingConfidence = chunk.confidence;
               break;
             case 'reasoning':
               // AI 사고 과정 스트리밍
@@ -259,6 +268,9 @@ export function ChatContainer() {
             content: fullOutput,
             timestamp: new Date().toISOString(),
             suggested_questions: suggestedQuestions.length > 0 ? suggestedQuestions : undefined,
+            agent: respondingAgent,
+            agent_display_name: respondingAgentName,
+            confidence: respondingConfidence,
           };
           addMessage(assistantMessage);
         }
