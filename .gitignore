@@ -84,6 +84,8 @@ logs/
 # Claude Code outputs
 .claude/docs/
 .claude/state/
+.claude/knowledge/
+.claude/settings.local.json
 
 # Development docs (keep only production docs)
 docs/plans/
