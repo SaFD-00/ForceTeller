@@ -35,7 +35,7 @@ export function MessageList({
   if (messages.length === 0 && !isLoading) {
     return (
       <div className="flex-1 flex items-center justify-center">
-        <div className="text-center text-white/40">
+        <div className="text-center text-gray-400">
           <Icon name="solar:chat-round-dots-bold" size={48} className="mx-auto mb-4" />
           <p>AI 상담사에게 사주에 대해 질문해보세요</p>
           <p className="text-sm mt-2">예: "제 성격은 어떤가요?" "직업운은 어떤가요?"</p>
@@ -70,9 +70,9 @@ export function MessageList({
           className="flex gap-3"
         >
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500/30 to-blue-500/30 flex items-center justify-center flex-shrink-0">
-            <Icon name="solar:magic-stick-3-bold" size={20} className="text-white" />
+            <Icon name="solar:magic-stick-3-bold" size={20} className="text-foreground" />
           </div>
-          <div className="max-w-[75%] p-4 rounded-2xl rounded-tl-md bg-white/5 border border-white/10">
+          <div className="max-w-[75%] p-4 rounded-2xl rounded-tl-md bg-muted border border-border">
             <MarkdownRenderer content={streamingOutput} />
             <motion.span
               animate={{ opacity: [1, 0] }}
@@ -89,13 +89,13 @@ export function MessageList({
       {isLoading && !reasoning && !streamingOutput && (
         <div className="flex gap-3">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500/30 to-blue-500/30 flex items-center justify-center">
-            <Icon name="solar:magic-stick-3-bold" size={20} className="text-white" />
+            <Icon name="solar:magic-stick-3-bold" size={20} className="text-foreground" />
           </div>
-          <div className="bg-white/5 border border-white/10 rounded-2xl rounded-tl-md p-4">
+          <div className="bg-muted border border-border rounded-2xl rounded-tl-md p-4">
             <div className="flex gap-1">
-              <div className="w-2 h-2 bg-white/40 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-              <div className="w-2 h-2 bg-white/40 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-              <div className="w-2 h-2 bg-white/40 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+              <div className="w-2 h-2 bg-muted rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+              <div className="w-2 h-2 bg-muted rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+              <div className="w-2 h-2 bg-muted rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
             </div>
           </div>
         </div>

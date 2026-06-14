@@ -63,8 +63,8 @@ const AGENTS: { type: AgentType; name: string; icon: string; description: string
 
 export function AgentSelector({ selected, onSelect }: AgentSelectorProps) {
   return (
-    <div className="p-3 border-b border-white/10">
-      <h3 className="text-xs font-medium text-white/50 mb-2">상담 분야 선택</h3>
+    <div className="p-3 border-b border-border">
+      <h3 className="text-xs font-medium text-muted-foreground mb-2">상담 분야 선택</h3>
       <div className="flex flex-wrap gap-1.5">
         {AGENTS.map((agent) => (
           <motion.button
@@ -76,17 +76,17 @@ export function AgentSelector({ selected, onSelect }: AgentSelectorProps) {
               'px-3 py-1.5 rounded-lg border transition-all flex items-center gap-1.5',
               selected === agent.type
                 ? 'bg-primary/20 border-primary'
-                : 'bg-white/5 border-white/10 hover:bg-white/10'
+                : 'bg-muted border-border hover:bg-muted'
             )}
           >
             <Icon
               name={agent.icon}
               size={16}
               className={cn(
-                selected === agent.type ? 'text-primary' : 'text-white/60'
+                selected === agent.type ? 'text-primary' : 'text-muted-foreground'
               )}
             />
-            <span className="text-xs font-medium text-white">{agent.name}</span>
+            <span className="text-xs font-medium text-foreground">{agent.name}</span>
           </motion.button>
         ))}
       </div>

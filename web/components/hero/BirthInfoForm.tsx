@@ -120,16 +120,7 @@ export function BirthInfoForm() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay: 0.2 }}
     >
-      <GlassCard className="w-full max-w-md mx-auto p-8">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">
-            사주명리
-          </h1>
-          <p className="text-white/60">
-            정확한 사주팔자 분석을 시작하세요
-          </p>
-        </div>
-
+      <GlassCard className="w-full max-w-xl mx-auto p-6 md:p-8 rounded-3xl">
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Name */}
           <Input
@@ -189,9 +180,9 @@ export function BirthInfoForm() {
               error={errors.city}
             />
             {showCityDropdown && (
-              <div className="absolute z-50 w-full mt-1 bg-black/95 backdrop-blur-xl border border-white/10 rounded-xl overflow-hidden max-h-60 overflow-y-auto">
+              <div className="absolute z-50 w-full mt-1 bg-surface border border-border rounded-xl shadow-card-hover overflow-hidden max-h-60 overflow-y-auto">
                 {isSearching ? (
-                  <div className="px-4 py-3 text-white/50 text-center">
+                  <div className="px-4 py-3 text-muted-foreground text-center">
                     <Icon name="solar:refresh-bold" size={16} className="animate-spin inline mr-2" />
                     검색 중...
                   </div>
@@ -200,14 +191,14 @@ export function BirthInfoForm() {
                     <button
                       key={`${city.name}-${city.country}`}
                       type="button"
-                      className="w-full px-4 py-2 text-left text-white/80 hover:bg-white/10 transition-colors"
+                      className="w-full px-4 py-2 text-left text-foreground hover:bg-muted transition-colors"
                       onClick={() => handleCitySelect(city)}
                     >
                       {city.name_ko || city.name}, {city.country_ko || city.country}
                     </button>
                   ))
                 ) : cityQuery.length > 0 ? (
-                  <div className="px-4 py-3 text-white/50 text-center">
+                  <div className="px-4 py-3 text-muted-foreground text-center">
                     검색 결과가 없습니다
                   </div>
                 ) : null}
@@ -215,65 +206,49 @@ export function BirthInfoForm() {
             )}
           </div>
 
-          {/* Gender */}
-          <div>
-            <label className="block text-sm font-medium text-white/70 mb-3">
-              성별
-            </label>
-            <div className="flex gap-4">
-              {(['male', 'female'] as const).map((gender) => (
-                <button
-                  key={gender}
-                  type="button"
-                  className={`flex-1 py-3 rounded-xl border transition-all duration-300 ${
-                    formData.gender === gender
-                      ? 'bg-primary/20 border-primary text-white'
-                      : 'bg-white/5 border-white/10 text-white/60 hover:bg-white/10'
-                  }`}
-                  onClick={() =>
-                    setFormData((prev) => ({ ...prev, gender }))
-                  }
-                >
-                  <Icon
-                    name={gender === 'male' ? 'solar:men-bold' : 'solar:women-bold'}
-                    size={20}
-                    className="inline mr-2"
-                  />
-                  {gender === 'male' ? '남성' : '여성'}
-                </button>
-              ))}
-            </div>
-          </div>
+          {/* Inline option pills: gender + calendar */}
+          <div className="flex flex-wrap items-center gap-2 pt-1">
+            <span className="text-sm font-medium text-muted-foreground mr-1">성별</span>
+            {(['male', 'female'] as const).map((gender) => (
+              <button
+                key={gender}
+                type="button"
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm border transition-all ${
+                  formData.gender === gender
+                    ? 'bg-primary/10 border-primary text-primary'
+                    : 'bg-surface border-border text-muted-foreground hover:bg-muted'
+                }`}
+                onClick={() => setFormData((prev) => ({ ...prev, gender }))}
+              >
+                <Icon
+                  name={gender === 'male' ? 'solar:men-bold' : 'solar:women-bold'}
+                  size={15}
+                />
+                {gender === 'male' ? '남성' : '여성'}
+              </button>
+            ))}
 
-          {/* Calendar Type */}
-          <div>
-            <label className="block text-sm font-medium text-white/70 mb-3">
-              달력 유형
-            </label>
-            <div className="flex gap-2">
-              {(['solar', 'lunar', 'leap_lunar'] as const).map((type) => (
-                <button
-                  key={type}
-                  type="button"
-                  className={`flex-1 py-2 rounded-lg text-sm border transition-all duration-300 ${
-                    formData.calendar === type
-                      ? 'bg-primary/20 border-primary text-white'
-                      : 'bg-white/5 border-white/10 text-white/60 hover:bg-white/10'
-                  }`}
-                  onClick={() =>
-                    setFormData((prev) => ({ ...prev, calendar: type }))
-                  }
-                >
-                  {type === 'solar' ? '양력' : type === 'lunar' ? '음력' : '윤달'}
-                </button>
-              ))}
-            </div>
+            <span className="text-sm font-medium text-muted-foreground mx-1">달력</span>
+            {(['solar', 'lunar', 'leap_lunar'] as const).map((type) => (
+              <button
+                key={type}
+                type="button"
+                className={`px-3 py-1.5 rounded-full text-sm border transition-all ${
+                  formData.calendar === type
+                    ? 'bg-primary/10 border-primary text-primary'
+                    : 'bg-surface border-border text-muted-foreground hover:bg-muted'
+                }`}
+                onClick={() => setFormData((prev) => ({ ...prev, calendar: type }))}
+              >
+                {type === 'solar' ? '양력' : type === 'lunar' ? '음력' : '윤달'}
+              </button>
+            ))}
           </div>
 
           {/* Submit Button */}
           <Button
             type="submit"
-            className="w-full mt-6"
+            className="w-full mt-2"
             disabled={isLoading}
           >
             {isLoading ? (

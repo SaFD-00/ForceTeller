@@ -28,7 +28,7 @@ export function FortuneCycleTimeline({ cycles, currentAge = 0 }: FortuneCycleTim
       <motion.h2
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="text-2xl font-bold text-white mb-6 text-center"
+        className="text-2xl font-bold text-foreground mb-6 text-center"
       >
         대운 흐름 (大運)
       </motion.h2>
@@ -48,7 +48,7 @@ export function FortuneCycleTimeline({ cycles, currentAge = 0 }: FortuneCycleTim
                 className="flex flex-col items-center"
               >
                 {/* Age range */}
-                <div className="text-xs text-white/50 mb-2">
+                <div className="text-xs text-muted-foreground mb-2">
                   {cycle.start_age} ~ {cycle.start_age + 9}세
                 </div>
 
@@ -59,8 +59,8 @@ export function FortuneCycleTimeline({ cycles, currentAge = 0 }: FortuneCycleTim
                     isCurrent
                       ? 'bg-primary/20 border-primary scale-110 shadow-lg shadow-primary/20'
                       : isPast
-                      ? 'bg-white/5 border-white/10 opacity-60'
-                      : 'bg-white/5 border-white/20'
+                      ? 'bg-muted border-border opacity-60'
+                      : 'bg-muted border-gray-300'
                   )}
                 >
                   {isCurrent && (
@@ -75,23 +75,23 @@ export function FortuneCycleTimeline({ cycles, currentAge = 0 }: FortuneCycleTim
 
                   {/* Heavenly Stem */}
                   <div className="text-center mb-2">
-                    <div className="text-xl font-bold text-white">
+                    <div className="text-xl font-bold text-foreground">
                       {cycle.heavenly_stem.hanja}
                     </div>
-                    <div className="text-xs text-white/60">
+                    <div className="text-xs text-muted-foreground">
                       {cycle.heavenly_stem.korean}
                     </div>
                   </div>
 
                   {/* Divider */}
-                  <div className="w-full h-px bg-white/10 my-2" />
+                  <div className="w-full h-px bg-muted my-2" />
 
                   {/* Earthly Branch */}
                   <div className="text-center">
-                    <div className="text-xl font-bold text-white">
+                    <div className="text-xl font-bold text-foreground">
                       {cycle.earthly_branch.hanja}
                     </div>
-                    <div className="text-xs text-white/60">
+                    <div className="text-xs text-muted-foreground">
                       {cycle.earthly_branch.korean}
                     </div>
                   </div>

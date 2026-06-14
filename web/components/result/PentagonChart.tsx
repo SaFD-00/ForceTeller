@@ -83,7 +83,7 @@ export function PentagonChart({ dayMaster, distribution, tenGodMapping, dayStemK
     >
       <div className="flex items-center gap-2 mb-4">
         <Icon name="solar:chart-bold" size={24} className="text-primary" />
-        <h2 className="text-xl font-bold text-white">나의 오행: {dayStemKorean ? DAY_MASTER_DISPLAY[dayStemKorean] || dayMaster : dayMaster}</h2>
+        <h2 className="text-xl font-bold text-foreground">나의 오행: {dayStemKorean ? DAY_MASTER_DISPLAY[dayStemKorean] || dayMaster : dayMaster}</h2>
       </div>
 
       <GlassCard className="p-4 md:p-6">
@@ -91,11 +91,11 @@ export function PentagonChart({ dayMaster, distribution, tenGodMapping, dayStemK
         <div className="flex items-center gap-6 mb-4 text-sm">
           <div className="flex items-center gap-2">
             <span className="text-cyan-400">→</span>
-            <span className="text-white/60">생(生)</span>
+            <span className="text-muted-foreground">생(生)</span>
           </div>
           <div className="flex items-center gap-2">
             <span className="text-red-400">→</span>
-            <span className="text-white/60">극(剋)</span>
+            <span className="text-muted-foreground">극(剋)</span>
           </div>
         </div>
 

@@ -35,7 +35,7 @@ export function MessageBubble({ message, onSuggestedQuestionClick }: MessageBubb
         <Icon
           name={isUser ? 'solar:user-bold' : 'solar:magic-stick-3-bold'}
           size={20}
-          className={isUser ? 'text-primary' : 'text-white'}
+          className={isUser ? 'text-primary' : 'text-foreground'}
         />
       </div>
 
@@ -45,18 +45,18 @@ export function MessageBubble({ message, onSuggestedQuestionClick }: MessageBubb
           'max-w-[75%] p-4 rounded-2xl',
           isUser
             ? 'bg-primary/20 border border-primary/30 rounded-tr-md'
-            : 'bg-white/5 border border-white/10 rounded-tl-md'
+            : 'bg-muted border border-border rounded-tl-md'
         )}
       >
         {isUser ? (
-          <p className="text-white/90 whitespace-pre-wrap leading-relaxed">
+          <p className="text-foreground whitespace-pre-wrap leading-relaxed">
             {message.content}
           </p>
         ) : (
           <MarkdownRenderer content={message.content} />
         )}
         {message.timestamp && (
-          <p className="text-xs text-white/40 mt-2">
+          <p className="text-xs text-gray-400 mt-2">
             {new Date(message.timestamp).toLocaleTimeString('ko-KR', {
               hour: '2-digit',
               minute: '2-digit',
@@ -66,14 +66,14 @@ export function MessageBubble({ message, onSuggestedQuestionClick }: MessageBubb
 
         {/* 추천 질문 버튼 */}
         {!isUser && message.suggested_questions && message.suggested_questions.length > 0 && (
-          <div className="flex flex-wrap gap-2 mt-4 pt-3 border-t border-white/10">
+          <div className="flex flex-wrap gap-2 mt-4 pt-3 border-t border-border">
             {message.suggested_questions.map((question, idx) => (
               <button
                 key={idx}
                 onClick={() => onSuggestedQuestionClick?.(question)}
                 className="px-3 py-1.5 text-sm bg-primary/10 hover:bg-primary/20
-                         border border-primary/30 rounded-full text-white/80
-                         transition-colors hover:text-white"
+                         border border-primary/30 rounded-full text-foreground
+                         transition-colors hover:text-foreground"
               >
                 {question}
               </button>

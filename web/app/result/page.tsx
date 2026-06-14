@@ -154,7 +154,7 @@ export default function ResultPage() {
             size={48}
             className="text-primary animate-spin mx-auto mb-4"
           />
-          <p className="text-white/60">사주를 분석하고 있습니다...</p>
+          <p className="text-muted-foreground">사주를 분석하고 있습니다...</p>
         </div>
       </div>
     );
@@ -169,8 +169,8 @@ export default function ResultPage() {
             size={48}
             className="text-red-400 mx-auto mb-4"
           />
-          <h2 className="text-xl font-bold text-white mb-2">오류가 발생했습니다</h2>
-          <p className="text-white/60 mb-6">{error}</p>
+          <h2 className="text-xl font-bold text-foreground mb-2">오류가 발생했습니다</h2>
+          <p className="text-muted-foreground mb-6">{error}</p>
           <Button onClick={() => router.push('/')}>
             <Icon name="solar:home-2-bold" size={20} className="mr-2" />
             홈으로 돌아가기
@@ -304,7 +304,7 @@ export default function ResultPage() {
   const strengthType = result.strength?.type || (isStrong ? '신강' : '신약');
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-[#0a0a0a] to-[#1a1a2e]">
+    <main className="min-h-screen bg-gradient-to-b from-white to-background">
       <div className="flex">
         {/* Left: Results Section */}
         <div
@@ -319,7 +319,7 @@ export default function ResultPage() {
               animate={{ opacity: 1, y: 0 }}
               className="text-center mb-8 lg:mb-12"
             >
-              <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-2">
+              <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-2">
                 {result.birth_info.name}
               </h1>
               {/* 일주 정보 */}
@@ -330,14 +330,14 @@ export default function ResultPage() {
                 </p>
               )}
               {/* 양력 */}
-              <p className="text-white/60 text-sm md:text-base mb-1">
+              <p className="text-muted-foreground text-sm md:text-base mb-1">
                 양 {result.birth_info.birth_date}
                 {result.birth_info.birth_time && ` ${result.birth_info.birth_time}`}
                 {' '}{result.birth_info.city} {result.birth_info.gender === 'male' ? '남자' : '여자'}
               </p>
               {/* 음력 */}
               {result.birth_info.lunar_year && (
-                <p className="text-white/50 text-sm md:text-base mb-1">
+                <p className="text-muted-foreground text-sm md:text-base mb-1">
                   음{result.birth_info.is_leap_month ? '(윤달)' : '(평달)'}{' '}
                   {result.birth_info.lunar_year}/{String(result.birth_info.lunar_month).padStart(2, '0')}/{String(result.birth_info.lunar_day).padStart(2, '0')}
                   {result.birth_info.birth_time && ` ${result.birth_info.birth_time}`}
@@ -345,7 +345,7 @@ export default function ResultPage() {
               )}
               {/* 시간 보정 */}
               {result.adjusted_time && (
-                <p className="text-white/40 text-xs md:text-sm">
+                <p className="text-gray-400 text-xs md:text-sm">
                   지역시: 양 {result.adjusted_time.true_solar_time.split(' ')[0]} {result.adjusted_time.true_solar_time.split(' ')[1]?.slice(0, 5)}
                   {' '}(보정: 지역 {result.adjusted_time.longitude_correction_minutes > 0 ? '+' : ''}{Math.round(result.adjusted_time.longitude_correction_minutes)}분)
                 </p>
@@ -470,7 +470,7 @@ export default function ResultPage() {
           <div className="sticky top-0 h-screen p-4">
             <div className="h-full flex flex-col">
               <div className="flex items-center justify-between mb-2">
-                <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+                <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
                   <Icon name="solar:chat-round-dots-bold" size={24} className="text-primary" />
                   AI 상담
                 </h2>
@@ -478,7 +478,7 @@ export default function ResultPage() {
                   variant="ghost"
                   size="sm"
                   onClick={() => setIsChatOpen(false)}
-                  className="text-white/50 hover:text-white"
+                  className="text-muted-foreground hover:text-foreground"
                 >
                   <Icon name="solar:close-circle-bold" size={20} />
                 </Button>
@@ -499,7 +499,7 @@ export default function ResultPage() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setIsChatOpen(true)}
-              className="bg-primary hover:bg-primary/90 text-white p-4 rounded-l-xl shadow-lg flex items-center gap-2"
+              className="bg-primary hover:bg-primary/90 text-white p-4 rounded-l-xl shadow-card-hover flex items-center gap-2"
             >
               <Icon name="solar:chat-round-dots-bold" size={24} />
               <span className="font-medium">AI 상담</span>
@@ -516,11 +516,11 @@ export default function ResultPage() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed inset-0 z-50 bg-[#0a0a0a]"
+            className="fixed inset-0 z-50 bg-background"
           >
             <div className="h-full flex flex-col">
-              <div className="flex items-center justify-between p-4 border-b border-white/10">
-                <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+              <div className="flex items-center justify-between p-4 border-b border-border">
+                <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
                   <Icon name="solar:chat-round-dots-bold" size={24} className="text-primary" />
                   AI 상담
                 </h2>
@@ -528,7 +528,7 @@ export default function ResultPage() {
                   variant="ghost"
                   size="sm"
                   onClick={() => setIsChatOpen(false)}
-                  className="text-white/50 hover:text-white"
+                  className="text-muted-foreground hover:text-foreground"
                 >
                   <Icon name="solar:close-circle-bold" size={24} />
                 </Button>

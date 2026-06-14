@@ -90,11 +90,11 @@ export function PillarTable({
         <table className="w-full min-w-[400px]">
           <thead>
             <tr>
-              <th className="text-left text-white/50 text-sm py-2 px-2 w-16"></th>
+              <th className="text-left text-muted-foreground text-sm py-2 px-2 w-16"></th>
               {columns.map((col) => (
                 <th
                   key={col.key}
-                  className="text-center text-white/70 text-sm font-medium py-2 px-2 border-b border-white/10"
+                  className="text-center text-gray-600 text-sm font-medium py-2 px-2 border-b border-border"
                 >
                   <span className="underline decoration-white/30">{col.label}</span>
                 </th>
@@ -104,12 +104,12 @@ export function PillarTable({
           <tbody>
             {/* 천간 십성 행 */}
             <tr>
-              <td className="text-white/50 text-xs py-2 px-2">십성</td>
+              <td className="text-muted-foreground text-xs py-2 px-2">십성</td>
               {columns.map((col) => {
                 const pillar = getPillar(col.key);
                 return (
                   <td key={col.key} className="text-center py-2 px-2">
-                    <span className="text-sm text-white/80">
+                    <span className="text-sm text-foreground">
                       {pillar.ten_god || '-'}
                     </span>
                   </td>
@@ -119,7 +119,7 @@ export function PillarTable({
 
             {/* 천간 행 */}
             <tr>
-              <td className="text-white/50 text-xs py-2 px-2">천간</td>
+              <td className="text-muted-foreground text-xs py-2 px-2">천간</td>
               {columns.map((col) => {
                 const pillar = getPillar(col.key);
                 const stem = pillar.heavenly_stem;
@@ -135,7 +135,7 @@ export function PillarTable({
                         {stem.korean}
                         <span className="text-xs ml-0.5">{stem.hanja}</span>
                       </span>
-                      <span className="text-xs text-white/60">
+                      <span className="text-xs text-muted-foreground">
                         {polarity}{elementKorean} ({elementHanja})
                       </span>
                     </div>
@@ -146,7 +146,7 @@ export function PillarTable({
 
             {/* 지지 행 */}
             <tr>
-              <td className="text-white/50 text-xs py-2 px-2">지지</td>
+              <td className="text-muted-foreground text-xs py-2 px-2">지지</td>
               {columns.map((col) => {
                 const pillar = getPillar(col.key);
                 const branch = pillar.earthly_branch;
@@ -162,7 +162,7 @@ export function PillarTable({
                         {branch.korean}
                         <span className="text-xs ml-0.5">{branch.hanja}</span>
                       </span>
-                      <span className="text-xs text-white/60">
+                      <span className="text-xs text-muted-foreground">
                         {polarity}{elementKorean} ({elementHanja})
                       </span>
                     </div>
@@ -173,12 +173,12 @@ export function PillarTable({
 
             {/* 지지 십성 행 */}
             <tr>
-              <td className="text-white/50 text-xs py-2 px-2">십성</td>
+              <td className="text-muted-foreground text-xs py-2 px-2">십성</td>
               {columns.map((col) => {
                 const pillar = getPillar(col.key);
                 return (
                   <td key={col.key} className="text-center py-2 px-2">
-                    <span className="text-sm text-white/80">
+                    <span className="text-sm text-foreground">
                       {pillar.branch_ten_god || '-'}
                     </span>
                   </td>
@@ -189,12 +189,12 @@ export function PillarTable({
             {/* 지장간 행 */}
             {showHiddenStems && (
               <tr>
-                <td className="text-white/50 text-xs py-2 px-2">지장간</td>
+                <td className="text-muted-foreground text-xs py-2 px-2">지장간</td>
                 {columns.map((col) => {
                   const pillar = getPillar(col.key);
                   return (
                     <td key={col.key} className="text-center py-2 px-2">
-                      <span className="text-xs text-white/60">
+                      <span className="text-xs text-muted-foreground">
                         {pillar.hidden_stems || '-'}
                       </span>
                     </td>
@@ -206,12 +206,12 @@ export function PillarTable({
             {/* 12운성 행 */}
             {showTwelvePhase && (
               <tr>
-                <td className="text-white/50 text-xs py-2 px-2">12운성</td>
+                <td className="text-muted-foreground text-xs py-2 px-2">12운성</td>
                 {columns.map((col) => {
                   const pillar = getPillar(col.key);
                   return (
                     <td key={col.key} className="text-center py-2 px-2">
-                      <span className="text-xs text-white/70">
+                      <span className="text-xs text-gray-600">
                         {pillar.twelve_phase || '-'}
                       </span>
                     </td>
@@ -223,12 +223,12 @@ export function PillarTable({
             {/* 12신살 행 */}
             {showTwelveShensha && (
               <tr>
-                <td className="text-white/50 text-xs py-2 px-2">12신살</td>
+                <td className="text-muted-foreground text-xs py-2 px-2">12신살</td>
                 {columns.map((col) => {
                   const pillar = getPillar(col.key);
                   return (
                     <td key={col.key} className="text-center py-2 px-2">
-                      <span className="text-xs text-white/60">
+                      <span className="text-xs text-muted-foreground">
                         {pillar.twelve_shensha || '-'}
                       </span>
                     </td>

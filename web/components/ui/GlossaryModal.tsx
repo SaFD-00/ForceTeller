@@ -68,26 +68,26 @@ export function GlossaryModal({ entry, isOpen, onClose }: GlossaryModalProps) {
               md:bottom-auto md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2
               lg:left-[37.5%]
               md:max-w-md md:w-full md:max-h-[80vh]
-              bg-[#1a1a2e] rounded-t-2xl md:rounded-2xl
-              border border-white/10 shadow-2xl
+              bg-background rounded-t-2xl md:rounded-2xl
+              border border-border shadow-card
               overflow-hidden"
           >
             {/* 모바일 드래그 핸들 */}
             <div className="md:hidden flex justify-center py-2">
-              <div className="w-10 h-1 bg-white/20 rounded-full" />
+              <div className="w-10 h-1 bg-muted rounded-full" />
             </div>
 
             {/* 헤더 */}
-            <div className="flex items-center justify-between px-5 py-4 border-b border-white/10">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-border">
               <div className="flex items-center gap-3">
-                <span className="text-2xl font-bold text-white">{entry.term}</span>
-                <span className="text-lg text-white/50">{entry.hanja}</span>
+                <span className="text-2xl font-bold text-foreground">{entry.term}</span>
+                <span className="text-lg text-muted-foreground">{entry.hanja}</span>
               </div>
               <button
                 onClick={onClose}
-                className="p-2 rounded-full hover:bg-white/10 transition-colors"
+                className="p-2 rounded-full hover:bg-muted transition-colors"
               >
-                <Icon name="solar:close-circle-bold" size={24} className="text-white/50" />
+                <Icon name="solar:close-circle-bold" size={24} className="text-muted-foreground" />
               </button>
             </div>
 
@@ -101,26 +101,26 @@ export function GlossaryModal({ entry, isOpen, onClose }: GlossaryModalProps) {
               </div>
 
               {/* 한자 풀이 */}
-              <div className="mb-4 p-3 bg-white/5 rounded-lg">
-                <p className="text-xs text-white/50 mb-1">한자 풀이</p>
-                <p className="text-sm text-white/80">{entry.hanjaBreakdown}</p>
+              <div className="mb-4 p-3 bg-muted rounded-lg">
+                <p className="text-xs text-muted-foreground mb-1">한자 풀이</p>
+                <p className="text-sm text-foreground">{entry.hanjaBreakdown}</p>
               </div>
 
               {/* 짧은 설명 */}
               <div className="mb-4">
-                <p className="text-xs text-white/50 mb-1">간단 설명</p>
+                <p className="text-xs text-muted-foreground mb-1">간단 설명</p>
                 <p className="text-base text-primary font-medium">{entry.shortDesc}</p>
               </div>
 
               {/* 상세 설명 */}
               <div className="mb-4">
-                <p className="text-xs text-white/50 mb-2">상세 설명</p>
-                <p className="text-sm text-white/80 leading-relaxed">{entry.longDesc}</p>
+                <p className="text-xs text-muted-foreground mb-2">상세 설명</p>
+                <p className="text-sm text-foreground leading-relaxed">{entry.longDesc}</p>
               </div>
             </div>
 
             {/* 푸터 */}
-            <div className="px-5 py-4 border-t border-white/10">
+            <div className="px-5 py-4 border-t border-border">
               <button
                 onClick={onClose}
                 className="w-full py-3 bg-primary hover:bg-primary/90 text-white font-medium rounded-lg transition-colors"

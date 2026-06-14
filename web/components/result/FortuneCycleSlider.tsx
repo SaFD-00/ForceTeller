@@ -293,15 +293,15 @@ function FortuneSection({
       <div className="flex items-center justify-between mb-2">
         <button
           onClick={onTitleClick}
-          className="text-lg font-bold text-white underline decoration-white/30 hover:decoration-primary transition-colors"
+          className="text-lg font-bold text-foreground underline decoration-white/30 hover:decoration-primary transition-colors"
         >
           {title}
         </button>
-        {subtitle && <span className="text-white/50 text-sm">{subtitle}</span>}
+        {subtitle && <span className="text-muted-foreground text-sm">{subtitle}</span>}
       </div>
 
       {comment && (
-        <p className="text-white/70 text-sm mb-3 bg-white/5 rounded-lg px-3 py-2">
+        <p className="text-gray-600 text-sm mb-3 bg-muted rounded-lg px-3 py-2">
           💫 {comment}
         </p>
       )}
@@ -310,14 +310,14 @@ function FortuneSection({
         <div className="relative">
           <button
             onClick={scrollLeft}
-            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-black/50 hover:bg-black/70 p-1.5 rounded-full text-white/70 hover:text-white transition-colors hidden md:block"
+            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-black/50 hover:bg-black/70 p-1.5 rounded-full text-gray-600 hover:text-foreground transition-colors hidden md:block"
           >
             <Icon name="solar:alt-arrow-left-bold" size={16} />
           </button>
 
           <button
             onClick={scrollRight}
-            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-black/50 hover:bg-black/70 p-1.5 rounded-full text-white/70 hover:text-white transition-colors hidden md:block"
+            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-black/50 hover:bg-black/70 p-1.5 rounded-full text-gray-600 hover:text-foreground transition-colors hidden md:block"
           >
             <Icon name="solar:alt-arrow-right-bold" size={16} />
           </button>
@@ -335,7 +335,7 @@ function FortuneSection({
                 }`}
               >
                 {/* 나이/연도/월/일 */}
-                <div className="text-white font-bold text-sm mb-0.5">
+                <div className="text-foreground font-bold text-sm mb-0.5">
                   {showAge && item.age !== undefined && item.age}
                   {showYear && item.year !== undefined && item.year}
                   {showMonth && item.month !== undefined && `${item.month}월`}
@@ -343,7 +343,7 @@ function FortuneSection({
                 </div>
 
                 {/* 천간 십성 */}
-                <div className="text-white/60 text-xs mb-0.5">
+                <div className="text-muted-foreground text-xs mb-0.5">
                   {item.ten_god}
                 </div>
 
@@ -351,10 +351,10 @@ function FortuneSection({
                 <div
                   className={`${ELEMENT_BG[item.heavenly_stem.element]} rounded-md p-1.5 mb-0.5`}
                 >
-                  <span className="text-base font-bold text-white">
+                  <span className="text-base font-bold text-foreground">
                     {item.heavenly_stem.korean}
                   </span>
-                  <span className="text-xs text-white/70 ml-0.5">
+                  <span className="text-xs text-gray-600 ml-0.5">
                     {item.heavenly_stem.hanja}
                   </span>
                 </div>
@@ -373,14 +373,14 @@ function FortuneSection({
 
                 {/* 지지 십성 */}
                 {item.branch_ten_god && item.branch_ten_god !== '-' && (
-                  <div className="text-white/50 text-xs mt-0.5">
+                  <div className="text-muted-foreground text-xs mt-0.5">
                     {item.branch_ten_god}
                   </div>
                 )}
 
                 {/* 12운성 */}
                 {item.twelve_phase && item.twelve_phase !== '-' && (
-                  <div className="text-white/40 text-xs">
+                  <div className="text-gray-400 text-xs">
                     {item.twelve_phase}
                   </div>
                 )}
@@ -551,7 +551,7 @@ export function FortuneCycleSlider({
       >
         <div className="flex items-center gap-2 mb-4">
           <Icon name="solar:calendar-bold" size={24} className="text-primary" />
-          <h2 className="text-xl font-bold text-white">운세 흐름</h2>
+          <h2 className="text-xl font-bold text-foreground">운세 흐름</h2>
         </div>
 
         {/* 대운 섹션 */}

@@ -154,11 +154,11 @@ export function ShenshaDetailCard({ shensha, pillars }: ShenshaDetailCardProps) 
                 setIsModalOpen(true);
               }
             }}
-            className="text-xl font-bold text-white underline decoration-white/30 hover:decoration-primary transition-colors"
+            className="text-xl font-bold text-foreground underline decoration-white/30 hover:decoration-primary transition-colors"
           >
             신살(神煞)
           </button>
-          <span className="text-sm text-white/50">
+          <span className="text-sm text-muted-foreground">
             총 {shensha.length}개
           </span>
         </div>
@@ -170,7 +170,7 @@ export function ShenshaDetailCard({ shensha, pillars }: ShenshaDetailCardProps) 
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
               viewMode === 'pillar'
                 ? 'bg-primary text-white'
-                : 'bg-white/10 text-white/60 hover:bg-white/20 hover:text-white'
+                : 'bg-muted text-muted-foreground hover:bg-muted hover:text-foreground'
             }`}
           >
             주별 보기
@@ -180,7 +180,7 @@ export function ShenshaDetailCard({ shensha, pillars }: ShenshaDetailCardProps) 
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
               viewMode === 'type'
                 ? 'bg-primary text-white'
-                : 'bg-white/10 text-white/60 hover:bg-white/20 hover:text-white'
+                : 'bg-muted text-muted-foreground hover:bg-muted hover:text-foreground'
             }`}
           >
             유형별 보기
@@ -195,7 +195,7 @@ export function ShenshaDetailCard({ shensha, pillars }: ShenshaDetailCardProps) 
               <div className="grid grid-cols-4 gap-2 mb-2">
                 {(['hour', 'day', 'month', 'year'] as const).map((pos) => (
                   <div key={pos} className="text-center">
-                    <span className="text-sm text-white/60">
+                    <span className="text-sm text-muted-foreground">
                       {pos === 'hour' ? '생시' : pos === 'day' ? '생일' : pos === 'month' ? '생월' : '생년'}
                     </span>
                   </div>
@@ -211,10 +211,10 @@ export function ShenshaDetailCard({ shensha, pillars }: ShenshaDetailCardProps) 
                       key={`stem-${pos}`}
                       className={`${ELEMENT_BG[pillar.heavenly_stem.element]} rounded-lg p-2 text-center`}
                     >
-                      <span className="text-lg font-bold text-white">
+                      <span className="text-lg font-bold text-foreground">
                         {pillar.heavenly_stem.korean}
                       </span>
-                      <span className="text-xs text-white/70 ml-0.5">
+                      <span className="text-xs text-gray-600 ml-0.5">
                         {pillar.heavenly_stem.hanja}
                       </span>
                     </div>
@@ -228,7 +228,7 @@ export function ShenshaDetailCard({ shensha, pillars }: ShenshaDetailCardProps) 
                   const pillar = pillars[pos];
                   return (
                     <div key={`stem-tg-${pos}`} className="text-center">
-                      <span className="text-xs text-white/50">{pillar.ten_god || '-'}</span>
+                      <span className="text-xs text-muted-foreground">{pillar.ten_god || '-'}</span>
                     </div>
                   );
                 })}
@@ -260,17 +260,17 @@ export function ShenshaDetailCard({ shensha, pillars }: ShenshaDetailCardProps) 
                   const pillar = pillars[pos];
                   return (
                     <div key={`branch-tg-${pos}`} className="text-center">
-                      <span className="text-xs text-white/50">{pillar.branch_ten_god || '-'}</span>
+                      <span className="text-xs text-muted-foreground">{pillar.branch_ten_god || '-'}</span>
                     </div>
                   );
                 })}
               </div>
 
               {/* 구분선 */}
-              <div className="border-t border-white/10 my-4" />
+              <div className="border-t border-border my-4" />
 
               {/* 신살 섹션 헤더 */}
-              <div className="text-sm text-white/60 mb-3">신살</div>
+              <div className="text-sm text-muted-foreground mb-3">신살</div>
 
               {/* 신살 목록 (주별) */}
               <div className="grid grid-cols-4 gap-2">
@@ -279,7 +279,7 @@ export function ShenshaDetailCard({ shensha, pillars }: ShenshaDetailCardProps) 
                   return (
                     <div key={`shensha-${pos}`} className="space-y-1">
                       {positionShensha.length === 0 ? (
-                        <span className="text-xs text-white/30">-</span>
+                        <span className="text-xs text-gray-400">-</span>
                       ) : (
                         positionShensha.map((item, idx) => {
                           const colors = typeColors[item.type];
@@ -316,7 +316,7 @@ export function ShenshaDetailCard({ shensha, pillars }: ShenshaDetailCardProps) 
                   <div className="flex items-center gap-2 mb-3">
                     <Icon name={colors.icon} size={18} className={colors.text} />
                     <span className={`font-medium ${colors.text}`}>{type}</span>
-                    <span className="text-xs text-white/40">({items.length})</span>
+                    <span className="text-xs text-gray-400">({items.length})</span>
                   </div>
 
                   {/* 신살 목록 */}
@@ -332,11 +332,11 @@ export function ShenshaDetailCard({ shensha, pillars }: ShenshaDetailCardProps) 
                       >
                         <div className="flex items-start justify-between mb-2">
                           <div>
-                            <span className="text-lg font-bold text-white">
+                            <span className="text-lg font-bold text-foreground">
                               {item.name}
                             </span>
                             {item.hanja && (
-                              <span className="ml-2 text-sm text-white/50">
+                              <span className="ml-2 text-sm text-muted-foreground">
                                 {item.hanja}
                               </span>
                             )}
@@ -345,7 +345,7 @@ export function ShenshaDetailCard({ shensha, pillars }: ShenshaDetailCardProps) 
                             {positionNames[item.position] || item.position}
                           </span>
                         </div>
-                        <p className="text-sm text-white/70 line-clamp-2">
+                        <p className="text-sm text-gray-600 line-clamp-2">
                           {item.description}
                         </p>
                         <div className="mt-2 text-xs text-primary flex items-center gap-1">

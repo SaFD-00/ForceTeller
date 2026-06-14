@@ -14,10 +14,10 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     const baseStyles = 'inline-flex items-center justify-center font-medium transition-all duration-300 disabled:opacity-50 disabled:pointer-events-none';
 
     const variants = {
-      default: 'bg-primary hover:bg-primary/90 text-white rounded-xl',
-      outline: 'border border-white/20 hover:bg-white/10 rounded-xl',
-      ghost: 'hover:bg-white/10 rounded-xl',
-      glass: 'glass-button',
+      default: 'bg-primary hover:bg-primary/90 text-white rounded-xl shadow-soft',
+      outline: 'border border-border bg-surface hover:bg-muted text-foreground rounded-xl',
+      ghost: 'hover:bg-muted text-foreground rounded-xl',
+      glass: 'glass-button text-foreground',
     };
 
     const sizes = {

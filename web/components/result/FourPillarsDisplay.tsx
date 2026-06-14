@@ -21,7 +21,7 @@ export function FourPillarsDisplay({ pillars }: FourPillarsDisplayProps) {
       <motion.h2
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="text-2xl font-bold text-white mb-6 text-center"
+        className="text-2xl font-bold text-foreground mb-6 text-center"
       >
         사주팔자 (四柱八字)
       </motion.h2>

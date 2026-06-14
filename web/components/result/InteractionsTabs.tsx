@@ -85,12 +85,12 @@ export function InteractionsTabs({ interactions }: InteractionsTabsProps) {
     >
       <div className="flex items-center gap-2 mb-4">
         <Icon name="solar:widget-2-bold" size={24} className="text-primary" />
-        <h2 className="text-xl font-bold text-white">천간 지지 작용</h2>
+        <h2 className="text-xl font-bold text-foreground">천간 지지 작용</h2>
       </div>
 
       <GlassCard className="p-4 md:p-6">
         {/* 탭 버튼들 */}
-        <div className="flex flex-wrap gap-2 mb-6 pb-4 border-b border-white/10">
+        <div className="flex flex-wrap gap-2 mb-6 pb-4 border-b border-border">
           {availableTabs.map(tab => {
             const count = (interactions[tab.key as keyof InteractionsData] || []).length;
             const isActive = activeTab === tab.key;
@@ -102,13 +102,13 @@ export function InteractionsTabs({ interactions }: InteractionsTabsProps) {
                 className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all
                   ${isActive
                     ? 'bg-primary/20 text-primary border border-primary/30'
-                    : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white/80'
+                    : 'bg-muted text-muted-foreground hover:bg-muted hover:text-foreground'
                   }`}
               >
                 <Icon name={tab.icon} size={16} className={isActive ? 'text-primary' : tab.color} />
                 <span className="text-sm font-medium">{tab.label}</span>
                 <span className={`text-xs px-1.5 py-0.5 rounded-full
-                  ${isActive ? 'bg-primary/30 text-primary' : 'bg-white/10 text-white/50'}`}>
+                  ${isActive ? 'bg-primary/30 text-primary' : 'bg-muted text-muted-foreground'}`}>
                   {count}
                 </span>
               </button>
@@ -126,7 +126,7 @@ export function InteractionsTabs({ interactions }: InteractionsTabsProps) {
             transition={{ duration: 0.2 }}
           >
             {activeItems.length === 0 ? (
-              <p className="text-center text-white/50 py-8">
+              <p className="text-center text-muted-foreground py-8">
                 해당하는 {activeTabInfo?.label}이(가) 없습니다.
               </p>
             ) : (
@@ -134,7 +134,7 @@ export function InteractionsTabs({ interactions }: InteractionsTabsProps) {
                 {activeItems.map((item, idx) => (
                   <div
                     key={idx}
-                    className="p-4 rounded-lg bg-white/5 border border-white/10"
+                    className="p-4 rounded-lg bg-muted border border-border"
                   >
                     {/* 설명 */}
                     <div className="flex items-center gap-2 mb-2">
@@ -143,17 +143,17 @@ export function InteractionsTabs({ interactions }: InteractionsTabsProps) {
                         size={20}
                         className={activeTabInfo?.color || 'text-primary'}
                       />
-                      <span className="font-medium text-white">
+                      <span className="font-medium text-foreground">
                         {item.description}
                       </span>
                     </div>
 
                     {/* 위치 정보 */}
                     {item.positions && (
-                      <div className="flex items-center gap-2 text-sm text-white/60">
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <span>위치:</span>
                         {item.positions.map((pos, i) => (
-                          <span key={i} className="px-2 py-0.5 bg-white/10 rounded">
+                          <span key={i} className="px-2 py-0.5 bg-muted rounded">
                             {positionNames[pos] || pos}
                           </span>
                         ))}
@@ -162,9 +162,9 @@ export function InteractionsTabs({ interactions }: InteractionsTabsProps) {
 
                     {/* 공망의 경우 */}
                     {item.position && item.branch !== undefined && (
-                      <div className="flex items-center gap-2 text-sm text-white/60">
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <span>위치:</span>
-                        <span className="px-2 py-0.5 bg-white/10 rounded">
+                        <span className="px-2 py-0.5 bg-muted rounded">
                           {positionNames[item.position] || item.position}
                         </span>
                         <span className="px-2 py-0.5 bg-gray-500/20 text-gray-400 rounded">
@@ -176,14 +176,14 @@ export function InteractionsTabs({ interactions }: InteractionsTabsProps) {
                     {/* 합화 결과 */}
                     {item.result && (
                       <div className="mt-2 text-sm">
-                        <span className="text-white/50">합화 결과: </span>
+                        <span className="text-muted-foreground">합화 결과: </span>
                         <span className="text-primary font-medium">{item.result}</span>
                       </div>
                     )}
 
                     {/* 삼합/방합 이름 */}
                     {item.name && (
-                      <div className="mt-1 text-xs text-white/40">
+                      <div className="mt-1 text-xs text-gray-400">
                         {item.name}
                       </div>
                     )}

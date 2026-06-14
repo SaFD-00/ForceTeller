@@ -27,12 +27,12 @@ export default function ChatPage() {
           <Icon
             name="solar:chat-round-dots-bold"
             size={48}
-            className="text-white/40 mx-auto mb-4"
+            className="text-gray-400 mx-auto mb-4"
           />
-          <h2 className="text-xl font-bold text-white mb-2">
+          <h2 className="text-xl font-bold text-foreground mb-2">
             사주 분석이 필요합니다
           </h2>
-          <p className="text-white/60 mb-6">
+          <p className="text-muted-foreground mb-6">
             AI 상담을 시작하려면 먼저 사주 분석을 진행해주세요.
           </p>
           <Link href="/">
@@ -56,8 +56,8 @@ export default function ChatPage() {
           className="flex items-center justify-between mb-6"
         >
           <div>
-            <h1 className="text-2xl font-bold text-white">AI 사주 상담</h1>
-            <p className="text-white/50 text-sm">
+            <h1 className="text-2xl font-bold text-foreground">AI 사주 상담</h1>
+            <p className="text-muted-foreground text-sm">
               {result.birth_info.name}님의 사주를 바탕으로 상담합니다
             </p>
           </div>

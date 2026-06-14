@@ -115,13 +115,13 @@ export function ElementDistribution({ distribution, tenGods, dominant }: Element
               setIsModalOpen(true);
             }
           }}
-          className="text-xl font-bold text-white underline decoration-white/30 hover:decoration-primary transition-colors"
+          className="text-xl font-bold text-foreground underline decoration-white/30 hover:decoration-primary transition-colors"
         >
           오행 / 십성 분포
         </button>
       </div>
 
-      <p className="text-white/60 text-sm mb-4">아래 박스를 터치해보세요.</p>
+      <p className="text-muted-foreground text-sm mb-4">아래 박스를 터치해보세요.</p>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* 오행 분포 */}
@@ -139,7 +139,7 @@ export function ElementDistribution({ distribution, tenGods, dominant }: Element
                   onClick={() => handleClick(element)}
                   className={`${info.bg} rounded-xl p-3 min-w-[100px] flex flex-col justify-center cursor-pointer hover:brightness-110 transition-all`}
                 >
-                  <div className="text-white font-bold">
+                  <div className="text-foreground font-bold">
                     {element}{info.hanja}{' '}
                     {percentage > 0 ? `${percentage}%` : '-'}
                   </div>
@@ -165,12 +165,12 @@ export function ElementDistribution({ distribution, tenGods, dominant }: Element
                           <div
                             key={pair.yin}
                             onClick={() => handleClick(pair.yin)}
-                            className="flex justify-between text-sm cursor-pointer hover:bg-white/5 rounded px-1 -mx-1 transition-colors"
+                            className="flex justify-between text-sm cursor-pointer hover:bg-muted rounded px-1 -mx-1 transition-colors"
                           >
-                            <span className="text-white/70">
+                            <span className="text-gray-600">
                               {pair.yin}({pair.hanja.yin})
                             </span>
-                            <span className="text-white/50">
+                            <span className="text-muted-foreground">
                               {yinPct > 0 ? `${yinPct}%` : '-'}
                             </span>
                           </div>
@@ -186,12 +186,12 @@ export function ElementDistribution({ distribution, tenGods, dominant }: Element
                           <div
                             key={pair.yang}
                             onClick={() => handleClick(pair.yang)}
-                            className="flex justify-between text-sm border-t border-white/10 pt-1 cursor-pointer hover:bg-white/5 rounded px-1 -mx-1 transition-colors"
+                            className="flex justify-between text-sm border-t border-border pt-1 cursor-pointer hover:bg-muted rounded px-1 -mx-1 transition-colors"
                           >
-                            <span className="text-white/70">
+                            <span className="text-gray-600">
                               {pair.yang}({pair.hanja.yang})
                             </span>
-                            <span className="text-white/50">
+                            <span className="text-muted-foreground">
                               {yangPct > 0 ? `${yangPct}%` : '-'}
                             </span>
                           </div>
@@ -210,7 +210,7 @@ export function ElementDistribution({ distribution, tenGods, dominant }: Element
           <div className="flex gap-8 items-start">
             {/* 오행 도넛 */}
             <div className="flex flex-col items-center">
-              <span className="text-sm text-white/60 mb-2">오행</span>
+              <span className="text-sm text-muted-foreground mb-2">오행</span>
               <div className="relative w-32 h-32">
                 <svg viewBox="0 0 100 100" className="w-full h-full">
                   {(() => {
@@ -253,14 +253,14 @@ export function ElementDistribution({ distribution, tenGods, dominant }: Element
                   })()}
                 </svg>
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-xl font-bold text-white">{dominant || '-'}</span>
+                  <span className="text-xl font-bold text-foreground">{dominant || '-'}</span>
                 </div>
               </div>
             </div>
 
             {/* 십성 도넛 */}
             <div className="flex flex-col items-center">
-              <span className="text-sm text-white/60 mb-2">십성</span>
+              <span className="text-sm text-muted-foreground mb-2">십성</span>
               <div className="relative w-32 h-32">
                 <svg viewBox="0 0 100 100" className="w-full h-full">
                   {(() => {
@@ -308,7 +308,7 @@ export function ElementDistribution({ distribution, tenGods, dominant }: Element
                   })()}
                 </svg>
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-lg font-bold text-white">
+                  <span className="text-lg font-bold text-foreground">
                     {(() => {
                       // 가장 많은 십성 찾기
                       const maxGod = Object.entries(tenGods).reduce(
@@ -330,7 +330,7 @@ export function ElementDistribution({ distribution, tenGods, dominant }: Element
               return (
                 <div key={element} className="flex items-center gap-1 text-xs">
                   <div className={`w-3 h-3 rounded ${ELEMENT_INFO[element].color}`} />
-                  <span className="text-white/60">
+                  <span className="text-muted-foreground">
                     {element} {percentage}%
                   </span>
                 </div>

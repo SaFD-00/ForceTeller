@@ -60,7 +60,7 @@ export function LoadingOverlay({
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="text-2xl font-bold text-white mb-2"
+              className="text-2xl font-bold text-foreground mb-2"
             >
               {message}
             </motion.h2>
@@ -69,7 +69,7 @@ export function LoadingOverlay({
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="text-white/60"
+              className="text-muted-foreground"
             >
               {subMessage}
             </motion.p>

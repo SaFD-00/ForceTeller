@@ -14,7 +14,7 @@ const GlassCard = forwardRef<HTMLDivElement, GlassCardProps>(
         ref={ref}
         className={cn(
           'glass-card',
-          variant === 'glow' && 'glow',
+          variant === 'glow' && 'shadow-card-hover',
           className
         )}
         {...props}

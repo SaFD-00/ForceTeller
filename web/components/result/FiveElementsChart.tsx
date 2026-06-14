@@ -58,7 +58,7 @@ export function FiveElementsChart({ analysis }: FiveElementsChartProps) {
       <motion.h2
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="text-2xl font-bold text-white mb-6 text-center"
+        className="text-2xl font-bold text-foreground mb-6 text-center"
       >
         오행 분석 (五行)
       </motion.h2>
@@ -71,7 +71,7 @@ export function FiveElementsChart({ analysis }: FiveElementsChartProps) {
           transition={{ delay: 0.2 }}
         >
           <GlassCard className="p-6">
-            <h3 className="text-lg font-medium text-white/80 mb-4 text-center">
+            <h3 className="text-lg font-medium text-foreground mb-4 text-center">
               오행 균형도
             </h3>
             <ResponsiveContainer width="100%" height={280}>
@@ -105,7 +105,7 @@ export function FiveElementsChart({ analysis }: FiveElementsChartProps) {
           transition={{ delay: 0.3 }}
         >
           <GlassCard className="p-6">
-            <h3 className="text-lg font-medium text-white/80 mb-4 text-center">
+            <h3 className="text-lg font-medium text-foreground mb-4 text-center">
               오행 분포
             </h3>
             <ResponsiveContainer width="100%" height={280}>
@@ -138,25 +138,25 @@ export function FiveElementsChart({ analysis }: FiveElementsChartProps) {
         <GlassCard className="p-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
             <div>
-              <span className="text-white/50 text-sm">주요 오행</span>
+              <span className="text-muted-foreground text-sm">주요 오행</span>
               <div className="text-xl font-bold text-primary mt-1">
                 {analysis.dominant ? ELEMENT_LABELS[analysis.dominant].hanja : '-'}
               </div>
             </div>
             <div>
-              <span className="text-white/50 text-sm">부족 오행</span>
+              <span className="text-muted-foreground text-sm">부족 오행</span>
               <div className="text-xl font-bold text-red-400 mt-1">
                 {analysis.lacking ? ELEMENT_LABELS[analysis.lacking].hanja : '-'}
               </div>
             </div>
             <div>
-              <span className="text-white/50 text-sm">용신</span>
+              <span className="text-muted-foreground text-sm">용신</span>
               <div className="text-xl font-bold text-green-400 mt-1">
                 {analysis.yongshin ? ELEMENT_LABELS[analysis.yongshin].hanja : '-'}
               </div>
             </div>
             <div>
-              <span className="text-white/50 text-sm">기신</span>
+              <span className="text-muted-foreground text-sm">기신</span>
               <div className="text-xl font-bold text-orange-400 mt-1">
                 {analysis.gishin ? ELEMENT_LABELS[analysis.gishin].hanja : '-'}
               </div>

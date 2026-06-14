@@ -23,8 +23,8 @@ export function SuggestedQuestions({
   const displayQuestions = questions.slice(0, 3);
 
   return (
-    <div className="px-4 py-2 border-t border-white/10">
-      <div className="text-xs text-white/50 mb-2 flex items-center gap-1">
+    <div className="px-4 py-2 border-t border-border">
+      <div className="text-xs text-muted-foreground mb-2 flex items-center gap-1">
         <Icon icon="mdi:lightbulb-outline" className="w-3.5 h-3.5" />
         이어서 질문해보세요
       </div>
@@ -40,8 +40,8 @@ export function SuggestedQuestions({
               inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full
               text-sm transition-all duration-200 text-left
               ${disabled
-                ? 'bg-white/5 text-white/30 cursor-not-allowed'
-                : 'bg-white/10 text-white/70 hover:bg-purple-500/30 hover:text-white cursor-pointer'
+                ? 'bg-muted text-gray-400 cursor-not-allowed'
+                : 'bg-muted text-gray-600 hover:bg-purple-500/30 hover:text-foreground cursor-pointer'
               }
             `}
           >

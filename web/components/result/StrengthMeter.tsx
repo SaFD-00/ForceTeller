@@ -21,7 +21,7 @@ export function StrengthMeter({ analysis }: StrengthMeterProps) {
       <motion.h2
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="text-2xl font-bold text-white mb-6 text-center"
+        className="text-2xl font-bold text-foreground mb-6 text-center"
       >
         신강/신약 분석
       </motion.h2>
@@ -55,7 +55,7 @@ export function StrengthMeter({ analysis }: StrengthMeterProps) {
           {/* Meter */}
           <div className="relative mb-8">
             {/* Background bar */}
-            <div className="h-4 bg-gradient-to-r from-orange-500/30 via-white/10 to-blue-500/30 rounded-full overflow-hidden">
+            <div className="h-4 bg-gradient-to-r from-orange-500/30 via-gray-200 to-blue-500/30 rounded-full overflow-hidden">
               {/* Indicator */}
               <motion.div
                 initial={{ left: '50%' }}
@@ -63,7 +63,7 @@ export function StrengthMeter({ analysis }: StrengthMeterProps) {
                 transition={{ duration: 0.8, delay: 0.3 }}
                 className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2"
               >
-                <div className="w-6 h-6 bg-white rounded-full shadow-lg shadow-white/30 flex items-center justify-center">
+                <div className="w-6 h-6 bg-surface rounded-full shadow-lg shadow-white/30 flex items-center justify-center">
                   <div className="w-3 h-3 bg-primary rounded-full" />
                 </div>
               </motion.div>
@@ -72,20 +72,20 @@ export function StrengthMeter({ analysis }: StrengthMeterProps) {
             {/* Labels */}
             <div className="flex justify-between mt-2">
               <span className="text-sm text-orange-400">신약</span>
-              <span className="text-sm text-white/50">균형</span>
+              <span className="text-sm text-muted-foreground">균형</span>
               <span className="text-sm text-blue-400">신강</span>
             </div>
           </div>
 
           {/* Details */}
           <div className="grid grid-cols-2 gap-4">
-            <div className="text-center p-4 rounded-xl bg-white/5">
-              <div className="text-white/50 text-sm mb-1">일간 강도</div>
-              <div className="text-2xl font-bold text-white">{score}%</div>
+            <div className="text-center p-4 rounded-xl bg-muted">
+              <div className="text-muted-foreground text-sm mb-1">일간 강도</div>
+              <div className="text-2xl font-bold text-foreground">{score}%</div>
             </div>
-            <div className="text-center p-4 rounded-xl bg-white/5">
-              <div className="text-white/50 text-sm mb-1">유형</div>
-              <div className="text-2xl font-bold text-white">
+            <div className="text-center p-4 rounded-xl bg-muted">
+              <div className="text-muted-foreground text-sm mb-1">유형</div>
+              <div className="text-2xl font-bold text-foreground">
                 {analysis.type || (isStrong ? '강' : '약')}
               </div>
             </div>
@@ -97,7 +97,7 @@ export function StrengthMeter({ analysis }: StrengthMeterProps) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5 }}
-              className="text-center text-white/60 mt-6 leading-relaxed"
+              className="text-center text-muted-foreground mt-6 leading-relaxed"
             >
               {analysis.description}
             </motion.p>

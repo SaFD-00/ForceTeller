@@ -62,7 +62,7 @@ export function ReasoningDisplay({
           </div>
 
           {/* Reasoning Text */}
-          <div className="text-sm text-white/70 leading-relaxed italic">
+          <div className="text-sm text-gray-600 leading-relaxed italic">
             {reasoning}
             {!isComplete && (
               <motion.span

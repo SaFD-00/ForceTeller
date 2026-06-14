@@ -37,7 +37,7 @@ export function TenGodsDistribution({ distribution }: TenGodsDistributionProps) 
       <motion.h2
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="text-2xl font-bold text-white mb-6 text-center"
+        className="text-2xl font-bold text-foreground mb-6 text-center"
       >
         십성 분포 (十星)
       </motion.h2>
@@ -58,20 +58,20 @@ export function TenGodsDistribution({ distribution }: TenGodsDistributionProps) 
                 className={`p-4 bg-gradient-to-br ${CATEGORY_COLORS[info.category]}`}
               >
                 <div className="text-center">
-                  <div className="text-lg font-bold text-white mb-1">{god}</div>
-                  <div className="text-xs text-white/50 mb-3">{info.description}</div>
+                  <div className="text-lg font-bold text-foreground mb-1">{god}</div>
+                  <div className="text-xs text-muted-foreground mb-3">{info.description}</div>
 
                   {/* Count indicator */}
-                  <div className="relative h-2 bg-white/10 rounded-full overflow-hidden mb-2">
+                  <div className="relative h-2 bg-muted rounded-full overflow-hidden mb-2">
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${percentage}%` }}
                       transition={{ duration: 0.5, delay: 0.3 + index * 0.05 }}
-                      className="absolute h-full bg-white/40 rounded-full"
+                      className="absolute h-full bg-muted rounded-full"
                     />
                   </div>
 
-                  <div className="text-2xl font-bold text-white">{count}</div>
+                  <div className="text-2xl font-bold text-foreground">{count}</div>
                 </div>
               </GlassCard>
             </motion.div>
@@ -88,11 +88,11 @@ export function TenGodsDistribution({ distribution }: TenGodsDistributionProps) 
           className="mt-6"
         >
           <GlassCard className="p-6 text-center">
-            <span className="text-white/50 text-sm">주 십성</span>
+            <span className="text-muted-foreground text-sm">주 십성</span>
             <div className="text-2xl font-bold text-primary mt-2">
               {distribution.primary}
             </div>
-            <p className="text-white/60 text-sm mt-2">
+            <p className="text-muted-foreground text-sm mt-2">
               {TEN_GODS_INFO[distribution.primary]?.description}
             </p>
           </GlassCard>

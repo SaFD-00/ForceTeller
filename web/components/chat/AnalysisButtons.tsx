@@ -54,11 +54,11 @@ export function AnalysisButtons({ onAnalysisClick, disabled = false }: AnalysisB
   };
 
   return (
-    <div className="px-4 py-2 border-t border-white/10">
+    <div className="px-4 py-2 border-t border-border">
       {/* 용신 방법론 선택 패널 (확장시 표시) */}
       {showYongsinMethods && (
-        <div className="mb-2 p-2 rounded-lg bg-white/5 border border-white/10">
-          <div className="text-xs text-white/50 mb-2">용신 분석 방법론 선택</div>
+        <div className="mb-2 p-2 rounded-lg bg-muted border border-border">
+          <div className="text-xs text-muted-foreground mb-2">용신 분석 방법론 선택</div>
           <div className="grid grid-cols-4 gap-2">
             {YONGSIN_METHODS.map(({ code, label, icon, description }) => (
               <button
@@ -69,8 +69,8 @@ export function AnalysisButtons({ onAnalysisClick, disabled = false }: AnalysisB
                   flex flex-col items-center gap-1 p-2 rounded-lg
                   text-xs transition-all duration-200
                   ${disabled
-                    ? 'bg-white/5 text-white/30 cursor-not-allowed'
-                    : 'bg-white/10 text-white/70 hover:bg-purple-500/30 hover:text-white'
+                    ? 'bg-muted text-gray-400 cursor-not-allowed'
+                    : 'bg-muted text-gray-600 hover:bg-purple-500/30 hover:text-foreground'
                   }
                 `}
                 title={description}
@@ -95,8 +95,8 @@ export function AnalysisButtons({ onAnalysisClick, disabled = false }: AnalysisB
               inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full
               text-sm font-medium transition-all duration-200
               ${disabled
-                ? 'bg-white/5 text-white/30 cursor-not-allowed'
-                : 'bg-white/10 text-white/70 hover:bg-purple-500/30 hover:text-white hover:scale-105'
+                ? 'bg-muted text-gray-400 cursor-not-allowed'
+                : 'bg-muted text-gray-600 hover:bg-purple-500/30 hover:text-foreground hover:scale-105'
               }
             `}
           >
@@ -106,7 +106,7 @@ export function AnalysisButtons({ onAnalysisClick, disabled = false }: AnalysisB
         ))}
 
         {/* 구분선 */}
-        <div className="w-px h-6 bg-white/20 self-center mx-1" />
+        <div className="w-px h-6 bg-muted self-center mx-1" />
 
         {/* 용신 분석 버튼 (드롭다운 토글) */}
         <div className="relative">
@@ -117,10 +117,10 @@ export function AnalysisButtons({ onAnalysisClick, disabled = false }: AnalysisB
               inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full
               text-sm font-medium transition-all duration-200
               ${showYongsinMethods
-                ? 'bg-purple-500/40 text-white'
+                ? 'bg-purple-500/40 text-foreground'
                 : disabled
-                  ? 'bg-white/5 text-white/30 cursor-not-allowed'
-                  : 'bg-white/10 text-white/70 hover:bg-purple-500/30 hover:text-white hover:scale-105'
+                  ? 'bg-muted text-gray-400 cursor-not-allowed'
+                  : 'bg-muted text-gray-600 hover:bg-purple-500/30 hover:text-foreground hover:scale-105'
               }
             `}
           >
@@ -141,8 +141,8 @@ export function AnalysisButtons({ onAnalysisClick, disabled = false }: AnalysisB
             inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full
             text-sm font-medium transition-all duration-200
             ${disabled
-              ? 'bg-white/5 text-white/30 cursor-not-allowed'
-              : 'bg-white/10 text-white/70 hover:bg-purple-500/30 hover:text-white hover:scale-105'
+              ? 'bg-muted text-gray-400 cursor-not-allowed'
+              : 'bg-muted text-gray-600 hover:bg-purple-500/30 hover:text-foreground hover:scale-105'
             }
           `}
         >
@@ -152,7 +152,7 @@ export function AnalysisButtons({ onAnalysisClick, disabled = false }: AnalysisB
       </div>
 
       {/* 안내 텍스트 */}
-      <div className="mt-2 text-xs text-white/40 text-center">
+      <div className="mt-2 text-xs text-gray-400 text-center">
         버튼을 클릭하여 원하는 분석을 시작하세요
       </div>
     </div>

@@ -89,7 +89,7 @@ export function StrengthDistributionChart({
         <Icon name="solar:chart-2-bold" size={24} className="text-primary" />
         <button
           onClick={handleTitleClick}
-          className="text-xl font-bold text-white underline decoration-white/30 hover:decoration-primary transition-colors"
+          className="text-xl font-bold text-foreground underline decoration-white/30 hover:decoration-primary transition-colors"
         >
           신강/신약지수
         </button>
@@ -97,11 +97,11 @@ export function StrengthDistributionChart({
 
       <GlassCard className="p-4 md:p-6">
         {/* 설명 텍스트 */}
-        <p className="text-white/80 mb-2">
+        <p className="text-foreground mb-2">
           {name}님은 <strong className="text-primary">{strengthType}</strong>한 사주입니다.
         </p>
         {percentile && (
-          <p className="text-white/60 text-sm mb-4">
+          <p className="text-muted-foreground text-sm mb-4">
             {percentile}%의 사람이 여기에 해당합니다.
           </p>
         )}
@@ -110,7 +110,7 @@ export function StrengthDistributionChart({
         {(deukryeong !== undefined || deukji !== undefined || deuksi !== undefined || deukse !== undefined) && (
           <div className="flex items-center gap-4 mb-6">
             <div className="flex items-center gap-1.5">
-              <span className="text-sm text-white/60">득령</span>
+              <span className="text-sm text-muted-foreground">득령</span>
               {deukryeong ? (
                 <Icon name="solar:check-circle-bold" size={18} className="text-cyan-400" />
               ) : (
@@ -118,7 +118,7 @@ export function StrengthDistributionChart({
               )}
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="text-sm text-white/60">득지</span>
+              <span className="text-sm text-muted-foreground">득지</span>
               {deukji ? (
                 <Icon name="solar:check-circle-bold" size={18} className="text-cyan-400" />
               ) : (
@@ -126,7 +126,7 @@ export function StrengthDistributionChart({
               )}
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="text-sm text-white/60">득시</span>
+              <span className="text-sm text-muted-foreground">득시</span>
               {deuksi ? (
                 <Icon name="solar:check-circle-bold" size={18} className="text-cyan-400" />
               ) : (
@@ -134,7 +134,7 @@ export function StrengthDistributionChart({
               )}
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="text-sm text-white/60">득세</span>
+              <span className="text-sm text-muted-foreground">득세</span>
               {deukse ? (
                 <Icon name="solar:check-circle-bold" size={18} className="text-cyan-400" />
               ) : (
@@ -218,7 +218,7 @@ export function StrengthDistributionChart({
         </div>
 
         {/* Y축 레이블 */}
-        <div className="flex justify-between text-xs text-white/40 mt-2 px-2">
+        <div className="flex justify-between text-xs text-gray-400 mt-2 px-2">
           <span>0%</span>
           <span>25</span>
           <span></span>

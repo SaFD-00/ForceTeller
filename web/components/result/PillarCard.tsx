@@ -28,7 +28,7 @@ export function PillarCard({ pillar, label, index }: PillarCardProps) {
     >
       <GlassCard className="p-4 text-center">
         {/* Label */}
-        <div className="text-sm text-white/50 mb-3">{label}</div>
+        <div className="text-sm text-muted-foreground mb-3">{label}</div>
 
         {/* Heavenly Stem (천간) */}
         <div className="mb-4">
@@ -40,7 +40,7 @@ export function PillarCard({ pillar, label, index }: PillarCardProps) {
           >
             {pillar.heavenly_stem.hanja}
           </div>
-          <div className="text-sm text-white/70">
+          <div className="text-sm text-gray-600">
             {pillar.heavenly_stem.korean}
           </div>
           <ElementBadge
@@ -51,7 +51,7 @@ export function PillarCard({ pillar, label, index }: PillarCardProps) {
         </div>
 
         {/* Divider */}
-        <div className="w-full h-px bg-white/10 my-3" />
+        <div className="w-full h-px bg-muted my-3" />
 
         {/* Earthly Branch (지지) */}
         <div className="mb-4">
@@ -63,7 +63,7 @@ export function PillarCard({ pillar, label, index }: PillarCardProps) {
           >
             {pillar.earthly_branch.hanja}
           </div>
-          <div className="text-sm text-white/70">
+          <div className="text-sm text-gray-600">
             {pillar.earthly_branch.korean}
           </div>
           <ElementBadge
@@ -75,8 +75,8 @@ export function PillarCard({ pillar, label, index }: PillarCardProps) {
 
         {/* Ten God (십성) - if present */}
         {pillar.ten_god && (
-          <div className="mt-3 pt-3 border-t border-white/10">
-            <span className="text-xs text-white/50">십성</span>
+          <div className="mt-3 pt-3 border-t border-border">
+            <span className="text-xs text-muted-foreground">십성</span>
             <div className="text-sm font-medium text-primary mt-1">
               {pillar.ten_god}
             </div>

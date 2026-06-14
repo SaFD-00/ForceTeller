@@ -3,13 +3,8 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
-    --background: 0 0% 4%;
-    --foreground: 0 0% 98%;
-  }
-
   * {
-    @apply border-white/10;
+    @apply border-border;
   }
 
   body {
@@ -19,36 +14,39 @@
 }
 
 @layer components {
+  /* 라이트 카드 (구 .glass* 클래스는 호환용 별칭) */
+  .card,
   .glass {
-    @apply backdrop-blur-xl bg-white/5 border border-white/10 shadow-2xl;
+    @apply bg-surface border border-border shadow-card;
+  }
+
+  .card-elevated {
+    @apply bg-surface border border-border shadow-card-hover;
   }
 
   .glass-card {
-    @apply glass rounded-2xl p-6;
+    @apply bg-surface border border-border shadow-card rounded-2xl p-6;
   }
 
   .glass-button {
-    @apply glass rounded-xl px-6 py-3 hover:bg-white/10 transition-all duration-300;
+    @apply bg-surface border border-border rounded-xl px-6 py-3 hover:bg-muted transition-all duration-200;
   }
 
+  /* 오행 배지 */
   .element-wood {
-    @apply bg-element-wood/20 text-element-wood border-element-wood/50;
+    @apply bg-element-wood/10 text-element-wood border-element-wood/30;
   }
-
   .element-fire {
-    @apply bg-element-fire/20 text-element-fire border-element-fire/50;
+    @apply bg-element-fire/10 text-element-fire border-element-fire/30;
   }
-
   .element-earth {
-    @apply bg-element-earth/20 text-element-earth border-element-earth/50;
+    @apply bg-element-earth/10 text-element-earth border-element-earth/30;
   }
-
   .element-metal {
-    @apply bg-element-metal/20 text-element-metal border-element-metal/50;
+    @apply bg-element-metal/10 text-element-metal border-element-metal/30;
   }
-
   .element-water {
-    @apply bg-element-water/20 text-element-water border-element-water/50;
+    @apply bg-element-water/10 text-element-water border-element-water/30;
   }
 }
 
@@ -58,30 +56,18 @@
   }
 
   .gradient-text {
-    @apply bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-violet-600 via-purple-600 to-violet-600 bg-clip-text text-transparent;
   }
 
-  .glow {
-    box-shadow: 0 0 40px rgba(139, 92, 246, 0.3);
-  }
-
-  .glow-sm {
-    box-shadow: 0 0 20px rgba(139, 92, 246, 0.2);
+  /* 은은한 라이트 배경 그라데이션 (히어로용) */
+  .hero-gradient {
+    background:
+      radial-gradient(60% 50% at 50% 0%, rgba(124, 58, 237, 0.06) 0%, rgba(124, 58, 237, 0) 100%),
+      linear-gradient(180deg, #ffffff 0%, #f7f8fa 100%);
   }
 }
 
-/* Unicorn Studio container styles */
-.unicorn-bg {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -1;
-  pointer-events: none;
-}
-
-/* Scrollbar styling */
+/* Scrollbar styling (light) */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -92,10 +78,10 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(17, 24, 39, 0.15);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(17, 24, 39, 0.25);
 }
