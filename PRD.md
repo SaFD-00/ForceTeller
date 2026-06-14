@@ -114,7 +114,7 @@
 ### 2.5 프로젝트 구조
 
 ```
-ForceTeller/
+./
 ├── PRD.md                          # 본 문서
 ├── README.md                       # 설치/실행 가이드
 ├── ARCHITECTURE.md                 # 아키텍처 상세
