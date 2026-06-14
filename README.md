@@ -9,7 +9,7 @@ ForceTeller는 정확한 만세력 계산과 AI 해석을 결합한 사주팔자
 ## 프로젝트 구조
 
 ```
-ForceTeller/
+./
 ├── api/                          # FastAPI 백엔드
 │   ├── routes/
 │   │   ├── chat.py               # 채팅/대화 엔드포인트
