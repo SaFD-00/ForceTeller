@@ -1,0 +1,92 @@
+[project]
+name = "forceteller"
+version = "0.1.0"
+description = "사주 명리학 기반 AI 운세 상담 서비스 (만세력 계산 + LangGraph 멀티 에이전트)"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "Apache-2.0" }
+dependencies = [
+    # 천문/달력 계산
+    "ephem>=4.1.0",
+    "korean-lunar-calendar>=0.3.1",
+    # 데이터 모델링
+    "pydantic>=2.0",
+    "pydantic-settings>=2.0",
+    "python-dateutil>=2.8.2",
+    # CLI
+    "click>=8.0",
+    "rich>=13.0",
+    # LangChain Core
+    "langchain>=0.3.0",
+    "langchain-core>=0.3.0",
+    # LLM (OpenRouter는 OpenAI 호환 API)
+    "langchain-openai>=0.2.0",
+    "openai>=1.0",
+    # LangGraph
+    "langgraph>=0.2.0",
+    # Error Handling
+    "tenacity>=8.2.0",
+    # HTTP 서버
+    "fastapi>=0.110.0",
+    "uvicorn>=0.27.0",
+    # 비동기
+    "httpx>=0.25",
+    "aiofiles>=23.0",
+    # 도시 데이터
+    "geonamescache>=2.0.0",
+    # 기타
+    "python-dotenv>=1.0",
+]
+
+# PEP 735 의존성 그룹 — `uv sync`는 기본적으로 dev 그룹을 포함 설치
+[dependency-groups]
+dev = [
+    # 테스트
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+    "pytest-cov>=4.0",
+    "pytest-mock>=3.0",
+    # 코드 품질
+    "black>=24.0",
+    "isort>=5.13",
+    "ruff>=0.1.0",
+    "mypy>=1.8",
+    # 타입 스텁
+    "types-python-dateutil",
+]
+
+[tool.uv]
+# 애플리케이션 프로젝트 — 자체 패키지로 빌드/설치하지 않고 의존성만 관리
+package = false
+
+# ---------------------------------------------------------------------------
+# 테스트 설정 (구 pytest.ini에서 이전)
+# ---------------------------------------------------------------------------
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+asyncio_mode = "auto"
+markers = [
+    "unit: 단위 테스트",
+    "integration: 통합 테스트 (실제 API 호출 가능)",
+    "e2e: End-to-End 테스트",
+    "slow: 느린 테스트",
+]
+addopts = "-v --strict-markers --tb=short"
+
+[tool.coverage.run]
+source = ["agents", "api", "conversation", "utils", "config", "manseol"]
+omit = [
+    "*/tests/*",
+    "*/__init__.py",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+]

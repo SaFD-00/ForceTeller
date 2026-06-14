@@ -36,7 +36,6 @@ ENV/
 
 # Testing
 tests/
-pytest.ini
 .pytest_cache/
 .coverage
 htmlcov/
@@ -88,4 +87,3 @@ logs/
 
 # Development docs (keep only production docs)
 docs/plans/
-requirements-dev.txt
