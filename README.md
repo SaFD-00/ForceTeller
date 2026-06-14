@@ -45,11 +45,11 @@ ForceTeller는 정확한 만세력 계산과 AI 해석을 결합한 사주팔자
 │   │   ├── fortune/analyzer.py   # 운세 분석
 │   │   ├── schools/              # 사주 학파
 │   │   │   ├── base_interpreter.py
-│   │   │   ├── dts.py            # 대주파(大主派)
-│   │   │   ├── ziping.py         # 자평파(子平派)
-│   │   │   ├── qtbj.py           # 기운투부(起運途步)
-│   │   │   ├── shensha.py        # 신살파
-│   │   │   ├── modern.py         # 현대 학파
+│   │   │   ├── ziping.py         # 자평명리(子平命理)
+│   │   │   ├── dts.py            # 적천수(滴天髓)
+│   │   │   ├── qtbj.py           # 궁통보감(窮通寶鑑)
+│   │   │   ├── shensha.py        # 신살중심(神煞中心)
+│   │   │   ├── modern.py         # 현대명리
 │   │   │   └── comparator.py     # 학파 비교
 │   │   └── yongsin/              # 용신(用神) 분석
 │   │       ├── base.py           # 용신 기본 클래스
@@ -71,13 +71,10 @@ ForceTeller는 정확한 만세력 계산과 AI 해석을 결합한 사주팔자
 │   ├── nodes.py                  # 노드 함수 (supervisor, interpreter, synthesis)
 │   ├── state.py                  # TypedDict 기반 상태 정의
 │   ├── schemas.py                # Pydantic 응답 스키마
-│   ├── llm.py                    # LangChain LLM 추상화
-│   ├── orchestrator.py           # Orchestrator (레거시 호환)
-│   ├── factory.py                # NodeFactory / AgentFactory
+│   ├── llm.py                    # OpenRouter LLM 추상화 (LangChain ChatOpenAI)
+│   ├── orchestrator.py           # Orchestrator (모델→그래프 config 주입)
 │   ├── agent_configs.py          # 8개 에이전트 설정
 │   ├── config.py                 # AgentConfig 데이터클래스
-│   ├── base_agent.py             # 레거시 BaseAgent (deprecated)
-│   ├── interpreters/             # 레거시 에이전트 (deprecated)
 │   └── prompts/
 │       └── system_prompts.py     # LLM 시스템 프롬프트
 │
@@ -91,7 +88,7 @@ ForceTeller는 정확한 만세력 계산과 AI 해석을 결합한 사주팔자
 │   └── logging_config.py         # 로깅 설정
 │
 ├── utils/
-│   ├── llm_client.py             # OpenAI/Gemini 클라이언트
+│   ├── llm_client.py             # OpenRouter 클라이언트 (스트리밍/reasoning)
 │   └── protocols.py              # 타입 프로토콜 정의
 │
 ├── tests/                        # 테스트
@@ -145,8 +142,9 @@ ForceTeller는 정확한 만세력 계산과 AI 해석을 결합한 사주팔자
 | FastAPI | 0.110 | REST API 프레임워크 |
 | Pydantic | 2.0 | 데이터 검증 |
 | Uvicorn | 0.27 | ASGI 서버 |
-| OpenAI SDK | 1.0+ | GPT 통합 |
-| Google GenAI SDK | - | Gemini 통합 |
+| LangGraph | 0.2+ | 에이전트 그래프 (Supervisor 패턴) |
+| LangChain (OpenAI) | 0.3+ | OpenRouter 연동 (OpenAI 호환) |
+| OpenAI SDK | 1.0+ | OpenRouter Chat Completions 클라이언트 |
 | PyEphem | 4.1 | 천문 계산 |
 | Korean-Lunar-Calendar | 0.3 | 음력 변환 |
 | Click | 8.0 | CLI 프레임워크 |
@@ -190,39 +188,39 @@ ForceTeller는 정확한 만세력 계산과 AI 해석을 결합한 사주팔자
 | 신살 | 천을귀인, 문창귀인 등 길흉신 분석 |
 | 지장간 | 지지 속 숨은 천간 분석 |
 
-### 3. 학파별 해석
-- **자평파(子平派)**: 전통적 자평명리
-- **대주파(大主派)**: 대주 중심 해석
-- **기운투부파**: 기운 흐름 분석
-- **신살파**: 신살 중심 해석
-- **현대 학파**: 현대적 재해석
+### 3. 학파별 해석 (5대 유파)
+- **자평명리(子平命理)**: 일간 중심 강약 분석과 격국론 (연해자평)
+- **적천수(滴天髓)**: 오행의 생극제화와 통변성정 (체용론)
+- **궁통보감(窮通寶鑑)**: 월령과 조후 중심 해석 (난강망 계열)
+- **현대명리**: 심리학적 관점의 실용적 재해석
+- **신살중심(神煞中心)**: 신살 배합 중심의 길흉 판단
 
-### 4. AI 에이전트 (8종)
+### 4. AI 에이전트 (8종, LangGraph Supervisor 패턴)
 
 | 에이전트 | 분석 영역 |
 |----------|-----------|
-| PersonalityAgent | 성격, 특성, 장단점 |
-| CareerAgent | 직업, 재물, 적성 |
-| RelationshipAgent | 인연, 궁합, 결혼 시기 |
-| HealthAgent | 건강, 체질, 질병 취약점 |
-| FortuneAgent | 운세, 시운, 길일 |
-| YongsinAgent | 용신 분석 및 조언 |
-| SchoolCompareAgent | 학파별 해석 비교 |
-| SynthesisAgent | 종합 분석 |
+| personality | 성격, 특성, 장단점 |
+| career | 직업, 재물, 적성 |
+| relationship | 인연, 궁합, 결혼 시기 |
+| health | 건강, 체질, 질병 취약점 |
+| fortune | 운세, 시운, 길일 |
+| yongsin | 용신 분석 및 조언 |
+| school_compare | 학파별 해석 비교 |
+| synthesis | 종합 분석 |
 
 ### 5. 대화형 상담
 - 멀티턴 대화 지원
 - 세션 기반 컨텍스트 유지
 - 사주 데이터 기반 맞춤 해석
 - 후속 질문 자동 추천
-- OpenAI/Gemini 선택 가능
+- OpenRouter 6개 모델 지원 (gpt-oss / gemma-4 / deepseek-v4)
 
 ## 시작하기
 
 ### 사전 요구사항
 - Python 3.11+
 - Node.js 18+
-- OpenAI API Key 또는 Google Gemini API Key
+- OpenRouter API Key (https://openrouter.ai/keys)
 
 ### 백엔드 설치 및 실행
 
@@ -241,7 +239,7 @@ cp .env.example .env
 # 서버 실행
 python -m api.server
 # 또는
-uvicorn api.server:app --reload --host 0.0.0.0 --port 1118
+uvicorn api.server:app --reload --host 0.0.0.0 --port 8000
 ```
 
 ### 프론트엔드 설치 및 실행
@@ -270,7 +268,7 @@ python main.py cli --name "홍길동" --birth-date "1990-01-15" --birth-time "14
 python main.py interactive
 
 # 서버 실행
-python main.py server --host 0.0.0.0 --port 1118 --reload
+python main.py server --host 0.0.0.0 --port 8000 --reload
 
 # 시스템 정보
 python main.py info
@@ -338,27 +336,25 @@ python main.py info
 ### 백엔드 (.env)
 
 ```env
-# LLM API 키
-OPENAI_API_KEY=sk-...
-GOOGLE_API_KEY=...
+# OpenRouter API 키 (https://openrouter.ai/keys)
+OPENROUTER_API_KEY=sk-or-v1-...
 
-# LLM 설정
-DEFAULT_LLM_PROVIDER=openai          # openai | gemini
-OPENAI_MODEL=gpt-5.2                 # gpt-5.2 | gpt-5.2-pro | gpt-5-mini | gpt-5-nano | gpt-5.1-codex-max
-GEMINI_MODEL=gemini-3-pro-preview    # gemini-3-pro-preview | gemini-3-flash-preview | gemini-3-pro-image-preview
+# LLM 설정 (OpenRouter 단일 게이트웨이)
+OPENROUTER_BASE_URL=https://openrouter.ai/api/v1
+OPENROUTER_MODEL=openai/gpt-oss-120b:free          # 기본 해석 모델
+OPENROUTER_ROUTING_MODEL=openai/gpt-oss-20b:free   # 라우팅(경량) 모델
+OPENROUTER_FALLBACK_MODEL=google/gemma-4-31b-it:free
+OPENROUTER_MAX_TOKENS=4096
+OPENROUTER_REASONING_EFFORT=medium                 # low | medium | high
+OPENROUTER_TEMPERATURE=0.7
 
-# OpenAI 설정
-OPENAI_REASONING_EFFORT=none         # low | medium | high
-OPENAI_TEXT_VERBOSITY=medium         # low | medium | high
-OPENAI_MAX_TOKENS=4096
-
-# Gemini 설정
-GEMINI_THINKING_LEVEL=medium         # minimal | low | medium | high
-GEMINI_MAX_TOKENS=4096
+# 지원 모델: openai/gpt-oss-120b:free, openai/gpt-oss-20b:free,
+#           google/gemma-4-26b-a4b-it:free, google/gemma-4-31b-it:free,
+#           deepseek/deepseek-v4-flash, deepseek/deepseek-v4-pro
 
 # 서버 설정
 API_HOST=0.0.0.0
-API_PORT=1118
+API_PORT=8000
 DEBUG=false
 
 # 세션 설정
@@ -373,7 +369,7 @@ USE_TRUE_SOLAR_TIME=true
 ### 프론트엔드 (web/.env.local)
 
 ```env
-NEXT_PUBLIC_API_URL=http://localhost:1118
+NEXT_PUBLIC_API_URL=http://localhost:8000
 ```
 
 ## 오행 색상 시스템
@@ -413,13 +409,16 @@ NEXT_PUBLIC_API_URL=http://localhost:1118
 - `AnalysisButtons` - 빠른 분석 버튼
 - `AgentSelector` - 에이전트 선택
 
-### UI 컴포넌트 (8개)
+### UI 컴포넌트
+- `Sidebar` - 좌측 아이콘 내비게이션 (홈/결과/채팅)
 - `Button`, `Input` - 기본 입력
-- `GlassCard` - 글래스모피즘 카드
+- `GlassCard` - 라이트 카드 (흰 배경 + 얇은 테두리 + 부드러운 그림자)
 - `Icon` - 아이콘 래퍼
 - `ElementBadge` - 오행 배지
 - `GlossaryTooltip`, `GlossaryModal` - 용어 설명
 - `LoadingOverlay` - 로딩 상태
+
+> UI 테마: FigureLabs 스타일 라이트·미니멀 디자인 (흰 배경 + 바이올렛 포인트).
 
 ## 데이터 상수 (config/constants.py)
 
@@ -441,7 +440,7 @@ NEXT_PUBLIC_API_URL=http://localhost:1118
 ```
 [사용자] → [Vercel (Next.js)] → [Railway (FastAPI)]
                                       ↓
-                              [OpenAI/Gemini API]
+                                [OpenRouter API]
 ```
 
 - **프론트엔드**: Vercel (Next.js 최적화, 무료 티어)
@@ -467,10 +466,8 @@ git push -u origin main
    - **Build Command**: 자동 감지 (Dockerfile 사용)
 5. Variables 탭에서 환경 변수 추가:
    ```
-   OPENAI_API_KEY=sk-...
-   GOOGLE_API_KEY=...
-   DEFAULT_LLM_PROVIDER=openai
-   OPENAI_MODEL=gpt-5-nano
+   OPENROUTER_API_KEY=sk-or-v1-...
+   OPENROUTER_MODEL=openai/gpt-oss-120b:free
    CORS_ORIGINS=https://your-app.vercel.app
    ```
 6. Settings → Networking → **Generate Domain** 클릭
@@ -496,9 +493,8 @@ git push -u origin main
 docker build -t forceteller-api .
 
 # 컨테이너 실행
-docker run -p 1118:1118 \
-  -e OPENAI_API_KEY=sk-... \
-  -e GOOGLE_API_KEY=... \
+docker run -p 8000:8000 \
+  -e OPENROUTER_API_KEY=sk-or-v1-... \
   forceteller-api
 ```
 
@@ -506,8 +502,8 @@ docker run -p 1118:1118 \
 
 | 변수 | 설명 | 예시 |
 |------|------|------|
-| `OPENAI_API_KEY` | OpenAI API 키 | `sk-...` |
-| `GOOGLE_API_KEY` | Google Gemini API 키 | `AI...` |
+| `OPENROUTER_API_KEY` | OpenRouter API 키 | `sk-or-v1-...` |
+| `OPENROUTER_MODEL` | 기본 해석 모델 | `openai/gpt-oss-120b:free` |
 | `CORS_ORIGINS` | 허용할 프론트엔드 도메인 | `https://your-app.vercel.app` |
 | `NEXT_PUBLIC_API_URL` | 백엔드 API URL | `https://api.railway.app` |
 
@@ -517,6 +513,7 @@ docker run -p 1118:1118 \
 |--------|-----------|
 | Vercel | 100GB 대역폭/월, 무제한 배포 |
 | Railway | $5 크레딧/월 (약 500시간) |
+| OpenRouter | `:free` 모델(gpt-oss, gemma-4)은 무료 / deepseek-v4는 종량제 |
 
 ## 라이선스
 
