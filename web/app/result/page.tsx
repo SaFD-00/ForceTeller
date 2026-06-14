@@ -14,6 +14,7 @@ import {
   YongshinCard,
   StrengthDistributionChart,
   FortuneCycleSlider,
+  YearlyFortune,
 } from '@/components/result';
 import { ChatContainer } from '@/components/chat';
 import type { Element, HiddenStemDisplay, ShenshaDisplay } from '@/types/saju';
@@ -430,6 +431,11 @@ export default function ResultPage() {
                 dayStemIndex={dayStemIndex}
                 showAge
               />
+            )}
+
+            {/* 세운 (연도별 운세) */}
+            {result.sewun && result.sewun.length > 0 && (
+              <YearlyFortune sewun={result.sewun} />
             )}
 
             {/* Actions */}

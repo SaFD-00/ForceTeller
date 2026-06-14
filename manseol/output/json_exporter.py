@@ -133,6 +133,11 @@ class JsonExporter:
         # 7.5 천간/지지 상호작용 (합·충·형·파·해·공망)
         interactions = self._build_interactions(pillars_raw)
 
+        # 7.6 세운(歲運) - 올해부터 향후 수년간 연운 (시간 미상과 무관)
+        sewun = self._build_sewun(
+            calc_datetime, pillars_raw, ten_gods_calc, twelve_phases_calc
+        )
+
         # 8. 최종 결과 조립
         return SajuResult(
             meta=MetaInfo(
@@ -163,8 +168,34 @@ class JsonExporter:
             pillars=pillars,
             analysis=analysis,
             fortune_cycles=fortune_cycles,
-            interactions=interactions
+            interactions=interactions,
+            sewun=sewun
         )
+
+    def _build_sewun(
+        self,
+        calc_datetime: datetime,
+        pillars_raw: Dict,
+        ten_gods_calc: TenGodsCalculator,
+        twelve_phases_calc: TwelvePhasesCalculator,
+        years: int = 6,
+    ) -> list:
+        """세운(歲運) 구성 - 올해부터 향후 N년간 연운(간지·십성·12운성)"""
+        fortune_calc = FortuneCycleCalculator(
+            birth_datetime=calc_datetime,
+            gender=self.input.gender.value,
+            year_stem=pillars_raw["year"][0],
+            month_stem=pillars_raw["month"][0],
+            month_branch=pillars_raw["month"][1],
+        )
+        current_year = datetime.now().year
+        result = []
+        for year in range(current_year, current_year + years):
+            sewun = fortune_calc.calculate_sewun(year)
+            sewun["ten_god"] = ten_gods_calc.get_ten_god_for_stem(sewun["stem_index"])
+            sewun["twelve_phase"] = twelve_phases_calc.get_twelve_phase(sewun["branch_index"])
+            result.append(sewun)
+        return result
 
     def _build_interactions(self, pillars_raw: Dict) -> Dict[str, list]:
         """천간/지지 상호작용 계산 (합·충·형·파·해·공망)"""

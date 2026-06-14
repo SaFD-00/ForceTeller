@@ -12,3 +12,4 @@ export { StrengthDistributionChart } from './StrengthDistributionChart';
 export { FortuneCycleSlider } from './FortuneCycleSlider';
 export { YongshinCard } from './YongshinCard';
 export { ElementDistribution } from './ElementDistribution';
+export { YearlyFortune } from './YearlyFortune';

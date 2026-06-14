@@ -239,6 +239,11 @@ class SajuResult(BaseModel):
         description="천간/지지 상호작용 (합·충·형·파·해·공망)"
     )
 
+    sewun: Optional[List[Dict[str, Any]]] = Field(
+        None,
+        description="세운(歲運) - 올해부터 향후 수년간 연운"
+    )
+
     def to_json(self, indent: int = 2) -> str:
         """JSON 문자열 변환"""
         return self.model_dump_json(indent=indent, exclude_none=True)

@@ -158,6 +158,17 @@ export interface InteractionsData {
   공망?: InteractionItem[];
 }
 
+// 세운(歲運) - 연도별 운세
+export interface SewunItem {
+  year: number;
+  stem_index: number;
+  branch_index: number;
+  ganji_korean: string;
+  ganji_chinese: string;
+  ten_god: string;
+  twelve_phase: string;
+}
+
 export interface SajuAnalysis {
   day_master: DayMasterAnalysis;
   five_elements: FiveElementsAnalysis;
@@ -201,6 +212,7 @@ export interface SajuResult {
   analysis: SajuAnalysis;
   fortune_cycles: FortuneCycleData | null;
   interactions?: InteractionsData;
+  sewun?: SewunItem[];
 }
 
 // API 요청/응답 타입
@@ -354,6 +366,7 @@ export interface SajuResultDisplay {
   shensha?: ShenshaDisplay[];
   adjusted_time?: TimeCorrection | null;
   interactions?: InteractionsData;
+  sewun?: SewunItem[];
 }
 
 // 유틸리티: 백엔드 응답을 프론트엔드 타입으로 변환하는 함수 타입

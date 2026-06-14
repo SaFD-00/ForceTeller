@@ -86,7 +86,7 @@ function transformFortuneCycle(cycle: FortuneCycle): FortuneCycleDisplay {
  * 백엔드 SajuResult를 프론트엔드 SajuResultDisplay로 변환
  */
 export function transformSajuResult(result: SajuResult): SajuResultDisplay {
-  const { input, pillars, analysis, fortune_cycles, adjusted_time, interactions } = result;
+  const { input, pillars, analysis, fortune_cycles, adjusted_time, interactions, sewun } = result;
 
   // Four Pillars 변환
   const fourPillars: FourPillarsDisplay = {
@@ -179,5 +179,6 @@ export function transformSajuResult(result: SajuResult): SajuResultDisplay {
     shensha: shensha,
     adjusted_time: adjusted_time,
     interactions: interactions,
+    sewun: sewun,
   };
 }
