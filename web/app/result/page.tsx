@@ -15,6 +15,7 @@ import {
   StrengthDistributionChart,
   FortuneCycleSlider,
   YearlyFortune,
+  LuckyGuideCard,
 } from '@/components/result';
 import { ChatContainer } from '@/components/chat';
 import type { Element, HiddenStemDisplay, ShenshaDisplay } from '@/types/saju';
@@ -409,6 +410,14 @@ export default function ResultPage() {
               <YongshinCard
                 type="억부용신"
                 element={result.five_elements.yongshin}
+              />
+            )}
+
+            {/* 용신 개운법 (색/방위/직업/생활) */}
+            {result.yongsin_recommendations && (
+              <LuckyGuideCard
+                recommendations={result.yongsin_recommendations}
+                comparison={result.yongsin_comparison}
               />
             )}
 

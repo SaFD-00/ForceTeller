@@ -7,6 +7,7 @@ from datetime import datetime, time
 from fastapi import APIRouter, HTTPException
 
 from api.schemas import ManseolRequest, ManseolResponse, ErrorResponse
+from api.converters import enrich_with_analysis
 from manseol.models.input_model import SajuInput, CalendarType, Gender
 from manseol.output.json_exporter import JsonExporter
 
@@ -61,9 +62,13 @@ async def calculate_saju(request: ManseolRequest) -> ManseolResponse:
         exporter = JsonExporter(saju_input)
         result = exporter.generate_result()
 
+        # 분석 라이브러리(용신·유파·운세) 결과 보강
+        data = result.to_dict()
+        data.update(enrich_with_analysis(data))
+
         return ManseolResponse(
             success=True,
-            data=result.to_dict()
+            data=data
         )
 
     except HTTPException:

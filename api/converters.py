@@ -124,6 +124,44 @@ class SajuDataConverter:
         }
 
 
+def enrich_with_analysis(result_dict: Dict[str, Any]) -> Dict[str, Any]:
+    """만세력 결과(dict)에 이미 구현된 분석 라이브러리 결과를 덧붙인다.
+
+    json_exporter는 결정론 계산만 담당하고, 용신 4방법·개운법·유파 비교·
+    운세 점수처럼 analysis 패키지가 책임지는 항목은 여기서 한 번에 조립한다.
+    개별 분석이 실패해도 기본 만세력 결과는 보존되도록 방어적으로 처리한다.
+
+    Args:
+        result_dict: SajuResult.to_dict() 결과
+
+    Returns:
+        결과 dict에 병합할 추가 키들 (yongsin_comparison, yongsin_recommendations 등)
+    """
+    enriched: Dict[str, Any] = {}
+
+    try:
+        analysis_data = SajuDataConverter.to_analysis_format(result_dict)
+    except Exception:
+        return enriched
+
+    # 용신 4방법 비교 + 개운법 추천 (강약/조후/통관/병약)
+    try:
+        from manseol.analysis import compare_yongsin_methods, select_yongsin_auto
+        from manseol.analysis.yongsin.recommendations import (
+            generate_detailed_recommendations,
+        )
+
+        enriched["yongsin_comparison"] = compare_yongsin_methods(analysis_data)
+        yongsin_result = select_yongsin_auto(analysis_data)
+        enriched["yongsin_recommendations"] = generate_detailed_recommendations(
+            yongsin_result
+        )
+    except Exception:
+        pass
+
+    return enriched
+
+
 class EnumConverter:
     """Enum 타입 변환기"""
 
