@@ -6,21 +6,30 @@
 import json
 from fastapi import APIRouter, HTTPException, Depends
 from fastapi.responses import StreamingResponse
-from typing import Optional, List, AsyncGenerator
+from typing import List, AsyncGenerator
 
 from api.schemas import (
     ChatRequest, ChatResponse,
     SessionListResponse, SessionDetailResponse,
-    ErrorResponse, InterpretationType
+    ErrorResponse,
 )
 from api.dependencies import get_session_manager, get_orchestrator
 from api.formatters import SuggestedQuestionsGenerator
+from config.settings import get_allowed_models
 from utils.protocols import SessionManagerProtocol
-from agents.orchestrator import Orchestrator
 from utils.llm_client import get_llm_client
 
 
 router = APIRouter(prefix="/api/chat", tags=["chat"])
+
+
+def _resolve_model(model_value: str | None) -> str | None:
+    """요청 모델을 화이트리스트로 검증. None이면 서버 기본값 사용."""
+    if model_value is None:
+        return None
+    if model_value not in get_allowed_models():
+        raise HTTPException(status_code=400, detail=f"허용되지 않은 모델: {model_value}")
+    return model_value
 
 
 @router.post(
@@ -67,68 +76,39 @@ async def chat(
         # 사용자 메시지 기록
         session.add_user_message(request.message)
 
-        # 오케스트레이터 생성
-        orchestrator = get_orchestrator(request.llm_provider.value)
+        # 모델 검증 후 오케스트레이터 생성
+        model = _resolve_model(request.model.value if request.model else None)
+        orchestrator = get_orchestrator(model=model)
 
         # 대화 이력 가져오기
         history = session.get_messages_for_llm(limit=10)
 
-        # 해석 유형에 따른 처리
+        # 전체 해석 (Supervisor 패턴 동적 라우팅)
         suggested_questions: List[str] = []
+        result = await orchestrator.route_and_interpret(
+            saju_data=session.saju_data,
+            question=request.message,
+            conversation_history=history,
+            include_synthesis=True,
+        )
 
-        if request.interpretation_type == InterpretationType.QUICK:
-            # 빠른 단일 해석
-            focus = request.focus or "personality"
-            response = await orchestrator.quick_interpret(
-                saju_data=session.saju_data,
-                focus=focus
-            )
-            result_message = response.interpretation
-            suggested_questions = response.suggested_questions or []
-            agents_used = [response.agent_name]
-            interpretations = {response.agent_name: response.to_dict()}
-
-        elif request.interpretation_type == InterpretationType.SPECIFIC:
-            # 특정 분야 해석
-            if not request.focus:
-                raise HTTPException(
-                    status_code=400,
-                    detail="specific 해석 유형에는 focus 파라미터가 필요합니다."
-                )
-            response = await orchestrator.quick_interpret(
-                saju_data=session.saju_data,
-                focus=request.focus
-            )
-            result_message = response.interpretation
-            suggested_questions = response.suggested_questions or []
-            agents_used = [response.agent_name]
-            interpretations = {response.agent_name: response.to_dict()}
-
+        # 응답 메시지 구성 및 suggested_questions 추출
+        if result.get("synthesis"):
+            result_message = result["synthesis"]["interpretation"]
+            suggested_questions = result["synthesis"].get("suggested_questions", [])
+        elif result.get("interpretations"):
+            first_interp = list(result["interpretations"].values())[0]
+            result_message = first_interp.get("interpretation", "해석을 생성할 수 없습니다.")
+            suggested_questions = first_interp.get("suggested_questions", [])
         else:
-            # 전체 해석 (기본)
-            result = await orchestrator.route_and_interpret(
-                saju_data=session.saju_data,
-                question=request.message,
-                conversation_history=history,
-                include_synthesis=True
-            )
+            result_message = "해석을 생성할 수 없습니다. 다시 시도해 주세요."
 
-            # 응답 메시지 구성 및 suggested_questions 추출
-            if result.get("synthesis"):
-                result_message = result["synthesis"]["interpretation"]
-                suggested_questions = result["synthesis"].get("suggested_questions", [])
-            else:
-                # synthesis가 없으면 첫 번째 해석 사용
-                first_interp = list(result["interpretations"].values())[0]
-                result_message = first_interp.get("interpretation", "해석을 생성할 수 없습니다.")
-                suggested_questions = first_interp.get("suggested_questions", [])
+        agents_used = result.get("agents_used", [])
+        interpretations = result.get("interpretations") or {}
 
-            agents_used = result.get("agents_used", [])
-            interpretations = result.get("interpretations")
-
-            # 해석 결과 캐시
-            for agent_name, interp in interpretations.items():
-                session.cache_interpretation(agent_name, interp)
+        # 해석 결과 캐시
+        for agent_name, interp in interpretations.items():
+            session.cache_interpretation(agent_name, interp)
 
         # 어시스턴트 메시지 기록
         session.add_assistant_message(result_message)
@@ -342,8 +322,9 @@ async def chat_stream(
             messages.extend(history)
             messages.append({"role": "user", "content": request.message})
 
-            # LLM 클라이언트로 스트리밍
-            llm = get_llm_client(provider=request.llm_provider.value)
+            # LLM 클라이언트로 스트리밍 (모델 검증)
+            model = _resolve_model(request.model.value if request.model else None)
+            llm = get_llm_client(model=model)
 
             full_output = ""
             async for chunk in llm.chat_stream_with_reasoning(messages):

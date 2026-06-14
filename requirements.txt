@@ -17,19 +17,15 @@ rich>=13.0
 langchain>=0.3.0
 langchain-core>=0.3.0
 
-# LLM Providers (LangChain)
+# LLM (OpenRouter는 OpenAI 호환 API)
 langchain-openai>=0.2.0
-langchain-google-genai>=2.0.0
+openai>=1.0
 
 # LangGraph
 langgraph>=0.2.0
 
 # Error Handling
 tenacity>=8.2.0
-
-# Legacy LLM API (deprecated, will be removed)
-openai>=1.0
-google-genai>=0.5.0
 
 # HTTP 서버
 fastapi>=0.110.0

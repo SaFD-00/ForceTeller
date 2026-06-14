@@ -8,7 +8,7 @@ from typing import Optional
 
 from conversation.session_manager import SessionManager
 from agents.orchestrator import Orchestrator
-from utils.llm_client import LLMClient
+from utils.llm_client import OpenRouterClient
 from utils.protocols import SessionManagerProtocol, LLMClientProtocol
 
 
@@ -46,34 +46,30 @@ def reset_session_manager() -> None:
     _session_manager_instance = None
 
 
-def get_orchestrator(
-    llm_provider: str = "openai",
-    llm_client: Optional[LLMClientProtocol] = None
-) -> Orchestrator:
+def get_orchestrator(model: Optional[str] = None) -> Orchestrator:
     """
     오케스트레이터 의존성
 
     Args:
-        llm_provider: LLM 제공자 ("openai" | "gemini")
-        llm_client: 주입할 LLM 클라이언트 (테스트용)
+        model: 사용할 OpenRouter 모델 ID (None이면 설정 기본값)
 
     Returns:
         Orchestrator 인스턴스
     """
-    return Orchestrator(llm_provider=llm_provider)
+    return Orchestrator(model=model)
 
 
 def get_llm_client(
-    provider: str = "openai",
+    model: Optional[str] = None,
     **kwargs
 ) -> LLMClientProtocol:
     """
     LLM 클라이언트 의존성
 
     Args:
-        provider: LLM 제공자 ("openai" | "gemini")
+        model: 사용할 OpenRouter 모델 ID (None이면 설정 기본값)
 
     Returns:
-        LLMClient 인스턴스
+        OpenRouterClient 인스턴스
     """
-    return LLMClient(provider=provider, **kwargs)
+    return OpenRouterClient(model=model, **kwargs)

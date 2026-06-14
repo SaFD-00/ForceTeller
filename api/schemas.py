@@ -28,9 +28,14 @@ class InterpretationType(str, Enum):
     SPECIFIC = "specific"   # 특정 분야 해석
 
 
-class LLMProvider(str, Enum):
-    OPENAI = "openai"
-    GEMINI = "gemini"
+class ModelChoice(str, Enum):
+    """OpenRouter 모델 선택지"""
+    GPT_OSS_120B = "openai/gpt-oss-120b:free"
+    GPT_OSS_20B = "openai/gpt-oss-20b:free"
+    GEMMA_4_26B = "google/gemma-4-26b-a4b-it:free"
+    GEMMA_4_31B = "google/gemma-4-31b-it:free"
+    DEEPSEEK_V4_FLASH = "deepseek/deepseek-v4-flash"
+    DEEPSEEK_V4_PRO = "deepseek/deepseek-v4-pro"
 
 
 # ============== 만세력 API 스키마 ==============
@@ -83,9 +88,9 @@ class ChatRequest(BaseModel):
         None,
         description="특정 해석 분야 (personality/career/relationship/health/fortune)"
     )
-    llm_provider: LLMProvider = Field(
-        default=LLMProvider.OPENAI,
-        description="LLM 제공자"
+    model: Optional[ModelChoice] = Field(
+        default=None,
+        description="사용할 OpenRouter 모델 (None이면 서버 기본 모델)"
     )
 
     class Config:
@@ -203,9 +208,9 @@ class AnalysisRequest(BaseModel):
         None,
         description="추가 질문 메시지"
     )
-    llm_provider: LLMProvider = Field(
-        default=LLMProvider.OPENAI,
-        description="LLM 제공자"
+    model: Optional[ModelChoice] = Field(
+        default=None,
+        description="사용할 OpenRouter 모델 (None이면 서버 기본 모델)"
     )
 
     class Config:

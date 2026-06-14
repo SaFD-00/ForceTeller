@@ -19,7 +19,7 @@ import asyncio
 from datetime import datetime
 from rich.console import Console
 from rich.panel import Panel
-from rich.prompt import Promptcl
+from rich.prompt import Prompt
 
 console = Console()
 
@@ -149,7 +149,7 @@ async def _interactive_mode():
         # 세션 및 오케스트레이터 초기화
         session_manager = SessionManager()
         session = session_manager.create_session(saju_data)
-        orchestrator = Orchestrator(llm_provider="openai")
+        orchestrator = Orchestrator()
 
         console.print("\n[bold green]대화를 시작합니다. 질문을 입력하세요.[/bold green]")
         console.print("[dim]예: '제 성격에 대해 알려주세요', '올해 운세는 어때요?'[/dim]\n")
@@ -217,15 +217,18 @@ def info():
     """시스템 정보 표시"""
     from config.settings import settings
 
+    key_status = "설정됨" if settings.OPENROUTER_API_KEY else "미설정"
     console.print(Panel(
         f"[bold]ForceTeller[/bold] v1.0.0\n\n"
         f"📦 만세력 계산 엔진 + AI 해석 에이전트\n\n"
-        f"[bold]LLM 설정:[/bold]\n"
-        f"  • OpenAI: {settings.openai_model}\n"
-        f"  • Gemini: {settings.gemini_model}\n\n"
+        f"[bold]LLM 설정 (OpenRouter):[/bold]\n"
+        f"  • API Key: {key_status}\n"
+        f"  • 기본 모델: {settings.OPENROUTER_MODEL}\n"
+        f"  • 라우팅 모델: {settings.OPENROUTER_ROUTING_MODEL}\n"
+        f"  • 폴백 모델: {settings.OPENROUTER_FALLBACK_MODEL}\n\n"
         f"[bold]API 서버:[/bold]\n"
-        f"  • Host: {settings.api_host}\n"
-        f"  • Port: {settings.api_port}\n\n"
+        f"  • Host: {settings.API_HOST}\n"
+        f"  • Port: {settings.API_PORT}\n\n"
         f"[bold]사용법:[/bold]\n"
         f"  python main.py cli --help     CLI 도움말\n"
         f"  python main.py server         API 서버 실행\n"

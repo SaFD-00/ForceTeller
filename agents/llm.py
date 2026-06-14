@@ -1,115 +1,126 @@
 """
-LangChain 기반 LLM 추상화
+LangChain 기반 LLM 추상화 (OpenRouter 단일 게이트웨이)
 
-Provider 독립적인 LLM 래퍼를 제공합니다.
-캐싱, 폴백 체인, 구조화된 출력 등을 지원합니다.
+OpenRouter는 OpenAI 호환 API이므로 ChatOpenAI 하나로 모든 모델을 호출한다.
+캐싱, 모델 폴백, 구조화된 출력, 재시도를 지원한다.
 """
 
-import os
+import json
 from functools import lru_cache
-from typing import TypeVar
+from typing import Any, TypeVar
 
+from langchain_core.exceptions import OutputParserException
 from langchain_core.language_models import BaseChatModel
 from langchain_openai import ChatOpenAI
-from langchain_google_genai import ChatGoogleGenerativeAI
-from pydantic import BaseModel
-from tenacity import retry, stop_after_attempt, wait_exponential
+from pydantic import BaseModel, ValidationError
+from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
+
+from config.settings import settings
 
 
 T = TypeVar("T", bound=BaseModel)
 
 
-@lru_cache(maxsize=8)
+def _openrouter_headers() -> dict[str, str]:
+    """OpenRouter 랭킹/식별용 헤더"""
+    return {
+        "HTTP-Referer": settings.OPENROUTER_SITE_URL,
+        "X-Title": settings.OPENROUTER_APP_NAME,
+    }
+
+
+@lru_cache(maxsize=16)
 def create_llm(
-    provider: str = "openai",
     model: str | None = None,
     temperature: float = 0.7,
 ) -> BaseChatModel:
-    """LLM 인스턴스 생성 (캐시됨)
+    """OpenRouter LLM 인스턴스 생성 (캐시됨)
 
     Args:
-        provider: LLM 제공자 ("openai" | "google")
-        model: 모델명 (None이면 기본값 사용)
+        model: OpenRouter 모델 ID (None이면 기본 모델)
         temperature: 온도 (0.0 ~ 2.0)
 
     Returns:
-        BaseChatModel 인스턴스
+        OpenRouter를 가리키는 ChatOpenAI 인스턴스
 
-    Raises:
-        ValueError: 알 수 없는 provider인 경우
+    Note:
+        lru_cache 키는 (model, temperature). ChatOpenAI는 상태 없는 경량
+        객체이므로 모델별로 캐시해도 안전하다.
     """
-    if provider == "openai":
-        return ChatOpenAI(
-            model=model or os.getenv("OPENAI_MODEL", "gpt-4o"),
-            api_key=os.getenv("OPENAI_API_KEY"),
-            temperature=temperature,
-        )
-    elif provider == "google":
-        return ChatGoogleGenerativeAI(
-            model=model or os.getenv("GOOGLE_MODEL", "gemini-2.0-flash"),
-            google_api_key=os.getenv("GOOGLE_API_KEY"),
-            temperature=temperature,
-        )
-    else:
-        raise ValueError(
-            f"Unknown provider: '{provider}'. Available: openai, google"
-        )
+    return ChatOpenAI(
+        model=model or settings.OPENROUTER_MODEL,
+        api_key=settings.OPENROUTER_API_KEY,
+        base_url=settings.OPENROUTER_BASE_URL,
+        temperature=temperature,
+        max_tokens=settings.OPENROUTER_MAX_TOKENS,
+        default_headers=_openrouter_headers(),
+    )
 
 
 def create_structured_llm(
     schema: type[T],
-    provider: str = "openai",
     model: str | None = None,
-    temperature: float = 0.7,
+    temperature: float = 0.0,
 ) -> BaseChatModel:
     """구조화된 출력을 위한 LLM 생성
 
-    Pydantic 스키마를 사용하여 LLM이 항상 해당 형식으로 응답하도록 합니다.
+    Pydantic 스키마를 사용하여 LLM이 항상 해당 형식으로 응답하도록 한다.
+    무료/오픈 모델의 스키마 준수율을 높이기 위해 기본 temperature는 0.0.
 
     Args:
         schema: Pydantic 스키마 클래스
-        provider: LLM 제공자
-        model: 모델명
-        temperature: 온도
+        model: OpenRouter 모델 ID
+        temperature: 온도 (구조화 출력은 0 권장)
 
     Returns:
         with_structured_output이 적용된 LLM
-
-    Example:
-        >>> from agents.schemas import InterpretationResult
-        >>> llm = create_structured_llm(InterpretationResult)
-        >>> result = await llm.ainvoke(messages)
-        >>> print(result.interpretation)
     """
-    llm = create_llm(provider=provider, model=model, temperature=temperature)
-    return llm.with_structured_output(schema)
+    llm = create_llm(model=model, temperature=temperature)
+    return llm.with_structured_output(schema, method="json_schema")
 
 
 def create_llm_with_fallback(
-    primary_provider: str = "openai",
-    fallback_provider: str = "google",
     model: str | None = None,
+    fallback_model: str | None = None,
 ) -> BaseChatModel:
-    """폴백 체인이 있는 LLM 생성
+    """모델 폴백 체인이 있는 LLM 생성
 
-    Primary LLM이 실패하면 자동으로 fallback LLM을 시도합니다.
+    Primary 모델이 실패하면 자동으로 fallback 모델을 시도한다.
 
     Args:
-        primary_provider: 기본 LLM 제공자
-        fallback_provider: 폴백 LLM 제공자
-        model: 모델명 (None이면 각 provider 기본값)
+        model: 기본 모델 ID (None이면 설정 기본값)
+        fallback_model: 폴백 모델 ID (None이면 설정 폴백값)
 
     Returns:
         폴백 체인이 적용된 LLM
-
-    Example:
-        >>> llm = create_llm_with_fallback("openai", "google")
-        >>> # OpenAI 실패 시 자동으로 Google 시도
-        >>> result = await llm.ainvoke(messages)
     """
-    primary = create_llm(provider=primary_provider, model=model)
-    fallback = create_llm(provider=fallback_provider)
+    primary = create_llm(model=model or settings.OPENROUTER_MODEL)
+    fallback = create_llm(model=fallback_model or settings.OPENROUTER_FALLBACK_MODEL)
     return primary.with_fallbacks([fallback])
+
+
+@retry(
+    stop=stop_after_attempt(3),
+    wait=wait_exponential(multiplier=1, min=1, max=8),
+    retry=retry_if_exception_type(
+        (ValidationError, OutputParserException, json.JSONDecodeError)
+    ),
+    reraise=True,
+)
+async def ainvoke_structured(chain: Any, payload: dict) -> Any:
+    """구조화 출력 체인을 재시도와 함께 호출
+
+    무료/오픈 모델은 JSON 스키마 준수가 불안정할 수 있어
+    검증 실패 시 지수 백오프로 재시도한다.
+
+    Args:
+        chain: prompt | structured_llm 형태의 Runnable
+        payload: chain.ainvoke에 전달할 입력
+
+    Returns:
+        검증된 Pydantic 결과
+    """
+    return await chain.ainvoke(payload)
 
 
 @retry(
@@ -134,8 +145,5 @@ async def invoke_with_retry(
 
 
 def clear_llm_cache() -> None:
-    """LLM 캐시 초기화
-
-    테스트나 설정 변경 시 사용합니다.
-    """
+    """LLM 캐시 초기화 (테스트나 설정 변경 시 사용)"""
     create_llm.cache_clear()

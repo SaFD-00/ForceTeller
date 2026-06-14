@@ -13,9 +13,8 @@ class LLMClientProtocol(Protocol):
     async def chat(
         self,
         messages: List[Dict[str, str]],
-        response_schema: Optional[Dict] = None,
         **kwargs
-    ) -> Union[str, Dict]:
+    ) -> str:
         """채팅 완료 API 호출"""
         ...
 
@@ -25,6 +24,14 @@ class LLMClientProtocol(Protocol):
         **kwargs
     ) -> AsyncIterator[str]:
         """스트리밍 채팅"""
+        ...
+
+    async def chat_stream_with_reasoning(
+        self,
+        messages: List[Dict[str, str]],
+        **kwargs
+    ) -> AsyncIterator[Dict[str, Any]]:
+        """reasoning/output 분리 스트리밍"""
         ...
 
 
