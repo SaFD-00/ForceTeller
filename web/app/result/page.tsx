@@ -18,6 +18,7 @@ import {
   LuckyGuideCard,
   SchoolComparison,
   FortuneScoreDashboard,
+  LifetimeReport,
 } from '@/components/result';
 import { ChatContainer } from '@/components/chat';
 import type { Element, HiddenStemDisplay, ShenshaDisplay } from '@/types/saju';
@@ -307,6 +308,14 @@ export default function ResultPage() {
   const isStrong = result.strength?.is_strong ?? true;
   const strengthType = result.strength?.type || (isStrong ? '신강' : '신약');
 
+  // 평생운 리포트용 대운 단계 (fortuneItems 재사용)
+  const lifeStages = fortuneItems.map((item) => ({
+    age: item.age,
+    ganji: `${item.heavenly_stem.korean}${item.earthly_branch.korean}`,
+    tenGodGroup: item.ten_god,
+    isCurrent: item.is_current,
+  }));
+
   return (
     <main className="min-h-screen bg-gradient-to-b from-white to-background">
       <div className="flex">
@@ -457,6 +466,14 @@ export default function ResultPage() {
             {/* 세운 (연도별 운세) */}
             {result.sewun && result.sewun.length > 0 && (
               <YearlyFortune sewun={result.sewun} />
+            )}
+
+            {/* 평생운 흐름 (10년 대운 내러티브) */}
+            {lifeStages.length > 0 && (
+              <LifetimeReport
+                stages={lifeStages}
+                overallSummary={result.fortune_scores?.general?.summary}
+              />
             )}
 
             {/* Actions */}
