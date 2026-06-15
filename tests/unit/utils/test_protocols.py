@@ -63,18 +63,14 @@ class TestSessionManagerProtocol:
                hasattr(SessionManagerProtocol, '_is_runtime_protocol')
 
     def test_mock_implements_protocol(self):
-        """Mock 객체가 프로토콜을 구현하는지 확인"""
-        mock_manager = MagicMock()
-        mock_manager.create_session = MagicMock()
-        mock_manager.get_session = MagicMock()
-        mock_manager.delete_session = MagicMock()
-        mock_manager.add_message = MagicMock()
-        mock_manager.get_conversation_history = MagicMock()
-        mock_manager.list_sessions = MagicMock()
-        mock_manager.get_session_count = MagicMock()
-        mock_manager.export_session = MagicMock()
+        """Mock 객체가 프로토콜을 구현하는지 확인 (Python 3.13: spec 필요)"""
+        # 비동기 프로토콜이므로 spec=로 생성해야 isinstance가 성립한다.
+        mock_manager = MagicMock(spec=SessionManagerProtocol)
 
         assert isinstance(mock_manager, SessionManagerProtocol)
+        # save_session 포함 핵심 메서드 노출 확인
+        assert hasattr(mock_manager, 'create_session')
+        assert hasattr(mock_manager, 'save_session')
 
     def test_mock_session_manager_create_session(self):
         """Mock 세션 매니저 create_session 테스트"""

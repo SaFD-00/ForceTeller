@@ -3,6 +3,7 @@
 """
 
 import pytest
+import pytest_asyncio
 import asyncio
 from typing import Dict, Any, List, AsyncGenerator
 from unittest.mock import AsyncMock, MagicMock
@@ -89,6 +90,30 @@ def session_manager():
 def sample_session(session_manager, sample_saju_data):
     """샘플 세션"""
     return session_manager.create_session(sample_saju_data)
+
+
+# ============================================================================
+# DB 영속화 Fixtures (DBSessionManager / SessionRepository 테스트용)
+# ============================================================================
+
+@pytest_asyncio.fixture
+async def db_url(tmp_path):
+    """테스트용 임시 SQLite DB URL (테스트마다 격리)"""
+    return f"sqlite+aiosqlite:///{tmp_path}/test_forceteller.db"
+
+
+@pytest_asyncio.fixture
+async def db_session_manager(db_url):
+    """임시 DB에 스키마를 만들고 DBSessionManager를 제공 (teardown에서 엔진 정리)"""
+    from db.base import configure_engine, dispose_engine, init_models
+    from conversation.db_session_manager import DBSessionManager
+
+    configure_engine(db_url)
+    await init_models()
+    try:
+        yield DBSessionManager(session_ttl_hours=24, max_sessions=100)
+    finally:
+        await dispose_engine()
 
 
 # ============================================================================

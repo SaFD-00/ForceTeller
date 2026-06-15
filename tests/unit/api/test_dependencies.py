@@ -36,16 +36,17 @@ class TestSessionManagerDependency:
         assert sm1 is sm2
         assert isinstance(sm1, SessionManagerProtocol)
 
-    def test_set_session_manager_injects_mock(self):
-        """set_session_manager로 mock을 주입할 수 있는지 확인"""
+    async def test_set_session_manager_injects_mock(self):
+        """set_session_manager로 mock을 주입할 수 있는지 확인 (비동기 프로토콜)"""
         mock_sm = MagicMock(spec=SessionManagerProtocol)
+        # 비동기 프로토콜이라 get_session_count는 AsyncMock으로 생성됨
         mock_sm.get_session_count.return_value = 42
 
         set_session_manager(mock_sm)
         sm = get_session_manager()
 
         assert sm is mock_sm
-        assert sm.get_session_count() == 42
+        assert await sm.get_session_count() == 42
 
     def test_reset_session_manager_clears_instance(self):
         """reset_session_manager가 인스턴스를 초기화하는지 확인"""
@@ -114,9 +115,9 @@ class TestDependencyInjectionPattern:
     def teardown_method(self):
         reset_session_manager()
 
-    def test_mock_session_manager_for_testing(self):
-        """테스트용 mock SessionManager 사용 패턴"""
-        # Mock 세션 매니저 생성
+    async def test_mock_session_manager_for_testing(self):
+        """테스트용 mock SessionManager 사용 패턴 (비동기 프로토콜)"""
+        # Mock 세션 매니저 생성 (create_session/get_session은 AsyncMock)
         mock_sm = MagicMock(spec=SessionManagerProtocol)
 
         # Mock 세션 객체 설정
@@ -132,10 +133,10 @@ class TestDependencyInjectionPattern:
         sm = get_session_manager()
 
         # 테스트
-        new_session = sm.create_session({"test": "data"})
+        new_session = await sm.create_session({"test": "data"})
         assert new_session.session_id == "test-session-123"
 
-        found_session = sm.get_session("test-session-123")
+        found_session = await sm.get_session("test-session-123")
         assert found_session is mock_session
 
         # Mock 호출 검증
