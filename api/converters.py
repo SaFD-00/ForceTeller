@@ -210,6 +210,28 @@ def enrich_with_analysis(result_dict: Dict[str, Any]) -> Dict[str, Any]:
     except Exception:
         pass
 
+    # 운세 유형별 점수 (종합/직업/재물/건강/애정)
+    try:
+        from manseol.analysis import analyze_all_fortunes
+
+        fortunes = analyze_all_fortunes(analysis_data)
+        fortune_scores = {}
+        for ftype, fa in fortunes.items():
+            key = ftype.value if hasattr(ftype, "value") else str(ftype)
+            fortune_scores[key] = {
+                "score": fa.score,
+                "summary": fa.summary,
+                "positive": fa.details.positive,
+                "negative": fa.details.negative,
+                "advice": fa.details.advice,
+                "lucky_colors": fa.lucky_elements.colors,
+                "lucky_numbers": fa.lucky_elements.numbers,
+                "lucky_directions": fa.lucky_elements.directions,
+            }
+        enriched["fortune_scores"] = fortune_scores
+    except Exception:
+        pass
+
     return enriched
 
 

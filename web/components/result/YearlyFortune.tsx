@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Icon, GlassCard } from '@/components/ui';
+import { Icon, GlassCard, GlossaryTooltip } from '@/components/ui';
 import { ELEMENT_COLORS } from '@/lib/constants/elements';
 import type { Element, SewunItem } from '@/types/saju';
 
@@ -61,8 +61,12 @@ export function YearlyFortune({ sewun }: YearlyFortuneProps) {
                 >
                   <span className={`text-lg font-bold ${color.text}`}>{item.ganji_korean}</span>
                 </div>
-                <p className="text-xs font-medium text-foreground">{item.ten_god}</p>
-                <p className="text-[11px] text-muted-foreground">{item.twelve_phase}</p>
+                <p className="text-xs font-medium text-foreground">
+                  <GlossaryTooltip term={item.ten_god}>{item.ten_god}</GlossaryTooltip>
+                </p>
+                <p className="text-[11px] text-muted-foreground">
+                  <GlossaryTooltip term={item.twelve_phase}>{item.twelve_phase}</GlossaryTooltip>
+                </p>
               </div>
             );
           })}

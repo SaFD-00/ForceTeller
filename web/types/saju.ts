@@ -188,6 +188,20 @@ export interface YongsinRecommendations {
   secondary_element?: YongsinElementGuide;
 }
 
+// 운세 유형별 점수
+export interface FortuneScoreItem {
+  score: number;
+  summary: string;
+  positive: string[];
+  negative: string[];
+  advice: string[];
+  lucky_colors: string[];
+  lucky_numbers: number[];
+  lucky_directions: string[];
+}
+
+export type FortuneScores = Record<string, FortuneScoreItem>;
+
 // 용신 4방법 비교 (강약/조후/통관/병약)
 export interface YongsinComparison {
   results: Record<string, Record<string, unknown>>;
@@ -247,6 +261,7 @@ export interface SajuResult {
   yongsin_comparison?: YongsinComparison;
   yongsin_recommendations?: YongsinRecommendations;
   school_comparison?: SchoolComparisonResult;
+  fortune_scores?: FortuneScores;
 }
 
 // API 요청/응답 타입
@@ -404,6 +419,7 @@ export interface SajuResultDisplay {
   yongsin_comparison?: YongsinComparison;
   yongsin_recommendations?: YongsinRecommendations;
   school_comparison?: SchoolComparisonResult;
+  fortune_scores?: FortuneScores;
 }
 
 // 유틸리티: 백엔드 응답을 프론트엔드 타입으로 변환하는 함수 타입

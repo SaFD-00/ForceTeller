@@ -17,6 +17,7 @@ import {
   YearlyFortune,
   LuckyGuideCard,
   SchoolComparison,
+  FortuneScoreDashboard,
 } from '@/components/result';
 import { ChatContainer } from '@/components/chat';
 import type { Element, HiddenStemDisplay, ShenshaDisplay } from '@/types/saju';
@@ -405,6 +406,11 @@ export default function ResultPage() {
               distribution={elementDistribution}
               dayStemKorean={result.four_pillars.day.heavenly_stem.korean}
             />
+
+            {/* 운세 유형별 점수 */}
+            {result.fortune_scores && (
+              <FortuneScoreDashboard scores={result.fortune_scores} />
+            )}
 
             {/* 용신 */}
             {result.five_elements.yongshin && (

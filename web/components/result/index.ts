@@ -15,3 +15,4 @@ export { ElementDistribution } from './ElementDistribution';
 export { YearlyFortune } from './YearlyFortune';
 export { LuckyGuideCard } from './LuckyGuideCard';
 export { SchoolComparison } from './SchoolComparison';
+export { FortuneScoreDashboard } from './FortuneScoreDashboard';
