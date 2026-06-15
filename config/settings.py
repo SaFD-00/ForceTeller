@@ -53,6 +53,12 @@ class Settings(BaseSettings):
     DEBUG: bool = False
     CORS_ORIGINS: str = "*"  # 콤마로 구분된 도메인 목록 (예: "https://example.com,https://app.example.com")
 
+    # ===================
+    # DB 영속화 (Postgres 배포 + SQLite 로컬, SQLAlchemy 추상화)
+    # ===================
+    # 미설정 시 로컬 SQLite 파일. 배포 시 "postgresql+asyncpg://user:pass@host/db" 주입.
+    DATABASE_URL: str = "sqlite+aiosqlite:///./forceteller.db"
+
     # 세션 설정
     SESSION_MAX_HISTORY: int = 20
     SESSION_TIMEOUT_MINUTES: int = 60

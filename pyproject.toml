@@ -34,6 +34,12 @@ dependencies = [
     "aiofiles>=23.0",
     # 도시 데이터
     "geonamescache>=2.0.0",
+    # DB 영속화 (Postgres 배포 + SQLite 로컬, 동일 코드)
+    "sqlalchemy>=2.0",
+    "greenlet>=3.0",  # SQLAlchemy async(run_sync)에 필요
+    "alembic>=1.13",
+    "asyncpg>=0.29",
+    "aiosqlite>=0.20",
     # 기타
     "python-dotenv>=1.0",
 ]

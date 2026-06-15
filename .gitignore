@@ -73,6 +73,12 @@ yarn-error.log*
 *.log
 logs/
 
+# Local databases (SQLite)
+*.db
+*.sqlite
+*.sqlite3
+/forceteller.db
+
 # Docker
 .docker/
 
