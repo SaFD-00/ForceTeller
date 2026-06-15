@@ -37,9 +37,9 @@ class LLMClientProtocol(Protocol):
 
 @runtime_checkable
 class SessionManagerProtocol(Protocol):
-    """세션 매니저 프로토콜"""
+    """세션 매니저 프로토콜 (DB 영속화: 비동기)"""
 
-    def create_session(
+    async def create_session(
         self,
         saju_data: Dict[str, Any],
         metadata: Optional[Dict] = None
@@ -47,15 +47,19 @@ class SessionManagerProtocol(Protocol):
         """세션 생성"""
         ...
 
-    def get_session(self, session_id: str) -> Optional[Any]:
+    async def get_session(self, session_id: str) -> Optional[Any]:
         """세션 조회"""
         ...
 
-    def delete_session(self, session_id: str) -> bool:
+    async def save_session(self, session: Any) -> None:
+        """변형된 세션 영속 (명시적 flush)"""
+        ...
+
+    async def delete_session(self, session_id: str) -> bool:
         """세션 삭제"""
         ...
 
-    def add_message(
+    async def add_message(
         self,
         session_id: str,
         role: str,
@@ -65,7 +69,7 @@ class SessionManagerProtocol(Protocol):
         """세션에 메시지 추가"""
         ...
 
-    def get_conversation_history(
+    async def get_conversation_history(
         self,
         session_id: str,
         limit: int = 10
@@ -73,14 +77,14 @@ class SessionManagerProtocol(Protocol):
         """대화 이력 조회"""
         ...
 
-    def list_sessions(self) -> List[Dict]:
+    async def list_sessions(self) -> List[Dict]:
         """세션 목록 조회"""
         ...
 
-    def get_session_count(self) -> int:
+    async def get_session_count(self) -> int:
         """세션 수 조회"""
         ...
 
-    def export_session(self, session_id: str) -> Optional[Dict[str, Any]]:
+    async def export_session(self, session_id: str) -> Optional[Dict[str, Any]]:
         """세션 데이터 내보내기"""
         ...
