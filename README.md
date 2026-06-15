@@ -79,8 +79,17 @@ ForceTeller는 정확한 만세력 계산과 AI 해석을 결합한 사주팔자
 │       └── system_prompts.py     # LLM 시스템 프롬프트
 │
 ├── conversation/                 # 세션 관리
-│   ├── session_manager.py        # 멀티턴 세션 핸들링
+│   ├── session_manager.py        # Session/Message dataclass + 인메모리 매니저(레거시)
+│   ├── db_session_manager.py     # DB 백엔드 세션 매니저 (영속화, async)
 │   └── context_builder.py        # 대화 컨텍스트
+│
+├── db/                           # DB 영속화 (SQLAlchemy 2.0 async)
+│   ├── base.py                   # 비동기 엔진·세션 팩토리·Base
+│   ├── models.py                 # SessionORM, MessageORM
+│   └── repository.py             # SessionRepository (async CRUD)
+│
+├── migrations/                   # Alembic 마이그레이션 (env.py 비동기)
+│   └── versions/                 # 0001_initial.py …
 │
 ├── config/                       # 설정
 │   ├── settings.py               # Pydantic 환경 설정
@@ -248,6 +257,9 @@ uv sync
 cp .env.example .env
 # .env 파일 편집 (API 키 설정)
 
+# DB 마이그레이션 (스키마 생성). DATABASE_URL 미설정 시 로컬 SQLite(./forceteller.db) 사용
+uv run alembic upgrade head
+
 # 서버 실행 (uv run은 .venv를 자동 활성화)
 uv run python -m api.server
 # 또는
@@ -255,6 +267,11 @@ uv run uvicorn api.server:app --reload --host 0.0.0.0 --port 8000
 ```
 
 > `uv sync`가 프로젝트 루트에 `.venv`를 생성합니다. 셸에서 직접 활성화하려면 `source .venv/bin/activate`를 사용하세요.
+>
+> **DB 영속화**: 세션·대화·사주결과가 DB에 영속되어 서버 재시작에도 유지됩니다.
+> 로컬은 SQLite(기본), 배포는 `DATABASE_URL`에 PostgreSQL을 주입하세요
+> (`postgresql+asyncpg://user:pass@host:5432/db`). 서버 기동 시 누락 테이블은 자동 생성되며,
+> 스키마 변경 이력 관리는 Alembic(`alembic upgrade head` / `alembic revision --autogenerate`)을 사용합니다.
 
 ### 개발 (테스트·코드 품질)
 
@@ -385,9 +402,12 @@ API_HOST=0.0.0.0
 API_PORT=8000
 DEBUG=false
 
+# DB 영속화 (선택) — 미설정 시 로컬 SQLite. 배포 시 PostgreSQL 주입
+# DATABASE_URL=postgresql+asyncpg://user:password@host:5432/forceteller
+
 # 세션 설정
 SESSION_MAX_HISTORY=20
-SESSION_TIMEOUT_MINUTES=60
+SESSION_TIMEOUT_MINUTES=60   # 세션 TTL(분). 경과 시 조회 불가·정리
 
 # 만세력 설정
 DEFAULT_CITY=Seoul
@@ -472,13 +492,14 @@ NEXT_PUBLIC_API_URL=http://localhost:8000
 ### 배포 아키텍처
 
 ```
-[사용자] → [Vercel (Next.js)] → [Railway (FastAPI)]
+[사용자] → [Vercel (Next.js)] → [Railway (FastAPI)] → [OpenRouter API]
                                       ↓
-                                [OpenRouter API]
+                                [PostgreSQL (Railway)]  ← 세션·대화 영속화
 ```
 
 - **프론트엔드**: Vercel (Next.js 최적화, 무료 티어)
 - **백엔드**: Railway (월 $5 크레딧 무료)
+- **DB**: Railway 관리형 PostgreSQL (세션·대화 영속). Docker 기동 시 `alembic upgrade head` 자동 실행.
 
 ### 1단계: GitHub 레포지토리 준비
 
@@ -498,14 +519,20 @@ git push -u origin main
 4. Settings에서 설정:
    - **Root Directory**: 프로젝트 루트 경로
    - **Build Command**: 자동 감지 (Dockerfile 사용)
-5. Variables 탭에서 환경 변수 추가:
+5. **PostgreSQL 추가**: 프로젝트에서 **New** → **Database** → **Add PostgreSQL**.
+   생성되면 같은 프로젝트의 서비스에서 `DATABASE_URL`을 참조할 수 있습니다.
+6. Variables 탭에서 환경 변수 추가:
    ```
    OPENROUTER_API_KEY=sk-or-v1-...
    OPENROUTER_MODEL=openai/gpt-oss-120b:free
    CORS_ORIGINS=https://your-app.vercel.app
+   # PostgreSQL 플러그인의 연결 문자열을 asyncpg 드라이버 형식으로 지정
+   DATABASE_URL=postgresql+asyncpg://${{Postgres.PGUSER}}:${{Postgres.PGPASSWORD}}@${{Postgres.PGHOST}}:${{Postgres.PGPORT}}/${{Postgres.PGDATABASE}}
    ```
-6. Settings → Networking → **Generate Domain** 클릭
-7. 생성된 도메인 복사 (예: `forceteller-xxx.railway.app`)
+   > Railway 기본 `DATABASE_URL`은 `postgresql://` 스킴이라 그대로 쓰면 동기 드라이버를 찾습니다.
+   > 반드시 `postgresql+asyncpg://` 형식으로 지정하세요. 컨테이너 기동 시 `alembic upgrade head`가 자동 실행됩니다.
+7. Settings → Networking → **Generate Domain** 클릭
+8. 생성된 도메인 복사 (예: `forceteller-xxx.railway.app`)
 
 ### 3단계: Vercel 프론트엔드 배포
 

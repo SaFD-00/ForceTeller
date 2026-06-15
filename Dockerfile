@@ -25,5 +25,6 @@ ENV PATH="/app/.venv/bin:$PATH"
 # 포트 노출
 EXPOSE 8000
 
-# 서버 실행
-CMD ["uvicorn", "api.server:app", "--host", "0.0.0.0", "--port", "8000"]
+# 서버 실행: 먼저 DB 마이그레이션(alembic) 적용 후 uvicorn 기동
+# (DATABASE_URL 미설정 시 로컬 SQLite, 배포 시 PostgreSQL을 환경변수로 주입)
+CMD ["sh", "-c", "alembic upgrade head && uvicorn api.server:app --host 0.0.0.0 --port 8000"]

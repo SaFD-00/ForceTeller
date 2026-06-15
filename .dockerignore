@@ -25,6 +25,11 @@ __pycache__/
 *.swp
 *.swo
 
+# 로컬 DB (SQLite) — 이미지에 굽지 않음
+*.db
+*.sqlite
+*.sqlite3
+
 # 기타
 *.md
 !README.md

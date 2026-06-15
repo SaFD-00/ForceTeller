@@ -161,6 +161,41 @@ web/
     └── api/          # API 클라이언트
 ```
 
+### 5. Persistence Layer (`db/`)
+
+SQLAlchemy 2.0 비동기 기반 영속화 계층입니다. 세션·대화·사주결과가
+서버 재시작과 TTL을 넘어 유지됩니다.
+
+```
+db/
+├── base.py        # 비동기 엔진·async_sessionmaker·Base·init_models
+├── models.py      # SessionORM, MessageORM (JSON 컬럼, PG=JSONB variant)
+└── repository.py  # SessionRepository (async CRUD, dataclass↔ORM 변환)
+
+conversation/
+└── db_session_manager.py  # DBSessionManager (SessionManagerProtocol async 구현)
+
+migrations/        # Alembic (env.py 비동기, versions/0001_initial.py)
+```
+
+**Key Design:**
+- **DB 단일 진실원천**: 인메모리 캐시 없음. 엔드포인트가 받은 `Session` 객체를 직접 변형한 뒤
+  `await sm.save_session(session)`로 명시적 flush 해야 영속된다(chat 3곳·analysis 1곳).
+- **Postgres(배포) + SQLite(로컬) 동일 코드**: `settings.DATABASE_URL`로 전환
+  (`sqlite+aiosqlite:///...` / `postgresql+asyncpg://...`). JSON 컬럼은 PG에서 JSONB variant.
+- **`Session`/`Message` dataclass 유지**: `conversation.context_builder`·프롬프트 빌드는 무변경.
+  `DBSessionManager`는 DB row ↔ dataclass 변환만 담당.
+- **스키마**: `sessions`(session_id PK, saju_data/interpretation_cache/metadata JSON, created_at, last_activity 인덱스),
+  `messages`(id PK, session_id FK ON DELETE CASCADE, seq, role, content, metadata, timestamp).
+- **마이그레이션**: 운영은 Alembic(`alembic upgrade head`, Docker CMD에 포함)이 진실원천.
+  `init_models()`(create_all)는 로컬·테스트 부트스트랩용.
+
+```
+api/routes/{chat,analysis}  --await-->  DBSessionManager  -->  SessionRepository
+                                                                     |
+                                              SQLAlchemy async (asyncpg / aiosqlite)
+```
+
 ## Data Flow
 
 ### 1. Saju Calculation Flow
@@ -288,6 +323,8 @@ def create_llm(model: str | None = None, temperature: float = 0.7) -> BaseChatMo
 
 ### Future Architecture (Multi-Instance)
 
+세션이 DB에 영속되므로(무상태 API), 다중 인스턴스로 수평 확장이 가능합니다.
+
 ```
                     +-------------+
                     | Load Balancer|
@@ -302,9 +339,10 @@ def create_llm(model: str | None = None, temperature: float = 0.7) -> BaseChatMo
            +---------------+---------------+
                            |
                     +------+------+
-                    |   Redis     |
-                    | (Sessions)  |
+                    | PostgreSQL  |
+                    | (Sessions)  |   ← 영속화 (현재 토대 구축 완료)
                     +-------------+
+                    (+ Redis 캐시는 후속 선택)
 ```
 
 ## Security Considerations
@@ -322,6 +360,8 @@ def create_llm(model: str | None = None, temperature: float = 0.7) -> BaseChatMo
 - LangGraph 0.x
 - LangChain 0.3+
 - PyEphem 4.1+
+- SQLAlchemy 2.0+ (async) · Alembic 1.13+
+- asyncpg (PostgreSQL) · aiosqlite (SQLite) · greenlet
 
 ### Frontend
 - Node.js 18+
