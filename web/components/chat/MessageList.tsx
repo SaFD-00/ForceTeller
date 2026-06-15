@@ -25,11 +25,23 @@ export function MessageList({
   isReasoningComplete = false,
   onSuggestedQuestionClick,
 }: MessageListProps) {
-  const bottomRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  // 사용자가 답변 생성 영역(스크롤 하단)에 있는지 추적
+  const isAtBottomRef = useRef(true);
 
-  // 메시지, reasoning, 또는 streamingOutput 변경 시 스크롤
+  const handleScroll = () => {
+    const container = containerRef.current;
+    if (!container) return;
+    isAtBottomRef.current =
+      container.scrollHeight - container.scrollTop - container.clientHeight < 80;
+  };
+
+  // 메시지/reasoning/streamingOutput 변경 시, 사용자가 생성 영역(하단)에 있을 때만 컨테이너 내부만 스크롤
+  // (scrollIntoView는 페이지 전체 등 모든 스크롤 조상을 함께 움직여 다른 창까지 끌려 내려감)
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (!isAtBottomRef.current) return;
+    const container = containerRef.current;
+    if (container) container.scrollTop = container.scrollHeight;
   }, [messages, reasoning, streamingOutput]);
 
   if (messages.length === 0 && !isLoading) {
@@ -45,7 +57,11 @@ export function MessageList({
   }
 
   return (
-    <div className="flex-1 overflow-y-auto p-4 space-y-4">
+    <div
+      ref={containerRef}
+      onScroll={handleScroll}
+      className="flex-1 overflow-y-auto p-4 space-y-4"
+    >
       {messages.map((message, index) => (
         <MessageBubble
           key={index}
@@ -100,8 +116,6 @@ export function MessageList({
           </div>
         </div>
       )}
-
-      <div ref={bottomRef} />
     </div>
   );
 }
