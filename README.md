@@ -213,7 +213,19 @@ ForceTeller는 정확한 만세력 계산과 AI 해석을 결합한 사주팔자
 - 세션 기반 컨텍스트 유지
 - 사주 데이터 기반 맞춤 해석
 - 후속 질문 자동 추천
+- 스트리밍 응답에 **에이전트별 전문 프롬프트 라우팅**(focus 지정 시 해당 에이전트, 없으면 RouterDecision 자동 선택)과 **출처·신뢰도 배지** 노출
+- 모든 해석 하단에 **면책 고지(Disclaimer)** 상시 표시 (참고용 콘텐츠 안내)
 - OpenRouter 6개 모델 지원 (gpt-oss / gemma-4 / deepseek-v4)
+
+### 6. 결과 노출 (Phase 1 배선)
+계산 엔진에 구현돼 있던 자산을 결과/응답에 노출:
+- **합·충·형·파·해·공망** 상호작용 (천간합/충극, 지지 육합·삼합·방합·반합, 충/형/파/해, 공망)
+- **세운(연운)**: 올해부터 향후 6년간 연도별 운세(간지·십성·12운성)
+- **용신 4방법 비교**(강약/조후/통관/병약) + **개운법**(색/방위/직업/활동/생활습관)
+- **5학파 비교 해석** + 학파 일치도(신뢰도) 배지
+- **운세 유형별 점수**(종합/직업/재물/건강/애정) 대시보드
+- **평생운 흐름**(10년 대운 내러티브) 리포트
+- 출생시간 **시간 미상(時不知)** 입력 지원
 
 ## 시작하기
 
@@ -296,7 +308,7 @@ uv run python main.py info
 
 | 메서드 | 경로 | 설명 |
 |--------|------|------|
-| POST | `/api/manseol` | 사주 계산 |
+| POST | `/api/manseol` | 사주 계산 (응답 `data`에 interactions·sewun·yongsin_comparison·yongsin_recommendations·school_comparison·fortune_scores 포함) |
 | POST | `/api/manseol/quick` | 빠른 계산 |
 | GET | `/api/manseol/cities` | 도시 목록 |
 | GET | `/api/manseol/city/{name}` | 도시 정보 |
@@ -400,7 +412,12 @@ NEXT_PUBLIC_API_URL=http://localhost:8000
 
 ## 프론트엔드 컴포넌트
 
-### 결과 표시 컴포넌트 (14개)
+### 결과 표시 컴포넌트
+- `YearlyFortune` - 세운(연도별 운세) 카드
+- `LuckyGuideCard` - 용신 개운법(색/방위/직업/생활)
+- `SchoolComparison` - 5학파 일치도·비교 탭
+- `FortuneScoreDashboard` - 운세 유형별 점수
+- `LifetimeReport` - 평생운(10년 대운) 내러티브
 - `FourPillarsDisplay` - 사주팔자 시각화
 - `PillarCard`, `PillarTable` - 주별 카드/테이블
 - `PentagonChart` - 오각형 강도 차트
@@ -432,6 +449,7 @@ NEXT_PUBLIC_API_URL=http://localhost:8000
 - `Icon` - 아이콘 래퍼
 - `ElementBadge` - 오행 배지
 - `GlossaryTooltip`, `GlossaryModal` - 용어 설명
+- `Disclaimer` - 면책 고지 (결과·채팅 하단 상시)
 - `LoadingOverlay` - 로딩 상태
 
 > UI 테마: FigureLabs 스타일 라이트·미니멀 디자인 (흰 배경 + 바이올렛 포인트).

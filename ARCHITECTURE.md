@@ -137,9 +137,12 @@ api/
 ```
 
 **Endpoints:**
-- `POST /api/manseol` - 사주 계산
+- `POST /api/manseol` - 사주 계산 (`api/converters.py:enrich_with_analysis`로 용신 4방법·개운법·5학파·운세점수를 응답에 보강. interactions·sewun은 json_exporter가 직접 산출)
 - `POST /api/chat` - AI 대화
+- `POST /api/chat/stream` - 스트리밍 대화 (focus 지정 시 에이전트별 프롬프트, 없으면 `agents.nodes.route_question`의 RouterDecision 라우팅 → `agent_selected` SSE 이벤트로 출처·신뢰도 전달)
 - `POST /api/analysis` - 상세 분석
+
+> **계산 vs 분석 분리:** 결정론 계산(사주팔자·상호작용·세운)은 `manseol/output/json_exporter.py`에서, 해석 라이브러리(용신·유파·운세) 조립은 API 계층의 `enrich_with_analysis`에서 `SajuDataConverter.to_analysis_format` 입력으로 수행한다. `/api/manseol` 응답 `data`는 `Dict`이므로 스키마 변경 없이 키를 주입해 노출한다.
 
 ### 4. Frontend (`web/`)
 
