@@ -135,7 +135,7 @@ async def analyze(
         # 세션 처리
         if request.session_id:
             # 기존 세션 사용
-            session = sm.get_session(request.session_id)
+            session = await sm.get_session(request.session_id)
             if not session:
                 raise HTTPException(
                     status_code=404,
@@ -148,7 +148,7 @@ async def analyze(
                     status_code=400,
                     detail="새 세션 생성시 saju_data가 필요합니다."
                 )
-            session = sm.create_session(request.saju_data)
+            session = await sm.create_session(request.saju_data)
 
         # 분석 함수용 형식으로 변환
         saju_data = SajuDataConverter.to_analysis_format(session.saju_data)
@@ -311,6 +311,8 @@ async def analyze(
         if request.message:
             session.add_user_message(request.message)
             session.add_assistant_message(message)
+            # 변형된 세션 영속 (명시적 flush)
+            await sm.save_session(session)
 
         return AnalysisResponse(
             success=True,

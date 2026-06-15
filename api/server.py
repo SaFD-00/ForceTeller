@@ -12,6 +12,7 @@ import uvicorn
 from api.schemas import HealthResponse, ErrorResponse
 from api.routes import manseol_router, chat_router, analysis_router
 from config.settings import settings
+from db.base import dispose_engine, init_models
 
 
 @asynccontextmanager
@@ -19,9 +20,13 @@ async def lifespan(app: FastAPI):
     """애플리케이션 생명주기 관리"""
     # 시작시 실행
     print(f"🔮 ForceTeller API 서버 시작")
+    # DB 스키마 부트스트랩 (없는 테이블만 생성). 운영 마이그레이션은 Alembic 사용.
+    await init_models()
+    print(f"🗄️  DB 준비 완료: {settings.DATABASE_URL.split('://', 1)[0]}")
     print(f"📍 API 문서: http://{settings.API_HOST}:{settings.API_PORT}/docs")
     yield
     # 종료시 실행
+    await dispose_engine()
     print("👋 ForceTeller API 서버 종료")
 
 

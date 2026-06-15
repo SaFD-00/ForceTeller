@@ -60,7 +60,7 @@ async def chat(
         # 세션 처리
         if request.session_id:
             # 기존 세션 사용
-            session = sm.get_session(request.session_id)
+            session = await sm.get_session(request.session_id)
             if not session:
                 raise HTTPException(
                     status_code=404,
@@ -73,7 +73,7 @@ async def chat(
                     status_code=400,
                     detail="새 세션 생성시 saju_data가 필요합니다."
                 )
-            session = sm.create_session(request.saju_data)
+            session = await sm.create_session(request.saju_data)
 
         # 사용자 메시지 기록
         session.add_user_message(request.message)
@@ -115,6 +115,9 @@ async def chat(
         # 어시스턴트 메시지 기록
         session.add_assistant_message(result_message)
 
+        # 변형된 세션 영속 (명시적 flush)
+        await sm.save_session(session)
+
         return ChatResponse(
             success=True,
             session_id=session.session_id,
@@ -140,7 +143,7 @@ async def list_sessions(
     sm: SessionManagerProtocol = Depends(get_session_manager)
 ) -> SessionListResponse:
     """세션 목록 조회"""
-    sessions = sm.list_sessions()
+    sessions = await sm.list_sessions()
 
     return SessionListResponse(
         success=True,
@@ -160,7 +163,7 @@ async def get_session(
     sm: SessionManagerProtocol = Depends(get_session_manager)
 ) -> SessionDetailResponse:
     """세션 상세 조회"""
-    session_data = sm.export_session(session_id)
+    session_data = await sm.export_session(session_id)
 
     if not session_data:
         raise HTTPException(
@@ -184,7 +187,7 @@ async def delete_session(
     sm: SessionManagerProtocol = Depends(get_session_manager)
 ):
     """세션 삭제"""
-    success = sm.delete_session(session_id)
+    success = await sm.delete_session(session_id)
 
     if not success:
         raise HTTPException(
@@ -205,7 +208,7 @@ async def clear_session_history(
     sm: SessionManagerProtocol = Depends(get_session_manager)
 ):
     """세션 대화 기록 초기화"""
-    session = sm.get_session(session_id)
+    session = await sm.get_session(session_id)
 
     if not session:
         raise HTTPException(
@@ -215,6 +218,9 @@ async def clear_session_history(
 
     session.messages.clear()
     session.interpretation_cache.clear()
+
+    # 초기화된 상태 영속 (명시적 flush)
+    await sm.save_session(session)
 
     return {"success": True, "message": "대화 기록이 초기화되었습니다."}
 
@@ -241,7 +247,7 @@ async def chat_stream(
         try:
             # 세션 처리
             if request.session_id:
-                session = sm.get_session(request.session_id)
+                session = await sm.get_session(request.session_id)
                 if not session:
                     yield f"data: {json.dumps({'type': 'error', 'content': '세션을 찾을 수 없습니다.'})}\n\n"
                     return
@@ -249,7 +255,7 @@ async def chat_stream(
                 if not request.saju_data:
                     yield f"data: {json.dumps({'type': 'error', 'content': '새 세션 생성시 saju_data가 필요합니다.'})}\n\n"
                     return
-                session = sm.create_session(request.saju_data)
+                session = await sm.create_session(request.saju_data)
 
             # 세션 ID 먼저 전송
             yield f"data: {json.dumps({'type': 'session', 'content': session.session_id})}\n\n"
@@ -381,6 +387,9 @@ async def chat_stream(
             if full_output:
                 session.add_user_message(request.message)
                 session.add_assistant_message(full_output)
+
+                # 변형된 세션 영속 (명시적 flush)
+                await sm.save_session(session)
 
                 # 추천 질문 생성 및 전송
                 suggested_questions = SuggestedQuestionsGenerator.from_context(request.message, full_output)

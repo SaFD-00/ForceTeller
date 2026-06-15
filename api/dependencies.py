@@ -3,29 +3,29 @@ API 의존성 모듈
 FastAPI Depends 패턴을 위한 의존성 팩토리
 """
 
-from functools import lru_cache
 from typing import Optional
 
-from conversation.session_manager import SessionManager
+from conversation.db_session_manager import DBSessionManager
 from agents.orchestrator import Orchestrator
 from utils.llm_client import OpenRouterClient
 from utils.protocols import SessionManagerProtocol, LLMClientProtocol
 
 
 # 싱글톤 인스턴스 (내부 사용)
-_session_manager_instance: Optional[SessionManager] = None
+_session_manager_instance: Optional[SessionManagerProtocol] = None
 
 
 def get_session_manager() -> SessionManagerProtocol:
     """
     세션 매니저 싱글톤 의존성
 
-    전체 애플리케이션에서 단일 SessionManager 인스턴스를 공유합니다.
+    전체 애플리케이션에서 단일 DBSessionManager 인스턴스를 공유합니다.
+    DBSessionManager는 무상태(요청마다 DB 세션을 열어 사용)이므로 싱글톤이 안전합니다.
     테스트 시에는 set_session_manager()로 mock을 주입할 수 있습니다.
     """
     global _session_manager_instance
     if _session_manager_instance is None:
-        _session_manager_instance = SessionManager()
+        _session_manager_instance = DBSessionManager()
     return _session_manager_instance
 
 
