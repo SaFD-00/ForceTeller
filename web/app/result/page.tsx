@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSajuStore } from '@/stores/sajuStore';
-import { Button, Icon, GlassCard } from '@/components/ui';
+import { Button, Icon, GlassCard, Disclaimer } from '@/components/ui';
 import {
   PillarTable,
   InteractionsTabs,
@@ -479,6 +479,9 @@ export default function ResultPage() {
                 다시 분석하기
               </Button>
             </motion.div>
+
+            {/* 면책 고지 */}
+            <Disclaimer className="mt-8" />
           </div>
         </div>
 

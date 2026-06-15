@@ -5,7 +5,7 @@ import { AgentSelector } from './AgentSelector';
 import { MessageList } from './MessageList';
 import { ChatInput } from './ChatInput';
 import { SuggestedQuestions } from './SuggestedQuestions';
-import { GlassCard } from '@/components/ui';
+import { GlassCard, Disclaimer } from '@/components/ui';
 import { sendChatMessage, streamChatMessage } from '@/lib/api/chat';
 import { useSajuStore, useChatStore } from '@/stores/sajuStore';
 import type { AgentType, ChatMessage, Element } from '@/types/saju';
@@ -357,6 +357,7 @@ export function ChatContainer() {
         disabled={isLoading || !result}
         placeholder={result ? '사주에 대해 질문하세요...' : '먼저 사주 분석을 진행해주세요'}
       />
+      <Disclaimer className="m-2 mt-0 border-0 bg-transparent px-2 py-1" />
     </GlassCard>
   );
 }
