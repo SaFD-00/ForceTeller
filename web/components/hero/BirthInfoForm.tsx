@@ -38,6 +38,7 @@ export function BirthInfoForm() {
   const [showCityDropdown, setShowCityDropdown] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [timeUnknown, setTimeUnknown] = useState(false);
 
   // Debounce search query
   const debouncedQuery = useDebounce(cityQuery, 300);
@@ -75,6 +76,16 @@ export function BirthInfoForm() {
 
     if (!formData.birth_date) {
       newErrors.birth_date = '생년월일을 입력해주세요';
+    } else {
+      // 생년월일 범위 가드 (미래/과도하게 과거 차단)
+      const birth = new Date(formData.birth_date);
+      const today = new Date();
+      const minDate = new Date('1900-01-01');
+      if (birth > today) {
+        newErrors.birth_date = '미래 날짜는 입력할 수 없습니다';
+      } else if (birth < minDate) {
+        newErrors.birth_date = '1900년 이후 날짜를 입력해주세요';
+      }
     }
 
     if (!formData.city) {
@@ -147,14 +158,40 @@ export function BirthInfoForm() {
           />
 
           {/* Birth Time (Optional) */}
-          <Input
-            label="출생시간"
-            type="time"
-            value={formData.birth_time}
-            onChange={(e) =>
-              setFormData((prev) => ({ ...prev, birth_time: e.target.value }))
-            }
-          />
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-sm font-medium text-foreground">출생시간</label>
+              <label className="flex items-center gap-1.5 text-sm text-muted-foreground cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={timeUnknown}
+                  onChange={(e) => {
+                    const checked = e.target.checked;
+                    setTimeUnknown(checked);
+                    if (checked) {
+                      setFormData((prev) => ({ ...prev, birth_time: '' }));
+                    }
+                  }}
+                  className="accent-primary"
+                />
+                시간 모름 (時不知)
+              </label>
+            </div>
+            <Input
+              type="time"
+              value={formData.birth_time}
+              disabled={timeUnknown}
+              className={timeUnknown ? 'opacity-50 cursor-not-allowed' : ''}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, birth_time: e.target.value }))
+              }
+            />
+            <p className="mt-1 text-xs text-muted-foreground">
+              {timeUnknown
+                ? '시주(時柱) 없이 분석합니다. 시간 관련 해석의 정확도는 낮아질 수 있어요.'
+                : '정확한 출생시각은 사주 정확도를 크게 높입니다. 해외 출생·서머타임은 도시 기준으로 자동 보정됩니다.'}
+            </p>
+          </div>
 
           {/* City Autocomplete */}
           <div className="relative">

@@ -143,7 +143,11 @@ class TenGodsCalculator:
         """
         result = {}
 
-        for pillar_name, (stem_idx, branch_idx) in pillars.items():
+        for pillar_name, pillar in pillars.items():
+            # 시간 미상 등으로 비어 있는 주는 건너뛴다
+            if pillar is None:
+                continue
+            stem_idx, branch_idx = pillar
             if pillar_name == "day":
                 # 일간은 십성 계산 안 함 (기준점)
                 result[pillar_name] = {
