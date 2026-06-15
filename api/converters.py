@@ -97,6 +97,11 @@ class SajuDataConverter:
         day_pillar = pillars.get("day", {})
         day_stem = day_pillar.get("stem", {}) if isinstance(day_pillar, dict) else {}
         stem_element = day_stem.get("element", "목") if isinstance(day_stem, dict) else "목"
+        # 원본 천간 오행은 영문(wood/fire/...)일 수 있어 분석 라이브러리가 쓰는 한글로 정규화
+        element_to_korean = {
+            "wood": "목", "fire": "화", "earth": "토", "metal": "금", "water": "수",
+        }
+        stem_element = element_to_korean.get(stem_element, stem_element)
 
         # 오행 분포
         five_elements = analysis.get("five_elements", {}) if isinstance(analysis, dict) else {}
@@ -156,6 +161,52 @@ def enrich_with_analysis(result_dict: Dict[str, Any]) -> Dict[str, Any]:
         enriched["yongsin_recommendations"] = generate_detailed_recommendations(
             yongsin_result
         )
+    except Exception:
+        pass
+
+    # 5학파 비교 + 일치도(신뢰도)
+    try:
+        from manseol.analysis import compare_schools
+
+        sc = compare_schools(analysis_data)
+        total = len(sc.schools) or 1
+        consensus = [
+            {
+                "category": c.category,
+                "agreement": c.agreement,
+                "schools": [s.value for s in c.schools],
+            }
+            for c in sc.consensus
+        ]
+        # 일치도: 합의 항목 중 가장 많은 유파가 동의한 비율
+        confidence = max((len(c["schools"]) / total for c in consensus), default=0.0)
+        enriched["school_comparison"] = {
+            "schools": [s.value for s in sc.schools],
+            "interpretations": [
+                {
+                    "school": i.school.value,
+                    "school_name": i.school_name,
+                    "yong_sin": i.yong_sin.value,
+                    "geok_guk": i.geok_guk,
+                    "overall": i.overall,
+                    "health": i.health,
+                    "wealth": i.wealth,
+                    "career": i.career,
+                    "relationship": i.relationship,
+                    "fame": i.fame,
+                    "confidence": i.confidence,
+                    "key_features": i.key_features,
+                }
+                for i in sc.interpretations
+            ],
+            "consensus": consensus,
+            "differences": [
+                {"category": d.category, "interpretations": d.interpretations}
+                for d in sc.differences
+            ],
+            "recommendation": sc.recommendation,
+            "confidence": confidence,
+        }
     except Exception:
         pass
 

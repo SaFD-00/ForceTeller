@@ -246,6 +246,7 @@ export interface SajuResult {
   sewun?: SewunItem[];
   yongsin_comparison?: YongsinComparison;
   yongsin_recommendations?: YongsinRecommendations;
+  school_comparison?: SchoolComparisonResult;
 }
 
 // API 요청/응답 타입
@@ -402,6 +403,7 @@ export interface SajuResultDisplay {
   sewun?: SewunItem[];
   yongsin_comparison?: YongsinComparison;
   yongsin_recommendations?: YongsinRecommendations;
+  school_comparison?: SchoolComparisonResult;
 }
 
 // 유틸리티: 백엔드 응답을 프론트엔드 타입으로 변환하는 함수 타입
@@ -504,6 +506,7 @@ export interface SchoolComparisonResult {
     }>;
   }>;
   recommendation: string;
+  confidence?: number;
 }
 
 // 분석 응답

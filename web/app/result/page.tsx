@@ -16,6 +16,7 @@ import {
   FortuneCycleSlider,
   YearlyFortune,
   LuckyGuideCard,
+  SchoolComparison,
 } from '@/components/result';
 import { ChatContainer } from '@/components/chat';
 import type { Element, HiddenStemDisplay, ShenshaDisplay } from '@/types/saju';
@@ -419,6 +420,11 @@ export default function ResultPage() {
                 recommendations={result.yongsin_recommendations}
                 comparison={result.yongsin_comparison}
               />
+            )}
+
+            {/* 5학파 비교 해석 */}
+            {result.school_comparison && (
+              <SchoolComparison comparison={result.school_comparison} />
             )}
 
             {/* 신강/신약 지수 */}

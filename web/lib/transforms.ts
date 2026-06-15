@@ -96,6 +96,7 @@ export function transformSajuResult(result: SajuResult): SajuResultDisplay {
     sewun,
     yongsin_comparison,
     yongsin_recommendations,
+    school_comparison,
   } = result;
 
   // Four Pillars 변환
@@ -192,5 +193,6 @@ export function transformSajuResult(result: SajuResult): SajuResultDisplay {
     sewun: sewun,
     yongsin_comparison: yongsin_comparison,
     yongsin_recommendations: yongsin_recommendations,
+    school_comparison: school_comparison,
   };
 }
