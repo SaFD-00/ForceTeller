@@ -157,9 +157,15 @@ web/
 │   └── ui/           # 재사용 UI (8개)
 ├── stores/
 │   └── sajuStore.ts  # Zustand 상태관리
-└── lib/
-    └── api/          # API 클라이언트
+├── lib/
+│   └── api/          # API 클라이언트
+├── .design-sync/     # claude.ai/design 디자인시스템 동기화 (synth-entry 번들)
+└── .ds-css/          # design-sync용 Tailwind v3 정적 CSS 컴파일
 ```
+
+**Key Design:**
+- **컴포넌트 순수 props-driven**: result/chat 컴포넌트 대부분이 store 비결합 → 프리뷰·재사용·테스트 용이.
+- **design-sync**: 앱을 DS 패키지처럼 synth-entry로 번들해 claude.ai/design에 게시한다(업로드는 별도 승인 단계). process shim·next/navigation no-op stub·framer-motion skipAnimations로 정적 헤드리스 렌더를 보정. 상세 재현 노트는 `web/.design-sync/NOTES.md`.
 
 ### 5. Persistence Layer (`db/`)
 
