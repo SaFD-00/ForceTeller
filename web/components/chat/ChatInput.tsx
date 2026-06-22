@@ -50,6 +50,7 @@ export function ChatInput({
             onChange={(e) => setMessage(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder={placeholder}
+            aria-label="메시지 입력"
             disabled={disabled}
             rows={1}
             className="w-full px-4 py-3 rounded-xl bg-muted border border-border text-foreground placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all resize-none"
@@ -59,6 +60,7 @@ export function ChatInput({
           type="submit"
           disabled={disabled || !message.trim()}
           className="px-4 h-12"
+          aria-label="메시지 전송"
         >
           <Icon name="solar:plain-2-bold" size={20} />
         </Button>

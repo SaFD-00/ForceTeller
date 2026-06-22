@@ -6,9 +6,7 @@ import './globals.css';
 export const metadata: Metadata = {
   title: 'ForceTeller | 사주명리 AI',
   description: '사주팔자 계산 및 AI 해석 서비스',
-  icons: {
-    icon: '/favicon.ico',
-  },
+  // 파비콘은 App Router 규약(app/icon.svg)으로 자동 주입됩니다.
 };
 
 export default function RootLayout({

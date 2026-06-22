@@ -160,7 +160,7 @@ export function BirthInfoForm() {
           {/* Birth Time (Optional) */}
           <div>
             <div className="flex items-center justify-between mb-1">
-              <label className="text-sm font-medium text-foreground">출생시간</label>
+              <label htmlFor="birth-time" className="text-sm font-medium text-foreground">출생시간</label>
               <label className="flex items-center gap-1.5 text-sm text-muted-foreground cursor-pointer select-none">
                 <input
                   type="checkbox"
@@ -178,6 +178,7 @@ export function BirthInfoForm() {
               </label>
             </div>
             <Input
+              id="birth-time"
               type="time"
               value={formData.birth_time}
               disabled={timeUnknown}

@@ -526,6 +526,7 @@ export default function ResultPage() {
                   size="sm"
                   onClick={() => setIsChatOpen(false)}
                   className="text-muted-foreground hover:text-foreground"
+                  aria-label="AI 상담 닫기"
                 >
                   <Icon name="solar:close-circle-bold" size={20} />
                 </Button>
@@ -576,6 +577,7 @@ export default function ResultPage() {
                   size="sm"
                   onClick={() => setIsChatOpen(false)}
                   className="text-muted-foreground hover:text-foreground"
+                  aria-label="AI 상담 닫기"
                 >
                   <Icon name="solar:close-circle-bold" size={24} />
                 </Button>
