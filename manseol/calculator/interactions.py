@@ -423,8 +423,8 @@ class InteractionsCalculator:
         day_stem = self.pillars["day"][0]
         day_branch = self.pillars["day"][1]
 
-        # 60갑자 번호 계산
-        ganji_num = (day_stem * 6 + day_branch) % 60
+        # 60갑자 번호 계산 (천간 % 10 == day_stem, 지지 % 12 == day_branch를 만족하는 인덱스)
+        ganji_num = (6 * day_stem - 5 * day_branch) % 60
         # 순(旬) 번호 (0-5)
         xun_num = ganji_num // 10
 

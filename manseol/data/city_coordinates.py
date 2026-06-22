@@ -122,18 +122,19 @@ class CityCoordinates:
 
     @staticmethod
     def get_coordinates(city_name: str) -> Optional[Tuple[float, float]]:
-        """도시의 (위도, 경도) 반환"""
-        cities = _get_cities()
+        """도시의 (위도, 경도) 반환.
 
-        # 정확한 이름 매칭 먼저 시도
-        for city in cities.values():
-            if city['name'].lower() == city_name.lower():
-                return (city['latitude'], city['longitude'])
+        한글/영어 입력을 모두 지원하며, 동명(同名) 도시가 여러 개일 때는
+        인구가 가장 많은 도시(통상 광역시)를 우선한다.
+        예) "광주"/"Gwangju" -> 광주광역시(126.85°E)이며, 경기도 광주시가 아님.
+        """
+        if not city_name:
+            return None
 
-        # 부분 매칭
-        for city in cities.values():
-            if city_name.lower() in city['name'].lower():
-                return (city['latitude'], city['longitude'])
+        # search_city의 매칭 로직(한글 인덱스 + 정확>시작>포함 + 인구순 정렬)을 재사용한다.
+        matches = CityCoordinates.search_city(city_name, limit=1)
+        if matches:
+            return (matches[0]['latitude'], matches[0]['longitude'])
 
         return None
 
