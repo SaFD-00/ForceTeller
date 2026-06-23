@@ -172,7 +172,7 @@ export default function ResultPage() {
           <Icon
             name="solar:danger-triangle-bold"
             size={48}
-            className="text-red-400 mx-auto mb-4"
+            className="text-danger mx-auto mb-4"
           />
           <h2 className="text-xl font-bold text-foreground mb-2">오류가 발생했습니다</h2>
           <p className="text-muted-foreground mb-6">{error}</p>
@@ -317,7 +317,7 @@ export default function ResultPage() {
   }));
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-white to-background">
+    <main className="min-h-screen bg-background">
       <div className="flex">
         {/* Left: Results Section */}
         <div
@@ -358,7 +358,7 @@ export default function ResultPage() {
               )}
               {/* 시간 보정 */}
               {result.adjusted_time && (
-                <p className="text-gray-400 text-xs md:text-sm">
+                <p className="text-muted-foreground text-xs md:text-sm">
                   지역시: 양 {result.adjusted_time.true_solar_time.split(' ')[0]} {result.adjusted_time.true_solar_time.split(' ')[1]?.slice(0, 5)}
                   {' '}(보정: 지역 {result.adjusted_time.longitude_correction_minutes > 0 ? '+' : ''}{Math.round(result.adjusted_time.longitude_correction_minutes)}분)
                 </p>
@@ -547,7 +547,7 @@ export default function ResultPage() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setIsChatOpen(true)}
-              className="bg-primary hover:bg-primary/90 text-white p-4 rounded-l-xl shadow-card-hover flex items-center gap-2"
+              className="bg-primary hover:bg-primary/90 text-white p-4 rounded-l-xl border-[1.5px] border-border shadow-card-hover flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
             >
               <Icon name="solar:chat-round-dots-bold" size={24} />
               <span className="font-medium">AI 상담</span>
@@ -567,7 +567,7 @@ export default function ResultPage() {
             className="fixed inset-0 z-50 bg-background"
           >
             <div className="h-full flex flex-col">
-              <div className="flex items-center justify-between p-4 border-b border-border">
+              <div className="flex items-center justify-between p-4 border-b-[1.5px] border-border">
                 <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
                   <Icon name="solar:chat-round-dots-bold" size={24} className="text-primary" />
                   AI 상담

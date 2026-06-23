@@ -131,7 +131,7 @@ export function BirthInfoForm() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay: 0.2 }}
     >
-      <GlassCard className="w-full max-w-xl mx-auto p-6 md:p-8 rounded-3xl">
+      <GlassCard className="w-full max-w-xl mx-auto p-6 md:p-8 rounded-xl">
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Name */}
           <Input
@@ -218,7 +218,7 @@ export function BirthInfoForm() {
               error={errors.city}
             />
             {showCityDropdown && (
-              <div className="absolute z-50 w-full mt-1 bg-surface border border-border rounded-xl shadow-card-hover overflow-hidden max-h-60 overflow-y-auto">
+              <div className="absolute z-50 w-full mt-1 bg-surface border-[1.5px] border-border rounded-xl shadow-card-hover overflow-hidden max-h-60 overflow-y-auto">
                 {isSearching ? (
                   <div className="px-4 py-3 text-muted-foreground text-center">
                     <Icon name="solar:refresh-bold" size={16} className="animate-spin inline mr-2" />
@@ -229,7 +229,7 @@ export function BirthInfoForm() {
                     <button
                       key={`${city.name}-${city.country}`}
                       type="button"
-                      className="w-full px-4 py-2 text-left text-foreground hover:bg-muted transition-colors"
+                      className="w-full px-4 py-2 text-left text-foreground hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                       onClick={() => handleCitySelect(city)}
                     >
                       {city.name_ko || city.name}, {city.country_ko || city.country}
@@ -251,9 +251,9 @@ export function BirthInfoForm() {
               <button
                 key={gender}
                 type="button"
-                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm border transition-all ${
+                className={`block-press inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm border-[1.5px] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
                   formData.gender === gender
-                    ? 'bg-primary/10 border-primary text-primary'
+                    ? 'bg-primary/15 border-border text-primary'
                     : 'bg-surface border-border text-muted-foreground hover:bg-muted'
                 }`}
                 onClick={() => setFormData((prev) => ({ ...prev, gender }))}
@@ -271,9 +271,9 @@ export function BirthInfoForm() {
               <button
                 key={type}
                 type="button"
-                className={`px-3 py-1.5 rounded-full text-sm border transition-all ${
+                className={`block-press px-3 py-1.5 rounded-lg text-sm border-[1.5px] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
                   formData.calendar === type
-                    ? 'bg-primary/10 border-primary text-primary'
+                    ? 'bg-primary/15 border-border text-primary'
                     : 'bg-surface border-border text-muted-foreground hover:bg-muted'
                 }`}
                 onClick={() => setFormData((prev) => ({ ...prev, calendar: type }))}
