@@ -1,5 +1,6 @@
 {
   "shape": "package",
+  "projectId": "f17c4807-52e8-496c-bf0f-1b58844eea77",
   "pkg": "forceteller-web",
   "globalName": "ForceTeller",
   "srcDir": "components",

@@ -10,6 +10,17 @@ module.exports = {
     './app/**/*.{js,ts,jsx,tsx,mdx}',
     './.design-sync/previews/**/*.{ts,tsx}',
   ],
+  // globals.css 의 @layer components 시맨틱 헬퍼(.element-*, .card-elevated)는 컴포넌트가
+  // 직접 쓰지 않아 purge 된다. conventions.md 가 디자인 에이전트에 안내하는 클래스이므로
+  // safelist 로 보존해 ds-compiled.css(=배포 CSS)에 포함시킨다(NOTES.md 참조).
+  safelist: [
+    'element-wood',
+    'element-fire',
+    'element-earth',
+    'element-metal',
+    'element-water',
+    'card-elevated',
+  ],
   theme: {
     extend: {
       colors: {
