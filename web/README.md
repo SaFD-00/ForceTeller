@@ -5,7 +5,9 @@
 ## 기술 스택
 
 - **프레임워크**: Next.js 14 (App Router)
-- **스타일링**: Tailwind CSS v3 (라이트 미니멀 — FigureLabs 스타일)
+- **스타일링**: Tailwind CSS v3 (tetris-refined 블록 톤 — 비비드 컬러 블록 + 하드 오프셋 그림자)
+- **타이포**: Pretendard(본문) + Bangers(라틴 디스플레이) + JetBrains Mono(숫자·간지)
+- **마스코트**: "별이" — 별·달 점성술사 (간단한 SVG 블록으로 조립, 채팅·설명·로딩·로고에 재사용)
 - **상태관리**: Zustand
 - **데이터 페칭**: React Query
 - **차트**: Recharts
@@ -15,7 +17,7 @@
 ## 주요 기능
 
 ### 1. 히어로 섹션
-- 라이트 미니멀(FigureLabs 스타일) 디자인 — 흰 배경 + 바이올렛 포인트
+- tetris-refined 블록 디자인 — 쿨블루 배경 + 비비드 퍼플 포인트 + 마스코트 "별이" + Bangers 워드마크
 - 생년월일, 출생시간(시간 모름 옵션), 출생도시(자동완성), 성별, 달력유형(양력/음력/윤달) 입력
 
 ### 2. 기능 그리드
@@ -92,6 +94,25 @@ npm run start
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:8000
 ```
+
+## 디자인 시스템 (tetris-refined 블록)
+
+[typeui.sh `tetris` 디자인 스킬](https://www.typeui.sh/design-skills/tetris) 기반 — 고대비 비비드 컬러 블록 + 하드 오프셋(솔리드) 그림자 + 컴팩트 게임감. 운세 분석 도구다운 신뢰감을 위해 모서리는 살짝 둥글리고(8~12px) 테두리는 1.5px로 절제했다.
+
+| 역할 | 토큰 | hex |
+|---|---|---|
+| 앱 배경(쿨블루) | `bg-background` | `#dfe7ff` |
+| 잉크(제목·본문·테두리) | `text-foreground`/`border-border` | `#1c202b` |
+| 카드/표면 | `bg-surface` | `#ffffff` |
+| 브랜드 강조(비비드 퍼플) | `bg-primary`/`text-primary` | `#7107e7` |
+| 보조 강조(네이비블루) | `accent` | `#1c398e` |
+| 보조 텍스트 | `text-muted-foreground` | `#54608a` |
+| 상태(성공/경고/위험) | `success`/`warning`/`danger` | `#16a34a`·`#d97706`·`#dc2626` |
+
+- **그림자(블록)**: `shadow-card`(3px 3px 0) · `shadow-card-hover`(5px 5px 0) · `shadow-block-sm`(2px 2px 0).
+- **공용 헬퍼**: `.glass-card`(블록 카드) · `.btn-block`(버튼 베이스) · `.block-press`(눌림) · `.gradient-text`.
+- **폰트**: `font-sans`(Pretendard) · `font-display`(Bangers, 라틴) · `font-mono`(JetBrains Mono, 숫자·간지).
+- **마스코트 "별이"**: `Mascot`/`MascotBubble` — mood(idle/happy/thinking/talking/curious/sleeping)·size(xs~xl) variant.
 
 ## 오행 색상 시스템
 

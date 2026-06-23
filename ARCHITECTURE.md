@@ -165,6 +165,7 @@ web/
 
 **Key Design:**
 - **컴포넌트 순수 props-driven**: result/chat 컴포넌트 대부분이 store 비결합 → 프리뷰·재사용·테스트 용이.
+- **UI 테마(tetris-refined 블록)**: [typeui.sh `tetris`](https://www.typeui.sh/design-skills/tetris) 기반 — 쿨블루 배경 + 비비드 퍼플 강조 + 딥네이비 잉크 + 하드 오프셋(솔리드) 그림자 + 1.5px 블록 테두리. 폰트 Pretendard(본문)·Bangers(라틴 디스플레이)·JetBrains Mono(숫자·간지). 브랜드 마스코트 **"별이"**(`components/ui/Mascot.tsx`, 별·달 점성술사)가 채팅 아바타·로딩·설명봇·로고에 재사용된다.
 - **design-sync**: 앱을 DS 패키지처럼 synth-entry로 번들해 claude.ai/design에 게시한다(업로드는 별도 승인 단계). process shim·next/navigation no-op stub·framer-motion skipAnimations로 정적 헤드리스 렌더를 보정. 상세 재현 노트는 `web/.design-sync/NOTES.md`.
 
 ### 5. Persistence Layer (`db/`)
