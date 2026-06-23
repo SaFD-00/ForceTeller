@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Icon } from './Icon';
+import { Mascot } from './Mascot';
 import type { GlossaryEntry } from '@/data/saju-glossary';
 
 interface GlossaryModalProps {
@@ -54,7 +55,7 @@ export function GlossaryModal({ entry, isOpen, onClose }: GlossaryModalProps) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
+            className="fixed inset-0 z-50 bg-foreground/40 backdrop-blur-sm"
           />
 
           {/* 모달 (데스크톱) / 바텀시트 (모바일) */}
@@ -68,25 +69,26 @@ export function GlossaryModal({ entry, isOpen, onClose }: GlossaryModalProps) {
               md:bottom-auto md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2
               lg:left-[37.5%]
               md:max-w-md md:w-full md:max-h-[80vh]
-              bg-background rounded-t-2xl md:rounded-2xl
-              border border-border shadow-card
+              bg-surface rounded-t-xl md:rounded-xl
+              border-[1.5px] border-border shadow-card-hover
               overflow-hidden"
           >
             {/* 모바일 드래그 핸들 */}
             <div className="md:hidden flex justify-center py-2">
-              <div className="w-10 h-1 bg-muted rounded-full" />
+              <div className="w-10 h-1 bg-border rounded-full" />
             </div>
 
-            {/* 헤더 */}
-            <div className="flex items-center justify-between px-5 py-4 border-b border-border">
+            {/* 헤더 — 설명봇 별이 */}
+            <div className="flex items-center justify-between px-5 py-4 border-b-[1.5px] border-border">
               <div className="flex items-center gap-3">
+                <Mascot mood="curious" size="sm" className="flex-shrink-0" />
                 <span className="text-2xl font-bold text-foreground">{entry.term}</span>
-                <span className="text-lg text-muted-foreground">{entry.hanja}</span>
+                <span className="text-lg text-muted-foreground font-mono">{entry.hanja}</span>
               </div>
               <button
                 onClick={onClose}
                 aria-label="닫기"
-                className="p-2 rounded-full hover:bg-muted transition-colors"
+                className="p-2 rounded-lg hover:bg-muted transition-colors"
               >
                 <Icon name="solar:close-circle-bold" size={24} className="text-muted-foreground" />
               </button>
@@ -96,13 +98,13 @@ export function GlossaryModal({ entry, isOpen, onClose }: GlossaryModalProps) {
             <div className="px-5 py-4 overflow-y-auto max-h-[60vh]">
               {/* 카테고리 태그 */}
               <div className="mb-4">
-                <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${categoryColors[entry.category]}`}>
+                <span className={`inline-block px-3 py-1 rounded-md border-[1.5px] border-border text-xs font-bold ${categoryColors[entry.category]}`}>
                   {entry.category}
                 </span>
               </div>
 
               {/* 한자 풀이 */}
-              <div className="mb-4 p-3 bg-muted rounded-lg">
+              <div className="mb-4 p-3 bg-muted rounded-lg border-[1.5px] border-border">
                 <p className="text-xs text-muted-foreground mb-1">한자 풀이</p>
                 <p className="text-sm text-foreground">{entry.hanjaBreakdown}</p>
               </div>
@@ -121,10 +123,10 @@ export function GlossaryModal({ entry, isOpen, onClose }: GlossaryModalProps) {
             </div>
 
             {/* 푸터 */}
-            <div className="px-5 py-4 border-t border-border">
+            <div className="px-5 py-4 border-t-[1.5px] border-border">
               <button
                 onClick={onClose}
-                className="w-full py-3 bg-primary hover:bg-primary/90 text-white font-medium rounded-lg transition-colors"
+                className="btn-block block-press w-full py-3 bg-primary text-white"
               >
                 닫기
               </button>

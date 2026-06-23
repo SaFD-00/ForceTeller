@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { MessageBubble } from './MessageBubble';
 import { ReasoningDisplay } from './ReasoningDisplay';
 import { MarkdownRenderer } from './MarkdownRenderer';
-import { Icon } from '@/components/ui';
+import { Mascot } from '@/components/ui';
 import type { ChatMessage } from '@/types/saju';
 
 interface MessageListProps {
@@ -46,11 +46,11 @@ export function MessageList({
 
   if (messages.length === 0 && !isLoading) {
     return (
-      <div className="flex-1 flex items-center justify-center">
-        <div className="text-center text-gray-400">
-          <Icon name="solar:chat-round-dots-bold" size={48} className="mx-auto mb-4" />
-          <p>AI 상담사에게 사주에 대해 질문해보세요</p>
-          <p className="text-sm mt-2">예: "제 성격은 어떤가요?" "직업운은 어떤가요?"</p>
+      <div className="flex-1 flex items-center justify-center p-6">
+        <div className="text-center">
+          <Mascot mood="happy" size="xl" floating className="mx-auto mb-4" />
+          <p className="font-bold text-foreground">별이에게 사주에 대해 물어보세요</p>
+          <p className="text-sm mt-2 text-muted-foreground">예: "제 성격은 어떤가요?" "직업운은 어떤가요?"</p>
         </div>
       </div>
     );
@@ -85,10 +85,10 @@ export function MessageList({
           animate={{ opacity: 1, y: 0 }}
           className="flex gap-3"
         >
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500/30 to-blue-500/30 flex items-center justify-center flex-shrink-0">
-            <Icon name="solar:magic-stick-3-bold" size={20} className="text-foreground" />
+          <div className="w-10 h-10 flex items-center justify-center flex-shrink-0">
+            <Mascot mood="talking" size="sm" />
           </div>
-          <div className="max-w-[75%] p-4 rounded-2xl rounded-tl-md bg-muted border border-border">
+          <div className="max-w-[75%] p-4 rounded-xl rounded-tl-sm bg-surface border-[1.5px] border-border shadow-block-sm">
             <MarkdownRenderer content={streamingOutput} />
             <motion.span
               animate={{ opacity: [1, 0] }}
@@ -104,14 +104,14 @@ export function MessageList({
       {/* 로딩 중이지만 아직 스트리밍 시작 전: 기본 로딩 인디케이터 */}
       {isLoading && !reasoning && !streamingOutput && (
         <div className="flex gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500/30 to-blue-500/30 flex items-center justify-center">
-            <Icon name="solar:magic-stick-3-bold" size={20} className="text-foreground" />
+          <div className="w-10 h-10 flex items-center justify-center">
+            <Mascot mood="thinking" size="sm" />
           </div>
-          <div className="bg-muted border border-border rounded-2xl rounded-tl-md p-4">
+          <div className="bg-surface border-[1.5px] border-border rounded-xl rounded-tl-sm shadow-block-sm p-4">
             <div className="flex gap-1">
-              <div className="w-2 h-2 bg-muted rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-              <div className="w-2 h-2 bg-muted rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-              <div className="w-2 h-2 bg-muted rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+              <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+              <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+              <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
             </div>
           </div>
         </div>

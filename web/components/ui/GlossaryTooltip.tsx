@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Mascot } from './Mascot';
 import { getGlossaryEntry, type GlossaryEntry } from '@/data/saju-glossary';
 
 interface GlossaryTooltipProps {
@@ -75,7 +76,7 @@ export function GlossaryTooltip({ term, children, onDetailClick }: GlossaryToolt
     <span className="relative inline-block">
       <span
         ref={triggerRef}
-        className="cursor-help border-b border-dotted border-gray-300 hover:border-primary transition-colors"
+        className="cursor-help border-b border-dotted border-muted-foreground hover:border-primary transition-colors"
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         onClick={handleClick}
@@ -91,7 +92,7 @@ export function GlossaryTooltip({ term, children, onDetailClick }: GlossaryToolt
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: position === 'top' ? 10 : -10, scale: 0.95 }}
             transition={{ duration: 0.15 }}
-            className={`absolute z-50 w-64 p-3 rounded-lg bg-background/95 backdrop-blur-md border border-border shadow-xl ${
+            className={`absolute z-50 w-64 p-3 rounded-lg bg-surface border-[1.5px] border-border shadow-card-hover ${
               position === 'top' ? 'bottom-full mb-2' : 'top-full mt-2'
             } left-1/2 -translate-x-1/2`}
             onMouseEnter={handleTooltipMouseEnter}
@@ -99,17 +100,18 @@ export function GlossaryTooltip({ term, children, onDetailClick }: GlossaryToolt
           >
             {/* 화살표 */}
             <div
-              className={`absolute left-1/2 -translate-x-1/2 w-2 h-2 bg-background/95 border-border rotate-45 ${
+              className={`absolute left-1/2 -translate-x-1/2 w-2 h-2 bg-surface border-border rotate-45 ${
                 position === 'top'
-                  ? 'bottom-0 translate-y-1/2 border-r border-b'
-                  : 'top-0 -translate-y-1/2 border-l border-t'
+                  ? 'bottom-0 translate-y-1/2 border-r-[1.5px] border-b-[1.5px]'
+                  : 'top-0 -translate-y-1/2 border-l-[1.5px] border-t-[1.5px]'
               }`}
             />
 
-            {/* 헤더 */}
+            {/* 헤더 — 설명봇 별이 */}
             <div className="flex items-center gap-2 mb-2">
+              <Mascot mood="curious" size="xs" className="flex-shrink-0" />
               <span className="text-primary font-bold">{entry.term}</span>
-              <span className="text-gray-400 text-sm">{entry.hanja}</span>
+              <span className="text-muted-foreground text-sm font-mono">{entry.hanja}</span>
             </div>
 
             {/* 한자 풀이 */}

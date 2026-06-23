@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { Icon } from './Icon';
+import { Mascot } from './Mascot';
 
 interface LoadingOverlayProps {
   isVisible: boolean;
@@ -22,38 +22,11 @@ export function LoadingOverlay({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3 }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-xl"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-background/95 backdrop-blur-sm"
         >
-          <div className="text-center">
-            {/* Animated circles */}
-            <div className="relative w-32 h-32 mx-auto mb-8">
-              {/* Outer rotating ring */}
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
-                className="absolute inset-0 rounded-full border-2 border-transparent border-t-primary border-r-primary/50"
-              />
-
-              {/* Middle rotating ring (opposite direction) */}
-              <motion.div
-                animate={{ rotate: -360 }}
-                transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
-                className="absolute inset-2 rounded-full border-2 border-transparent border-b-purple-400 border-l-purple-400/50"
-              />
-
-              {/* Inner pulsing circle */}
-              <motion.div
-                animate={{ scale: [1, 1.1, 1], opacity: [0.5, 1, 0.5] }}
-                transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
-                className="absolute inset-4 rounded-full bg-gradient-to-br from-primary/20 to-purple-500/20 flex items-center justify-center"
-              >
-                <Icon
-                  name="solar:stars-bold"
-                  size={40}
-                  className="text-primary"
-                />
-              </motion.div>
-            </div>
+          <div className="text-center rounded-xl border-[1.5px] border-border bg-surface shadow-card-hover px-10 py-8">
+            {/* 별이가 사주를 들여다보는 중 */}
+            <Mascot mood="thinking" size="xl" floating className="mx-auto mb-6" />
 
             {/* Text */}
             <motion.h2
