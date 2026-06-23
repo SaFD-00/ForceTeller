@@ -7,21 +7,26 @@
  * tailwind.config.ts 의 값이 바뀌면 이 파일도 동기화할 것(NOTES.md 토큰 동기화).
  */
 :root {
-  /* 표면 · 텍스트 (라이트 미니멀, FigureLabs 스타일) */
-  --ft-color-background: #f7f8fa;
-  --ft-color-foreground: #111827;
+  /* 표면 · 텍스트 (tetris-refined — 쿨블루 surface + 딥네이비 잉크) */
+  --ft-color-background: #dfe7ff;
+  --ft-color-foreground: #1c202b;
   --ft-color-surface: #ffffff;
-  --ft-color-border: #e5e7eb;
+  --ft-color-border: #1c202b;
   --ft-color-card: #ffffff;
-  --ft-color-card-foreground: #111827;
-  --ft-color-muted: #f3f4f6;
-  --ft-color-muted-foreground: #6b7280;
+  --ft-color-card-foreground: #1c202b;
+  --ft-color-muted: #eef1ff;
+  --ft-color-muted-foreground: #54608a;
 
-  /* 브랜드 (바이올렛) */
-  --ft-color-primary: #7c3aed;
+  /* 브랜드 (비비드 퍼플 + 네이비블루 보조) */
+  --ft-color-primary: #7107e7;
   --ft-color-primary-foreground: #ffffff;
-  --ft-color-accent: #8b5cf6;
+  --ft-color-accent: #1c398e;
   --ft-color-accent-foreground: #ffffff;
+
+  /* 상태색 */
+  --ft-color-success: #16a34a;
+  --ft-color-warning: #d97706;
+  --ft-color-danger: #dc2626;
 
   /* 오행(五行) — 도메인 핵심 색 시스템 */
   --ft-color-element-wood: #16a34a;  /* 목 木 */
@@ -30,11 +35,18 @@
   --ft-color-element-metal: #71717a; /* 금 金 */
   --ft-color-element-water: #2563eb; /* 수 水 */
 
-  /* 그림자 */
-  --ft-shadow-card: 0 1px 3px rgba(17, 24, 39, 0.04), 0 1px 2px rgba(17, 24, 39, 0.06);
-  --ft-shadow-card-hover: 0 4px 16px rgba(17, 24, 39, 0.08);
-  --ft-shadow-soft: 0 2px 8px rgba(17, 24, 39, 0.06);
+  /* 그림자 — 하드 오프셋 솔리드(블록감) */
+  --ft-shadow-card: 3px 3px 0 0 #1c202b;
+  --ft-shadow-card-hover: 5px 5px 0 0 #1c202b;
+  --ft-shadow-soft: 2px 2px 0 0 #1c202b;
+  --ft-shadow-block: 3px 3px 0 0 #1c202b;
+  --ft-shadow-block-lg: 6px 6px 0 0 #1c202b;
+
+  /* 테두리 */
+  --ft-border-block: 1.5px;
 
   /* 타이포 */
   --ft-font-sans: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+  --ft-font-display: 'Bangers', 'Pretendard', cursive;
+  --ft-font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
 }

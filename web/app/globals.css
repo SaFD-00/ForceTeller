@@ -14,39 +14,60 @@
 }
 
 @layer components {
-  /* 라이트 카드 (구 .glass* 클래스는 호환용 별칭) */
+  /* 블록 카드 (구 .glass* 클래스는 호환용 별칭 — 실제는 흰 표면 + 딥네이비 1.5px 테두리 + 하드 오프셋 그림자) */
   .card,
   .glass {
     @apply bg-surface border border-border shadow-card;
+    border-width: 1.5px;
   }
 
   .card-elevated {
     @apply bg-surface border border-border shadow-card-hover;
+    border-width: 1.5px;
   }
 
   .glass-card {
-    @apply bg-surface border border-border shadow-card rounded-2xl p-6;
+    @apply bg-surface border border-border shadow-card rounded-xl p-6;
+    border-width: 1.5px;
   }
 
   .glass-button {
-    @apply bg-surface border border-border rounded-xl px-6 py-3 hover:bg-muted transition-all duration-200;
+    @apply bg-surface border border-border rounded-lg px-6 py-3 shadow-block-sm transition-all duration-150;
+    border-width: 1.5px;
+  }
+  .glass-button:hover {
+    @apply -translate-x-px -translate-y-px shadow-card;
   }
 
-  /* 오행 배지 */
+  /* 블록 버튼 공통 베이스(채움/외곽 변형은 컴포넌트가 색만 얹음) */
+  .btn-block {
+    @apply inline-flex items-center justify-center font-bold border border-border rounded-lg shadow-card transition-all duration-150;
+    border-width: 1.5px;
+  }
+  .btn-block:hover {
+    @apply -translate-x-px -translate-y-px shadow-card-hover;
+  }
+
+  /* 눌림 효과 — active 시 그림자 쪽으로 밀려들어가며 그림자 제거 */
+  .block-press:active {
+    @apply translate-x-[3px] translate-y-[3px] shadow-none;
+  }
+
+  /* 오행 배지 (블록 톤 — 채움 15% + 텍스트 + 테두리) */
   .element-wood {
-    @apply bg-element-wood/10 text-element-wood border-element-wood/30;
+    @apply bg-element-wood/15 text-element-wood border-element-wood/50;
   }
   .element-fire {
-    @apply bg-element-fire/10 text-element-fire border-element-fire/30;
+    @apply bg-element-fire/15 text-element-fire border-element-fire/50;
   }
   .element-earth {
-    @apply bg-element-earth/10 text-element-earth border-element-earth/30;
+    @apply bg-element-earth/15 text-element-earth border-element-earth/50;
   }
   .element-metal {
-    @apply bg-element-metal/10 text-element-metal border-element-metal/30;
+    @apply bg-element-metal/15 text-element-metal border-element-metal/50;
   }
   .element-water {
-    @apply bg-element-water/10 text-element-water border-element-water/30;
+    @apply bg-element-water/15 text-element-water border-element-water/50;
   }
 }
 
@@ -56,21 +77,21 @@
   }
 
   .gradient-text {
-    @apply bg-gradient-to-r from-violet-600 via-purple-600 to-violet-600 bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent;
   }
 
-  /* 은은한 라이트 배경 그라데이션 (히어로용) */
+  /* 쿨블루 베이스 + 퍼플 라디얼 (히어로용) */
   .hero-gradient {
     background:
-      radial-gradient(60% 50% at 50% 0%, rgba(124, 58, 237, 0.06) 0%, rgba(124, 58, 237, 0) 100%),
-      linear-gradient(180deg, #ffffff 0%, #f7f8fa 100%);
+      radial-gradient(60% 50% at 50% 0%, rgba(113, 7, 231, 0.10) 0%, rgba(113, 7, 231, 0) 100%),
+      linear-gradient(180deg, #ffffff 0%, #dfe7ff 100%);
   }
 }
 
-/* Scrollbar styling (light) */
+/* Scrollbar styling (블록 톤) */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
 }
 
 ::-webkit-scrollbar-track {
@@ -78,10 +99,10 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(17, 24, 39, 0.15);
-  border-radius: 4px;
+  background: rgba(28, 32, 43, 0.25);
+  border-radius: 6px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(17, 24, 39, 0.25);
+  background: rgba(28, 32, 43, 0.45);
 }

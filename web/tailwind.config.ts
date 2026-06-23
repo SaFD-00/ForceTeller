@@ -1,5 +1,7 @@
 import type { Config } from 'tailwindcss';
 
+// ForceTeller 디자인 토큰 — tetris-refined 블록 톤(고대비 비비드 컬러 블록 + 하드 오프셋 그림자).
+// ⚠ 이 theme.extend 가 바뀌면 .ds-css/tailwind.ds.config.cjs 와 .design-sync/ds-tokens/tokens.css 도 동기화할 것.
 const config: Config = {
   content: [
     './app/**/*.{js,ts,jsx,tsx,mdx}',
@@ -8,27 +10,30 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Light minimalist palette (FigureLabs-style)
-        background: '#f7f8fa',   // 앱 배경 (아주 옅은 회색)
-        foreground: '#111827',   // 본문 텍스트 (거의 검정)
+        // tetris-refined 팔레트 (쿨블루 surface + 비비드 퍼플 포인트 + 딥네이비 잉크)
+        background: '#dfe7ff',   // 앱 배경 (쿨블루 surface)
+        foreground: '#1c202b',   // 잉크 — 제목·본문·테두리
         surface: '#ffffff',      // 카드/패널 표면
-        border: '#e5e7eb',       // 기본 테두리
+        border: '#1c202b',       // 블록 테두리 (딥네이비, 1.5px)
         primary: {
-          DEFAULT: '#7c3aed',    // 바이올렛 (라이트 배경에 잘 맞음)
+          DEFAULT: '#7107e7',    // 비비드 퍼플 (브랜드 강조)
           foreground: '#ffffff',
         },
         accent: {
-          DEFAULT: '#8b5cf6',
+          DEFAULT: '#1c398e',    // 네이비블루 (보조 강조·링크·차트 보조)
           foreground: '#ffffff',
         },
         muted: {
-          DEFAULT: '#f3f4f6',    // 옅은 회색 표면
-          foreground: '#6b7280', // 보조 텍스트
+          DEFAULT: '#eef1ff',    // 옅은 블루 틴트 면
+          foreground: '#54608a', // 보조 텍스트 (네이비-그레이)
         },
         card: {
           DEFAULT: '#ffffff',
-          foreground: '#111827',
+          foreground: '#1c202b',
         },
+        success: { DEFAULT: '#16a34a', foreground: '#ffffff' },
+        warning: { DEFAULT: '#d97706', foreground: '#ffffff' },
+        danger: { DEFAULT: '#dc2626', foreground: '#ffffff' },
         element: {
           wood: '#16a34a',
           fire: '#dc2626',
@@ -39,11 +44,21 @@ const config: Config = {
       },
       fontFamily: {
         sans: ['Pretendard', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+        display: ['Bangers', 'Pretendard', 'cursive'],
+        mono: ['"JetBrains Mono"', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+      },
+      borderWidth: {
+        '1.5': '1.5px',
+        '3': '3px',
       },
       boxShadow: {
-        card: '0 1px 3px rgba(17, 24, 39, 0.04), 0 1px 2px rgba(17, 24, 39, 0.06)',
-        'card-hover': '0 4px 16px rgba(17, 24, 39, 0.08)',
-        soft: '0 2px 8px rgba(17, 24, 39, 0.06)',
+        // 하드 오프셋 솔리드 그림자(블록감). 기존 card/card-hover/soft 이름 유지 → 사용처 자동 승계.
+        card: '3px 3px 0 0 #1c202b',
+        'card-hover': '5px 5px 0 0 #1c202b',
+        soft: '2px 2px 0 0 #1c202b',
+        block: '3px 3px 0 0 #1c202b',
+        'block-sm': '2px 2px 0 0 #1c202b',
+        'block-lg': '6px 6px 0 0 #1c202b',
       },
     },
   },

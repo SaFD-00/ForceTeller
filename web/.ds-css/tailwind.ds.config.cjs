@@ -10,9 +10,9 @@ module.exports = {
     './app/**/*.{js,ts,jsx,tsx,mdx}',
     './.design-sync/previews/**/*.{ts,tsx}',
   ],
-  // globals.css 의 @layer components 시맨틱 헬퍼(.element-*, .card-elevated)는 컴포넌트가
-  // 직접 쓰지 않아 purge 된다. conventions.md 가 디자인 에이전트에 안내하는 클래스이므로
-  // safelist 로 보존해 ds-compiled.css(=배포 CSS)에 포함시킨다(NOTES.md 참조).
+  // globals.css 의 @layer components 시맨틱 헬퍼(.element-*, .card-elevated, .block-press,
+  // .btn-block)는 컴포넌트가 직접 안 쓸 수 있어 purge 된다. conventions.md 가 디자인 에이전트에
+  // 안내하는 클래스이므로 safelist 로 보존해 ds-compiled.css(=배포 CSS)에 포함시킨다(NOTES.md 참조).
   safelist: [
     'element-wood',
     'element-fire',
@@ -20,18 +20,23 @@ module.exports = {
     'element-metal',
     'element-water',
     'card-elevated',
+    'btn-block',
+    'block-press',
   ],
   theme: {
     extend: {
       colors: {
-        background: '#f7f8fa',
-        foreground: '#111827',
+        background: '#dfe7ff',
+        foreground: '#1c202b',
         surface: '#ffffff',
-        border: '#e5e7eb',
-        primary: { DEFAULT: '#7c3aed', foreground: '#ffffff' },
-        accent: { DEFAULT: '#8b5cf6', foreground: '#ffffff' },
-        muted: { DEFAULT: '#f3f4f6', foreground: '#6b7280' },
-        card: { DEFAULT: '#ffffff', foreground: '#111827' },
+        border: '#1c202b',
+        primary: { DEFAULT: '#7107e7', foreground: '#ffffff' },
+        accent: { DEFAULT: '#1c398e', foreground: '#ffffff' },
+        muted: { DEFAULT: '#eef1ff', foreground: '#54608a' },
+        card: { DEFAULT: '#ffffff', foreground: '#1c202b' },
+        success: { DEFAULT: '#16a34a', foreground: '#ffffff' },
+        warning: { DEFAULT: '#d97706', foreground: '#ffffff' },
+        danger: { DEFAULT: '#dc2626', foreground: '#ffffff' },
         element: {
           wood: '#16a34a',
           fire: '#dc2626',
@@ -42,11 +47,20 @@ module.exports = {
       },
       fontFamily: {
         sans: ['Pretendard', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+        display: ['Bangers', 'Pretendard', 'cursive'],
+        mono: ['"JetBrains Mono"', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+      },
+      borderWidth: {
+        '1.5': '1.5px',
+        '3': '3px',
       },
       boxShadow: {
-        card: '0 1px 3px rgba(17, 24, 39, 0.04), 0 1px 2px rgba(17, 24, 39, 0.06)',
-        'card-hover': '0 4px 16px rgba(17, 24, 39, 0.08)',
-        soft: '0 2px 8px rgba(17, 24, 39, 0.06)',
+        card: '3px 3px 0 0 #1c202b',
+        'card-hover': '5px 5px 0 0 #1c202b',
+        soft: '2px 2px 0 0 #1c202b',
+        block: '3px 3px 0 0 #1c202b',
+        'block-sm': '2px 2px 0 0 #1c202b',
+        'block-lg': '6px 6px 0 0 #1c202b',
       },
     },
   },

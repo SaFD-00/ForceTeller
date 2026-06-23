@@ -11,3 +11,28 @@
   font-display: swap;
   src: url('./PretendardVariable.woff2') format('woff2-variations');
 }
+
+/* tetris-refined 디스플레이/모노 폰트 (라틴 전용 서브셋, Google Fonts woff2 vendor).
+ * Bangers: 라틴 워드마크/대형 헤딩(font-display). JetBrains Mono: 점수·간지·숫자(font-mono).
+ * 한글은 Pretendard 가 담당 — Bangers/JetBrains 는 라틴·숫자 glyph 만 포함한다. */
+@font-face {
+  font-family: 'Bangers';
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  src: url('./Bangers-Regular.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  src: url('./JetBrainsMono-Regular.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  src: url('./JetBrainsMono-Bold.woff2') format('woff2');
+}
