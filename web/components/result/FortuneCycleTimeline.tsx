@@ -48,19 +48,19 @@ export function FortuneCycleTimeline({ cycles, currentAge = 0 }: FortuneCycleTim
                 className="flex flex-col items-center"
               >
                 {/* Age range */}
-                <div className="text-xs text-muted-foreground mb-2">
+                <div className="text-xs text-muted-foreground font-mono mb-2">
                   {cycle.start_age} ~ {cycle.start_age + 9}세
                 </div>
 
                 {/* Pillar */}
                 <div
                   className={cn(
-                    'relative w-20 p-3 rounded-xl border-2 transition-all',
+                    'relative w-20 p-3 rounded-xl border-[1.5px] border-border transition-all',
                     isCurrent
-                      ? 'bg-primary/20 border-primary scale-110 shadow-lg shadow-primary/20'
+                      ? 'bg-primary/20 scale-110 shadow-card-hover'
                       : isPast
-                      ? 'bg-muted border-border opacity-60'
-                      : 'bg-muted border-gray-300'
+                      ? 'bg-muted opacity-60 shadow-block-sm'
+                      : 'bg-muted shadow-block-sm'
                   )}
                 >
                   {isCurrent && (
@@ -75,7 +75,7 @@ export function FortuneCycleTimeline({ cycles, currentAge = 0 }: FortuneCycleTim
 
                   {/* Heavenly Stem */}
                   <div className="text-center mb-2">
-                    <div className="text-xl font-bold text-foreground">
+                    <div className="text-xl font-bold font-mono text-foreground">
                       {cycle.heavenly_stem.hanja}
                     </div>
                     <div className="text-xs text-muted-foreground">
@@ -84,11 +84,11 @@ export function FortuneCycleTimeline({ cycles, currentAge = 0 }: FortuneCycleTim
                   </div>
 
                   {/* Divider */}
-                  <div className="w-full h-px bg-muted my-2" />
+                  <div className="w-full border-t-[1.5px] border-border my-2" />
 
                   {/* Earthly Branch */}
                   <div className="text-center">
-                    <div className="text-xl font-bold text-foreground">
+                    <div className="text-xl font-bold font-mono text-foreground">
                       {cycle.earthly_branch.hanja}
                     </div>
                     <div className="text-xs text-muted-foreground">
@@ -113,7 +113,7 @@ export function FortuneCycleTimeline({ cycles, currentAge = 0 }: FortuneCycleTim
 
                 {/* Current indicator */}
                 {isCurrent && (
-                  <div className="mt-2 px-2 py-1 rounded-full bg-primary/20 text-primary text-xs">
+                  <div className="mt-2 px-2 py-1 rounded-lg border-[1.5px] border-border bg-primary/20 text-primary text-xs shadow-block-sm">
                     현재
                   </div>
                 )}

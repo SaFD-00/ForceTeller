@@ -93,8 +93,8 @@ export function ElementDistribution({ distribution, tenGods, dominant }: Element
   };
 
   const getStatus = (element: Element, percentage: number) => {
-    if (percentage === 0) return { label: '부족', color: 'text-red-400' };
-    if (percentage >= 30) return { label: '발달', color: 'text-green-400' };
+    if (percentage === 0) return { label: '부족', color: 'text-danger' };
+    if (percentage >= 30) return { label: '발달', color: 'text-success' };
     return { label: '', color: '' };
   };
 
@@ -115,7 +115,7 @@ export function ElementDistribution({ distribution, tenGods, dominant }: Element
               setIsModalOpen(true);
             }
           }}
-          className="text-xl font-bold text-foreground underline decoration-white/30 hover:decoration-primary transition-colors"
+          className="text-xl font-bold text-foreground underline decoration-border/30 hover:decoration-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
         >
           오행 / 십성 분포
         </button>
@@ -137,9 +137,9 @@ export function ElementDistribution({ distribution, tenGods, dominant }: Element
                 {/* 오행 박스 */}
                 <div
                   onClick={() => handleClick(element)}
-                  className={`${info.bg} rounded-xl p-3 min-w-[100px] flex flex-col justify-center cursor-pointer hover:brightness-110 transition-all`}
+                  className={`${info.bg} rounded-xl border-[1.5px] border-border shadow-block-sm p-3 min-w-[100px] flex flex-col justify-center cursor-pointer hover:-translate-x-px hover:-translate-y-px hover:shadow-card-hover transition-all`}
                 >
-                  <div className="text-foreground font-bold">
+                  <div className="text-foreground font-bold font-mono">
                     {element}{info.hanja}{' '}
                     {percentage > 0 ? `${percentage}%` : '-'}
                   </div>
@@ -165,12 +165,12 @@ export function ElementDistribution({ distribution, tenGods, dominant }: Element
                           <div
                             key={pair.yin}
                             onClick={() => handleClick(pair.yin)}
-                            className="flex justify-between text-sm cursor-pointer hover:bg-muted rounded px-1 -mx-1 transition-colors"
+                            className="flex justify-between text-sm cursor-pointer hover:bg-muted rounded-lg px-1 -mx-1 transition-colors"
                           >
-                            <span className="text-gray-600">
+                            <span className="text-muted-foreground">
                               {pair.yin}({pair.hanja.yin})
                             </span>
-                            <span className="text-muted-foreground">
+                            <span className="text-muted-foreground font-mono">
                               {yinPct > 0 ? `${yinPct}%` : '-'}
                             </span>
                           </div>
@@ -186,12 +186,12 @@ export function ElementDistribution({ distribution, tenGods, dominant }: Element
                           <div
                             key={pair.yang}
                             onClick={() => handleClick(pair.yang)}
-                            className="flex justify-between text-sm border-t border-border pt-1 cursor-pointer hover:bg-muted rounded px-1 -mx-1 transition-colors"
+                            className="flex justify-between text-sm border-t-[1.5px] border-border pt-1 cursor-pointer hover:bg-muted rounded-lg px-1 -mx-1 transition-colors"
                           >
-                            <span className="text-gray-600">
+                            <span className="text-muted-foreground">
                               {pair.yang}({pair.hanja.yang})
                             </span>
-                            <span className="text-muted-foreground">
+                            <span className="text-muted-foreground font-mono">
                               {yangPct > 0 ? `${yangPct}%` : '-'}
                             </span>
                           </div>
@@ -329,8 +329,8 @@ export function ElementDistribution({ distribution, tenGods, dominant }: Element
               const percentage = getPercentage(distribution[element] || 0, total);
               return (
                 <div key={element} className="flex items-center gap-1 text-xs">
-                  <div className={`w-3 h-3 rounded ${ELEMENT_INFO[element].color}`} />
-                  <span className="text-muted-foreground">
+                  <div className={`w-3 h-3 rounded-sm border-[1.5px] border-border ${ELEMENT_INFO[element].color}`} />
+                  <span className="text-muted-foreground font-mono">
                     {element} {percentage}%
                   </span>
                 </div>

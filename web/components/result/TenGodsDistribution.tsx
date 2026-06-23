@@ -62,16 +62,16 @@ export function TenGodsDistribution({ distribution }: TenGodsDistributionProps) 
                   <div className="text-xs text-muted-foreground mb-3">{info.description}</div>
 
                   {/* Count indicator */}
-                  <div className="relative h-2 bg-muted rounded-full overflow-hidden mb-2">
+                  <div className="relative h-2 bg-muted rounded-full overflow-hidden mb-2 border-[1.5px] border-border">
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${percentage}%` }}
                       transition={{ duration: 0.5, delay: 0.3 + index * 0.05 }}
-                      className="absolute h-full bg-muted rounded-full"
+                      className="absolute h-full bg-primary rounded-full"
                     />
                   </div>
 
-                  <div className="text-2xl font-bold text-foreground">{count}</div>
+                  <div className="text-2xl font-bold font-mono text-foreground">{count}</div>
                 </div>
               </GlassCard>
             </motion.div>

@@ -52,7 +52,7 @@ export function YongshinCard({ type, element, hanja, description }: YongshinCard
           <Icon name="solar:star-bold" size={24} className="text-primary" />
           <button
             onClick={handleTitleClick}
-            className="text-xl font-bold text-foreground underline decoration-white/30 hover:decoration-primary transition-colors"
+            className="text-xl font-bold text-foreground underline decoration-border/30 hover:decoration-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
           >
             용신
           </button>
@@ -60,7 +60,7 @@ export function YongshinCard({ type, element, hanja, description }: YongshinCard
 
         <GlassCard className="p-4 md:p-6">
           <div className="flex flex-wrap gap-4">
-            <div className={`${info.bg} rounded-xl p-4 text-center min-w-[100px]`}>
+            <div className={`${info.bg} border-[1.5px] border-border rounded-xl p-4 text-center min-w-[100px] shadow-block-sm`}>
               <div className="text-xs text-muted-foreground mb-2">{type}</div>
               <div className={`text-2xl font-bold ${info.text}`}>
                 {element}({hanja || info.hanja})
@@ -69,7 +69,7 @@ export function YongshinCard({ type, element, hanja, description }: YongshinCard
 
             {description && (
               <div className="flex-1 min-w-[200px]">
-                <p className="text-gray-600 text-sm leading-relaxed">{description}</p>
+                <p className="text-muted-foreground text-sm leading-relaxed">{description}</p>
               </div>
             )}
           </div>

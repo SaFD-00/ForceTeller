@@ -20,10 +20,10 @@ const FORTUNE_META: Record<string, { label: string; icon: string }> = {
 const ORDER = ['general', 'career', 'wealth', 'health', 'love'];
 
 function scoreColor(score: number): string {
-  if (score >= 70) return 'bg-green-500';
+  if (score >= 70) return 'bg-success';
   if (score >= 50) return 'bg-primary';
-  if (score >= 35) return 'bg-amber-500';
-  return 'bg-rose-500';
+  if (score >= 35) return 'bg-warning';
+  return 'bg-danger';
 }
 
 export function FortuneScoreDashboard({ scores }: FortuneScoreDashboardProps) {
@@ -51,16 +51,16 @@ export function FortuneScoreDashboard({ scores }: FortuneScoreDashboardProps) {
           const isOpen = openKey === key;
 
           return (
-            <div key={key} className="rounded-lg border border-border overflow-hidden">
+            <div key={key} className="rounded-lg border-[1.5px] border-border overflow-hidden shadow-block-sm">
               <button
                 onClick={() => setOpenKey(isOpen ? null : key)}
-                className="w-full p-3 flex items-center gap-3 hover:bg-muted/50 transition-colors text-left"
+                className="w-full p-3 flex items-center gap-3 hover:bg-muted/50 transition-colors text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
               >
                 <Icon name={meta.icon} size={20} className="text-primary flex-shrink-0" />
                 <span className="text-sm font-medium text-foreground w-16 flex-shrink-0">
                   {meta.label}
                 </span>
-                <div className="flex-1 h-2 rounded-full bg-muted overflow-hidden">
+                <div className="flex-1 h-2 rounded-full bg-muted border-[1.5px] border-border overflow-hidden">
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${item.score}%` }}
@@ -68,7 +68,7 @@ export function FortuneScoreDashboard({ scores }: FortuneScoreDashboardProps) {
                     className={`h-full rounded-full ${scoreColor(item.score)}`}
                   />
                 </div>
-                <span className="text-sm font-semibold text-foreground w-10 text-right flex-shrink-0">
+                <span className="text-sm font-mono font-bold text-foreground w-10 text-right flex-shrink-0">
                   {item.score}
                 </span>
                 <Icon

@@ -293,7 +293,7 @@ function FortuneSection({
       <div className="flex items-center justify-between mb-2">
         <button
           onClick={onTitleClick}
-          className="text-lg font-bold text-foreground underline decoration-white/30 hover:decoration-primary transition-colors"
+          className="text-lg font-bold text-foreground underline decoration-border/30 hover:decoration-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
         >
           {title}
         </button>
@@ -301,7 +301,7 @@ function FortuneSection({
       </div>
 
       {comment && (
-        <p className="text-gray-600 text-sm mb-3 bg-muted rounded-lg px-3 py-2">
+        <p className="text-muted-foreground text-sm mb-3 bg-muted rounded-lg px-3 py-2 border-[1.5px] border-border">
           💫 {comment}
         </p>
       )}
@@ -311,7 +311,7 @@ function FortuneSection({
           <button
             onClick={scrollLeft}
             aria-label="이전 운세 보기"
-            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-black/50 hover:bg-black/70 p-1.5 rounded-full text-gray-600 hover:text-foreground transition-colors hidden md:block"
+            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-foreground/50 hover:bg-foreground/70 p-1.5 rounded-full text-muted-foreground hover:text-foreground transition-colors hidden md:block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
           >
             <Icon name="solar:alt-arrow-left-bold" size={16} />
           </button>
@@ -319,7 +319,7 @@ function FortuneSection({
           <button
             onClick={scrollRight}
             aria-label="다음 운세 보기"
-            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-black/50 hover:bg-black/70 p-1.5 rounded-full text-gray-600 hover:text-foreground transition-colors hidden md:block"
+            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-foreground/50 hover:bg-foreground/70 p-1.5 rounded-full text-muted-foreground hover:text-foreground transition-colors hidden md:block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
           >
             <Icon name="solar:alt-arrow-right-bold" size={16} />
           </button>
@@ -333,11 +333,11 @@ function FortuneSection({
               <div
                 key={index}
                 className={`flex-shrink-0 w-16 text-center ${
-                  item.is_current ? 'ring-2 ring-primary rounded-lg' : ''
+                  item.is_current ? 'ring-2 ring-primary rounded-xl' : ''
                 }`}
               >
                 {/* 나이/연도/월/일 */}
-                <div className="text-foreground font-bold text-sm mb-0.5">
+                <div className="text-foreground font-mono font-bold text-sm mb-0.5">
                   {showAge && item.age !== undefined && item.age}
                   {showYear && item.year !== undefined && item.year}
                   {showMonth && item.month !== undefined && `${item.month}월`}
@@ -356,7 +356,7 @@ function FortuneSection({
                   <span className="text-base font-bold text-foreground">
                     {item.heavenly_stem.korean}
                   </span>
-                  <span className="text-xs text-gray-600 ml-0.5">
+                  <span className="text-xs text-muted-foreground ml-0.5">
                     {item.heavenly_stem.hanja}
                   </span>
                 </div>
@@ -365,10 +365,10 @@ function FortuneSection({
                 <div
                   className={`${ELEMENT_BG_LIGHT[item.earthly_branch.element]} rounded-md p-1.5`}
                 >
-                  <span className="text-base font-bold text-gray-800">
+                  <span className="text-base font-bold text-foreground">
                     {item.earthly_branch.korean}
                   </span>
-                  <span className="text-xs text-gray-600 ml-0.5">
+                  <span className="text-xs text-muted-foreground ml-0.5">
                     {item.earthly_branch.hanja}
                   </span>
                 </div>
@@ -382,7 +382,7 @@ function FortuneSection({
 
                 {/* 12운성 */}
                 {item.twelve_phase && item.twelve_phase !== '-' && (
-                  <div className="text-gray-400 text-xs">
+                  <div className="text-muted-foreground text-xs">
                     {item.twelve_phase}
                   </div>
                 )}

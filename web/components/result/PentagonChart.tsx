@@ -185,7 +185,7 @@ export function PentagonChart({ dayMaster, distribution, tenGodMapping, dayStemK
                     cx={pos.x}
                     cy={pos.y}
                     r={35}
-                    className={`${colors.bg} ${isMyElement ? 'stroke-primary stroke-2' : 'stroke-white/20 stroke-1'}`}
+                    className={`${colors.bg} ${isMyElement ? 'stroke-primary stroke-2' : 'stroke-border/30 stroke-1'}`}
                     fill="currentColor"
                     style={{ fill: colors.bg.includes('green') ? 'rgba(34, 197, 94, 0.2)' :
                              colors.bg.includes('red') ? 'rgba(239, 68, 68, 0.2)' :
@@ -198,7 +198,7 @@ export function PentagonChart({ dayMaster, distribution, tenGodMapping, dayStemK
                     x={pos.x}
                     y={pos.y - 8}
                     textAnchor="middle"
-                    className={`text-xs fill-white/80`}
+                    className={`text-xs fill-foreground/80`}
                   >
                     {element}({tenGod})
                   </text>
@@ -207,7 +207,7 @@ export function PentagonChart({ dayMaster, distribution, tenGodMapping, dayStemK
                     x={pos.x}
                     y={pos.y + 10}
                     textAnchor="middle"
-                    className={`text-sm font-bold ${colors.text}`}
+                    className={`text-sm font-bold font-mono ${colors.text}`}
                     style={{ fill: colors.text.includes('green') ? '#4ade80' :
                              colors.text.includes('red') ? '#f87171' :
                              colors.text.includes('yellow') ? '#facc15' :

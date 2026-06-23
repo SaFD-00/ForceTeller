@@ -89,7 +89,7 @@ export function StrengthDistributionChart({
         <Icon name="solar:chart-2-bold" size={24} className="text-primary" />
         <button
           onClick={handleTitleClick}
-          className="text-xl font-bold text-foreground underline decoration-white/30 hover:decoration-primary transition-colors"
+          className="text-xl font-bold text-foreground underline decoration-border/30 hover:decoration-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
         >
           신강/신약지수
         </button>
@@ -102,7 +102,7 @@ export function StrengthDistributionChart({
         </p>
         {percentile && (
           <p className="text-muted-foreground text-sm mb-4">
-            {percentile}%의 사람이 여기에 해당합니다.
+            <span className="font-mono">{percentile}%</span>의 사람이 여기에 해당합니다.
           </p>
         )}
 
@@ -112,33 +112,33 @@ export function StrengthDistributionChart({
             <div className="flex items-center gap-1.5">
               <span className="text-sm text-muted-foreground">득령</span>
               {deukryeong ? (
-                <Icon name="solar:check-circle-bold" size={18} className="text-cyan-400" />
+                <Icon name="solar:check-circle-bold" size={18} className="text-success" />
               ) : (
-                <Icon name="solar:close-circle-bold" size={18} className="text-red-400" />
+                <Icon name="solar:close-circle-bold" size={18} className="text-danger" />
               )}
             </div>
             <div className="flex items-center gap-1.5">
               <span className="text-sm text-muted-foreground">득지</span>
               {deukji ? (
-                <Icon name="solar:check-circle-bold" size={18} className="text-cyan-400" />
+                <Icon name="solar:check-circle-bold" size={18} className="text-success" />
               ) : (
-                <Icon name="solar:close-circle-bold" size={18} className="text-red-400" />
+                <Icon name="solar:close-circle-bold" size={18} className="text-danger" />
               )}
             </div>
             <div className="flex items-center gap-1.5">
               <span className="text-sm text-muted-foreground">득시</span>
               {deuksi ? (
-                <Icon name="solar:check-circle-bold" size={18} className="text-cyan-400" />
+                <Icon name="solar:check-circle-bold" size={18} className="text-success" />
               ) : (
-                <Icon name="solar:close-circle-bold" size={18} className="text-red-400" />
+                <Icon name="solar:close-circle-bold" size={18} className="text-danger" />
               )}
             </div>
             <div className="flex items-center gap-1.5">
               <span className="text-sm text-muted-foreground">득세</span>
               {deukse ? (
-                <Icon name="solar:check-circle-bold" size={18} className="text-cyan-400" />
+                <Icon name="solar:check-circle-bold" size={18} className="text-success" />
               ) : (
-                <Icon name="solar:close-circle-bold" size={18} className="text-red-400" />
+                <Icon name="solar:close-circle-bold" size={18} className="text-danger" />
               )}
             </div>
           </div>
@@ -155,7 +155,7 @@ export function StrengthDistributionChart({
                 y={0}
                 width={(300 / 8)}
                 height={100}
-                fill={i % 2 === 0 ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.04)'}
+                fill={i % 2 === 0 ? 'rgba(28,32,43,0.03)' : 'rgba(28,32,43,0.06)'}
               />
             ))}
 
@@ -163,7 +163,7 @@ export function StrengthDistributionChart({
             <polyline
               points={curvePoints}
               fill="none"
-              stroke="rgba(255,255,255,0.5)"
+              stroke="rgba(28,32,43,0.5)"
               strokeWidth="2"
             />
 
@@ -177,8 +177,8 @@ export function StrengthDistributionChart({
             {/* 그라데이션 정의 */}
             <defs>
               <linearGradient id="curveGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="white" stopOpacity="0.2" />
-                <stop offset="100%" stopColor="white" stopOpacity="0" />
+                <stop offset="0%" stopColor="#1c202b" stopOpacity="0.2" />
+                <stop offset="100%" stopColor="#1c202b" stopOpacity="0" />
               </linearGradient>
             </defs>
 
@@ -187,15 +187,15 @@ export function StrengthDistributionChart({
               cx={markerX}
               cy={markerY}
               r={6}
-              fill="#0a0a0a"
-              stroke="white"
+              fill="#7107e7"
+              stroke="#1c202b"
               strokeWidth="2"
             />
             <text
               x={markerX}
               y={markerY + 20}
               textAnchor="middle"
-              fill="white"
+              fill="#1c202b"
               fontSize="10"
             >
               나
@@ -208,7 +208,7 @@ export function StrengthDistributionChart({
                 x={(level.min / 100) * 300 + (300 / 16)}
                 y={115}
                 textAnchor="middle"
-                fill="rgba(255,255,255,0.5)"
+                fill="rgba(84,96,138,0.8)"
                 fontSize="7"
               >
                 {level.label}
@@ -218,7 +218,7 @@ export function StrengthDistributionChart({
         </div>
 
         {/* Y축 레이블 */}
-        <div className="flex justify-between text-xs text-gray-400 mt-2 px-2">
+        <div className="flex justify-between text-xs text-muted-foreground font-mono mt-2 px-2">
           <span>0%</span>
           <span>25</span>
           <span></span>

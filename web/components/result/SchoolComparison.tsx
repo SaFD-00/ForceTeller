@@ -19,9 +19,9 @@ const CATEGORY_LABELS: Record<string, string> = {
 };
 
 function confidenceLabel(c: number): { label: string; cls: string } {
-  if (c >= 0.8) return { label: '일치도 높음', cls: 'bg-green-500/15 text-green-600' };
-  if (c >= 0.5) return { label: '일치도 보통', cls: 'bg-amber-500/15 text-amber-600' };
-  return { label: '해석 분분', cls: 'bg-rose-500/15 text-rose-600' };
+  if (c >= 0.8) return { label: '일치도 높음', cls: 'bg-success/15 text-success' };
+  if (c >= 0.5) return { label: '일치도 보통', cls: 'bg-warning/15 text-warning' };
+  return { label: '해석 분분', cls: 'bg-danger/15 text-danger' };
 }
 
 export function SchoolComparison({ comparison }: SchoolComparisonProps) {
@@ -54,32 +54,32 @@ export function SchoolComparison({ comparison }: SchoolComparisonProps) {
         <Icon name="solar:scale-bold" size={24} className="text-primary" />
         <h2 className="text-xl font-bold text-foreground">5학파 비교 해석</h2>
         {typeof confidence === 'number' && (
-          <span className={`text-xs px-2 py-0.5 rounded-full ${badge.cls}`}>{badge.label}</span>
+          <span className={`text-xs px-2 py-0.5 rounded-lg ${badge.cls}`}>{badge.label}</span>
         )}
       </div>
 
       <GlassCard className="p-4 md:p-6 space-y-5">
         {/* 종합 권장 */}
         {recommendation && (
-          <p className="text-sm text-foreground bg-muted rounded-lg p-3">{recommendation}</p>
+          <p className="text-sm text-foreground bg-muted rounded-lg p-3 border-[1.5px] border-border">{recommendation}</p>
         )}
 
         {/* 학파 합의 */}
         {consensus && consensus.length > 0 && (
           <div>
             <p className="flex items-center gap-1 text-sm font-medium text-foreground mb-2">
-              <Icon name="solar:check-read-bold" size={16} className="text-green-500" />
+              <Icon name="solar:check-read-bold" size={16} className="text-success" />
               학파 공통 견해
             </p>
             <ul className="space-y-2">
               {consensus.map((c, i) => (
                 <li key={i} className="flex items-start gap-2 text-sm">
-                  <span className="px-1.5 py-0.5 rounded bg-primary/10 text-primary text-xs flex-shrink-0">
+                  <span className="px-1.5 py-0.5 rounded-lg bg-primary/10 text-primary text-xs flex-shrink-0">
                     {CATEGORY_LABELS[c.category] || c.category}
                   </span>
                   <span className="text-muted-foreground">
                     {c.agreement}
-                    <span className="text-xs text-gray-400"> ({c.schools.length}개 학파 동의)</span>
+                    <span className="text-xs text-muted-foreground"> ({c.schools.length}개 학파 동의)</span>
                   </span>
                 </li>
               ))}
@@ -89,16 +89,16 @@ export function SchoolComparison({ comparison }: SchoolComparisonProps) {
 
         {/* 학파별 탭 */}
         <div>
-          <div className="flex flex-wrap gap-2 mb-4 pb-3 border-b border-border">
+          <div className="flex flex-wrap gap-2 mb-4 pb-3 border-b-[1.5px] border-border">
             {interpretations.map((interp) => {
               const isActive = activeSchool === interp.school;
               return (
                 <button
                   key={interp.school}
                   onClick={() => setActiveSchool(interp.school)}
-                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                  className={`px-3 py-1.5 rounded-lg border-[1.5px] border-border text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
                     isActive
-                      ? 'bg-primary/20 text-primary border border-primary/30'
+                      ? 'bg-primary/15 text-primary'
                       : 'bg-muted text-muted-foreground hover:text-foreground'
                   }`}
                 >
@@ -136,7 +136,7 @@ export function SchoolComparison({ comparison }: SchoolComparisonProps) {
                   {active.key_features.map((f, i) => (
                     <span
                       key={i}
-                      className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground border border-border"
+                      className="text-xs px-2 py-0.5 rounded-lg bg-muted text-muted-foreground border-[1.5px] border-border"
                     >
                       {f}
                     </span>

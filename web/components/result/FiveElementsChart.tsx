@@ -76,21 +76,21 @@ export function FiveElementsChart({ analysis }: FiveElementsChartProps) {
             </h3>
             <ResponsiveContainer width="100%" height={280}>
               <RadarChart cx="50%" cy="50%" outerRadius="70%" data={radarData}>
-                <PolarGrid stroke="rgba(255,255,255,0.1)" />
+                <PolarGrid stroke="rgba(28,32,43,0.15)" />
                 <PolarAngleAxis
                   dataKey="element"
-                  tick={{ fill: 'rgba(255,255,255,0.7)', fontSize: 14 }}
+                  tick={{ fill: 'rgba(28,32,43,0.8)', fontSize: 14 }}
                 />
                 <PolarRadiusAxis
                   angle={90}
                   domain={[0, 8]}
-                  tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 10 }}
+                  tick={{ fill: 'rgba(84,96,138,0.7)', fontSize: 10 }}
                 />
                 <Radar
                   name="오행"
                   dataKey="value"
-                  stroke="#8b5cf6"
-                  fill="#8b5cf6"
+                  stroke="#7107e7"
+                  fill="#7107e7"
                   fillOpacity={0.4}
                 />
               </RadarChart>
@@ -110,11 +110,11 @@ export function FiveElementsChart({ analysis }: FiveElementsChartProps) {
             </h3>
             <ResponsiveContainer width="100%" height={280}>
               <BarChart data={barData} layout="vertical">
-                <XAxis type="number" domain={[0, 8]} tick={{ fill: 'rgba(255,255,255,0.5)' }} />
+                <XAxis type="number" domain={[0, 8]} tick={{ fill: 'rgba(84,96,138,0.7)' }} />
                 <YAxis
                   type="category"
                   dataKey="name"
-                  tick={{ fill: 'rgba(255,255,255,0.7)', fontSize: 16 }}
+                  tick={{ fill: 'rgba(28,32,43,0.8)', fontSize: 16 }}
                   width={40}
                 />
                 <Bar dataKey="value" radius={[0, 4, 4, 0]}>
@@ -139,25 +139,25 @@ export function FiveElementsChart({ analysis }: FiveElementsChartProps) {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
             <div>
               <span className="text-muted-foreground text-sm">주요 오행</span>
-              <div className="text-xl font-bold text-primary mt-1">
+              <div className="text-xl font-bold font-mono text-primary mt-1">
                 {analysis.dominant ? ELEMENT_LABELS[analysis.dominant].hanja : '-'}
               </div>
             </div>
             <div>
               <span className="text-muted-foreground text-sm">부족 오행</span>
-              <div className="text-xl font-bold text-red-400 mt-1">
+              <div className="text-xl font-bold font-mono text-danger mt-1">
                 {analysis.lacking ? ELEMENT_LABELS[analysis.lacking].hanja : '-'}
               </div>
             </div>
             <div>
               <span className="text-muted-foreground text-sm">용신</span>
-              <div className="text-xl font-bold text-green-400 mt-1">
+              <div className="text-xl font-bold font-mono text-success mt-1">
                 {analysis.yongshin ? ELEMENT_LABELS[analysis.yongshin].hanja : '-'}
               </div>
             </div>
             <div>
               <span className="text-muted-foreground text-sm">기신</span>
-              <div className="text-xl font-bold text-orange-400 mt-1">
+              <div className="text-xl font-bold font-mono text-warning mt-1">
                 {analysis.gishin ? ELEMENT_LABELS[analysis.gishin].hanja : '-'}
               </div>
             </div>

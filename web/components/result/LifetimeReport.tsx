@@ -41,7 +41,7 @@ export function LifetimeReport({ stages, overallSummary }: LifetimeReportProps) 
 
       <GlassCard className="p-4 md:p-6">
         {overallSummary && (
-          <p className="text-sm text-foreground bg-muted rounded-lg p-3 mb-4">{overallSummary}</p>
+          <p className="text-sm text-foreground bg-muted rounded-lg p-3 mb-4 border-[1.5px] border-border">{overallSummary}</p>
         )}
 
         <div className="relative pl-6">
@@ -65,20 +65,20 @@ export function LifetimeReport({ stages, overallSummary }: LifetimeReportProps) 
                     }`}
                   />
                   <div
-                    className={`rounded-lg p-3 border ${
-                      stage.isCurrent ? 'border-primary bg-primary/5' : 'border-border bg-muted/40'
+                    className={`rounded-xl p-3 border-[1.5px] border-border ${
+                      stage.isCurrent ? 'bg-primary/5' : 'bg-muted/40'
                     }`}
                   >
                     <div className="flex items-center gap-2 mb-1">
                       <Icon name={meta.icon} size={16} className="text-primary" />
-                      <span className="text-sm font-semibold text-foreground">
+                      <span className="text-sm font-mono font-semibold text-foreground">
                         {stage.age}~{stage.age + 9}세
                       </span>
-                      <span className="text-xs px-1.5 py-0.5 rounded bg-muted text-muted-foreground">
+                      <span className="text-xs px-1.5 py-0.5 rounded-lg bg-muted text-muted-foreground">
                         {stage.ganji} · {stage.tenGodGroup}
                       </span>
                       {stage.isCurrent && (
-                        <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-primary/20 text-primary">
+                        <span className="text-[10px] px-1.5 py-0.5 rounded-lg bg-primary/20 text-primary">
                           현재
                         </span>
                       )}
