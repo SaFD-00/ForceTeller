@@ -15,7 +15,7 @@ export function Disclaimer({ className }: DisclaimerProps) {
   return (
     <div
       className={cn(
-        'flex items-start gap-2 rounded-lg border border-border bg-muted/50 px-3 py-2 text-xs text-muted-foreground',
+        'flex items-start gap-2 rounded-lg border-[1.5px] border-border bg-muted/50 px-3 py-2 text-xs text-muted-foreground',
         className
       )}
     >

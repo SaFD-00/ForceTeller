@@ -30,18 +30,18 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           aria-invalid={error ? true : undefined}
           aria-describedby={errorId}
           className={cn(
-            'w-full px-4 py-3 rounded-xl',
-            'bg-surface border border-border',
+            'w-full px-4 py-3 rounded-lg',
+            'bg-surface border-[1.5px] border-border',
             'text-foreground placeholder:text-muted-foreground',
-            'focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus:border-primary',
             'transition-all duration-200',
-            error && 'border-red-400 focus:ring-red-300',
+            error && 'border-danger focus-visible:ring-danger',
             className
           )}
           {...props}
         />
         {error && (
-          <p id={errorId} className="mt-1 text-sm text-red-500">{error}</p>
+          <p id={errorId} className="mt-1 text-sm text-danger">{error}</p>
         )}
       </div>
     );

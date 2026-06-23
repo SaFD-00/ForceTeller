@@ -35,9 +35,9 @@ const elementChars: Record<Element, string> = {
 
 // 기본 색상 (fallback)
 const defaultColors = {
-  bg: 'bg-gray-500/20',
-  text: 'text-gray-400',
-  border: 'border-gray-500/50',
+  bg: 'bg-muted',
+  text: 'text-muted-foreground',
+  border: 'border-border',
 };
 
 export function ElementBadge({
@@ -59,7 +59,7 @@ export function ElementBadge({
   return (
     <span
       className={cn(
-        'inline-flex items-center justify-center rounded-full border font-medium',
+        'inline-flex items-center justify-center rounded-lg border-[1.5px] font-medium shadow-block-sm',
         colors.bg,
         colors.text,
         colors.border,
