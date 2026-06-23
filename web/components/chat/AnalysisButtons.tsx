@@ -54,10 +54,10 @@ export function AnalysisButtons({ onAnalysisClick, disabled = false }: AnalysisB
   };
 
   return (
-    <div className="px-4 py-2 border-t border-border">
+    <div className="px-4 py-2 border-t-[1.5px] border-border">
       {/* 용신 방법론 선택 패널 (확장시 표시) */}
       {showYongsinMethods && (
-        <div className="mb-2 p-2 rounded-lg bg-muted border border-border">
+        <div className="mb-2 p-2 rounded-xl bg-surface border-[1.5px] border-border shadow-card">
           <div className="text-xs text-muted-foreground mb-2">용신 분석 방법론 선택</div>
           <div className="grid grid-cols-4 gap-2">
             {YONGSIN_METHODS.map(({ code, label, icon, description }) => (
@@ -66,11 +66,11 @@ export function AnalysisButtons({ onAnalysisClick, disabled = false }: AnalysisB
                 onClick={() => handleYongsinMethodClick(code)}
                 disabled={disabled}
                 className={`
-                  flex flex-col items-center gap-1 p-2 rounded-lg
-                  text-xs transition-all duration-200
+                  flex flex-col items-center gap-1 p-2 rounded-lg border-[1.5px] border-border
+                  text-xs transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary
                   ${disabled
-                    ? 'bg-muted text-gray-400 cursor-not-allowed'
-                    : 'bg-muted text-gray-600 hover:bg-purple-500/30 hover:text-foreground'
+                    ? 'bg-muted text-muted-foreground cursor-not-allowed'
+                    : 'bg-surface text-foreground hover:-translate-x-px hover:-translate-y-px hover:shadow-card-hover block-press'
                   }
                 `}
                 title={description}
@@ -92,11 +92,11 @@ export function AnalysisButtons({ onAnalysisClick, disabled = false }: AnalysisB
             onClick={() => handleFortuneClick(type)}
             disabled={disabled}
             className={`
-              inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full
-              text-sm font-medium transition-all duration-200
+              inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border-[1.5px] border-border
+              text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary
               ${disabled
-                ? 'bg-muted text-gray-400 cursor-not-allowed'
-                : 'bg-muted text-gray-600 hover:bg-purple-500/30 hover:text-foreground hover:scale-105'
+                ? 'bg-muted text-muted-foreground cursor-not-allowed'
+                : 'bg-surface text-foreground hover:-translate-x-px hover:-translate-y-px hover:shadow-card-hover block-press'
               }
             `}
           >
@@ -106,7 +106,7 @@ export function AnalysisButtons({ onAnalysisClick, disabled = false }: AnalysisB
         ))}
 
         {/* 구분선 */}
-        <div className="w-px h-6 bg-muted self-center mx-1" />
+        <div className="w-px h-6 bg-border self-center mx-1" />
 
         {/* 용신 분석 버튼 (드롭다운 토글) */}
         <div className="relative">
@@ -114,13 +114,13 @@ export function AnalysisButtons({ onAnalysisClick, disabled = false }: AnalysisB
             onClick={toggleYongsinMethods}
             disabled={disabled}
             className={`
-              inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full
-              text-sm font-medium transition-all duration-200
+              inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border-[1.5px] border-border
+              text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary
               ${showYongsinMethods
-                ? 'bg-purple-500/40 text-foreground'
+                ? 'bg-primary/15 text-primary shadow-block-sm'
                 : disabled
-                  ? 'bg-muted text-gray-400 cursor-not-allowed'
-                  : 'bg-muted text-gray-600 hover:bg-purple-500/30 hover:text-foreground hover:scale-105'
+                  ? 'bg-muted text-muted-foreground cursor-not-allowed'
+                  : 'bg-surface text-foreground hover:-translate-x-px hover:-translate-y-px hover:shadow-card-hover block-press'
               }
             `}
           >
@@ -138,11 +138,11 @@ export function AnalysisButtons({ onAnalysisClick, disabled = false }: AnalysisB
           onClick={handleSchoolCompareClick}
           disabled={disabled}
           className={`
-            inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full
-            text-sm font-medium transition-all duration-200
+            inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border-[1.5px] border-border
+            text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary
             ${disabled
-              ? 'bg-muted text-gray-400 cursor-not-allowed'
-              : 'bg-muted text-gray-600 hover:bg-purple-500/30 hover:text-foreground hover:scale-105'
+              ? 'bg-muted text-muted-foreground cursor-not-allowed'
+              : 'bg-surface text-foreground hover:-translate-x-px hover:-translate-y-px hover:shadow-card-hover block-press'
             }
           `}
         >
@@ -152,7 +152,7 @@ export function AnalysisButtons({ onAnalysisClick, disabled = false }: AnalysisB
       </div>
 
       {/* 안내 텍스트 */}
-      <div className="mt-2 text-xs text-gray-400 text-center">
+      <div className="mt-2 text-xs text-muted-foreground text-center">
         버튼을 클릭하여 원하는 분석을 시작하세요
       </div>
     </div>

@@ -63,7 +63,7 @@ const AGENTS: { type: AgentType; name: string; icon: string; description: string
 
 export function AgentSelector({ selected, onSelect }: AgentSelectorProps) {
   return (
-    <div className="p-3 border-b border-border">
+    <div className="p-3 border-b-[1.5px] border-border">
       <h3 className="text-xs font-medium text-muted-foreground mb-2">상담 분야 선택</h3>
       <div className="flex flex-wrap gap-1.5">
         {AGENTS.map((agent) => (
@@ -73,10 +73,10 @@ export function AgentSelector({ selected, onSelect }: AgentSelectorProps) {
             whileTap={{ scale: 0.98 }}
             onClick={() => onSelect(agent.type)}
             className={cn(
-              'px-3 py-1.5 rounded-lg border transition-all flex items-center gap-1.5',
+              'px-3 py-1.5 rounded-lg border-[1.5px] border-border transition-all flex items-center gap-1.5 block-press focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
               selected === agent.type
-                ? 'bg-primary/20 border-primary'
-                : 'bg-muted border-border hover:bg-muted'
+                ? 'bg-primary/15 text-primary border-border shadow-block-sm'
+                : 'bg-surface hover:bg-muted'
             )}
           >
             <Icon
