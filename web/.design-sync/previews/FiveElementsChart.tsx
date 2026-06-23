@@ -11,7 +11,7 @@ export const Balanced = () => {
     gishin: "화",
   };
   return (
-    <div style={{ padding: 16, background: "#f7f8fa", width: 480, height: 360 }}>
+    <div style={{ padding: 16, background: "#dfe7ff", width: 480, height: 360 }}>
       <FiveElementsChart analysis={analysis} />
     </div>
   );
@@ -27,7 +27,7 @@ export const WoodHeavy = () => {
     gishin: "목",
   };
   return (
-    <div style={{ padding: 16, background: "#f7f8fa", width: 480, height: 360 }}>
+    <div style={{ padding: 16, background: "#dfe7ff", width: 480, height: 360 }}>
       <FiveElementsChart analysis={analysis} />
     </div>
   );
@@ -43,7 +43,7 @@ export const WaterHeavy = () => {
     gishin: "수",
   };
   return (
-    <div style={{ padding: 16, background: "#f7f8fa", width: 480, height: 360 }}>
+    <div style={{ padding: 16, background: "#dfe7ff", width: 480, height: 360 }}>
       <FiveElementsChart analysis={analysis} />
     </div>
   );

@@ -3,22 +3,31 @@
 ForceTeller는 사주명리(만세력) 기반 AI 운세 분석 웹앱이다. 여기 컴포넌트는 앱 `web/components/` 의
 **실제 shipped 컴포넌트**(Next.js 14 + Tailwind CSS v3)다 — 재구현이 아니라 실제 export를 렌더한다.
 
-## 스타일링 — Tailwind v3 유틸리티 + 오행 토큰
+## 스타일링 — Tailwind v3 유틸리티 + 오행 토큰 (tetris-refined 블록 톤)
 디자인 토큰은 `tailwind.config.ts` 의 `theme.extend` 에 hex로 정의된다(CSS 변수 아님). 새 마크업을
 작성할 때는 **컴포넌트가 이미 쓰는 유틸리티 클래스**를 재사용하거나 인라인 스타일을 써라(임의 Tailwind
 클래스는 정적 컴파일된 ds-compiled.css에 없을 수 있다).
 
-팔레트(라이트 미니멀 — FigureLabs 스타일, 흰 배경 + 바이올렛 포인트):
+팔레트(tetris-refined — 쿨블루 surface + 비비드 퍼플 포인트 + 딥네이비 잉크, 하드 오프셋 그림자):
 
 | 역할 | 값 | 유틸리티 |
 |---|---|---|
-| 앱 배경 | `#f7f8fa` | `bg-background` |
-| 본문 텍스트 | `#111827` | `text-foreground` |
+| 앱 배경 | `#dfe7ff` | `bg-background` |
+| 본문/잉크 | `#1c202b` | `text-foreground` / `border-border` |
 | 카드/표면 | `#ffffff` | `bg-surface` |
-| 테두리 | `#e5e7eb` | `border-border` |
-| 주요(바이올렛) | `#7c3aed` | `bg-primary` / `text-primary` |
-| 보조 텍스트 | `#6b7280` | `text-muted-foreground` |
-| 그림자 | — | `shadow-card` / `shadow-card-hover` / `shadow-soft` |
+| muted 면 | `#eef1ff` | `bg-muted` |
+| 주요(비비드 퍼플) | `#7107e7` | `bg-primary` / `text-primary` |
+| 보조(네이비블루) | `#1c398e` | `text-accent` / `bg-accent` |
+| 보조 텍스트 | `#54608a` | `text-muted-foreground` |
+| 상태 | `#16a34a`·`#d97706`·`#dc2626` | `success` / `warning` / `danger` |
+| 그림자(블록) | 3·5·2px 0 오프셋 | `shadow-card` / `shadow-card-hover` / `shadow-block-sm` |
+
+**블록 규칙**: 카드/입력/버튼/뱃지는 `border-[1.5px] border-border` + 하드 오프셋 그림자 + `rounded-xl`(칩은 `rounded-lg`).
+hover=살짝 들림, 클릭=`.block-press`(눌림), focus=`focus-visible:ring-2 ring-primary`.
+
+**타이포**: 한글/본문 Pretendard(`font-sans`), 라틴 워드마크/대형 헤딩 Bangers(`font-display`), 점수·간지·숫자 JetBrains Mono(`font-mono`).
+
+**마스코트**: 브랜드 캐릭터 `Mascot`("별이", 별·달 점성술사) — 채팅 아바타·로딩·설명봇·로고에 재사용(`MascotBubble` 말풍선 헬퍼). 상세 규칙 `guidelines/03-mascot.md`.
 
 **오행(五行) 색 시스템** — 도메인 핵심:
 
@@ -30,12 +39,12 @@ ForceTeller는 사주명리(만세력) 기반 AI 운세 분석 웹앱이다. 여
 | 금(金) | 金 | `#71717a` | `text-element-metal` / `.element-metal` |
 | 수(水) | 水 | `#2563eb` | `text-element-water` / `.element-water` |
 
-공용 클래스: `.glass-card`(라이트 카드 — 흰 표면+옅은 테두리+shadow-card, 구 glassmorphism 별칭이지만
-실제는 라이트), `.card-elevated`, `.glass-button`, `.gradient-text`(바이올렛 그라데이션 텍스트). 폰트는
-Pretendard(한글).
+공용 클래스: `.glass-card`(블록 카드 — 흰 표면+딥네이비 1.5px 테두리+하드 오프셋 shadow-card, 구
+glassmorphism 별칭), `.card-elevated`, `.glass-button`, `.btn-block`(버튼 베이스), `.block-press`(눌림),
+`.gradient-text`(퍼플→네이비 그라데이션 텍스트).
 
 ## 컴포넌트 구성
-- `ui/`: Button, Input, GlassCard, Icon(Iconify Solar), ElementBadge, Disclaimer, GlossaryTooltip/Modal, LoadingOverlay.
+- `ui/`: Button, Input, GlassCard, Icon(Iconify Solar), ElementBadge, Disclaimer, GlossaryTooltip/Modal, LoadingOverlay, **Mascot/MascotBubble**("별이").
 - `result/`: 사주 결과 시각화 — PillarTable(사주팔자 표), FourPillarsDisplay/PillarCard, FiveElementsChart(오행
   레이더), PentagonChart, TenGodsDistribution, ElementDistribution, StrengthMeter/StrengthDistributionChart(신강·신약),
   FortuneCycleTimeline/FortuneCycleSlider/YearlyFortune/LifetimeReport(대운·세운·평생운), YongshinCard/LuckyGuideCard(용신·개운),

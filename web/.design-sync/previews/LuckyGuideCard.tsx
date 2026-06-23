@@ -3,7 +3,7 @@ import { LuckyGuideCard } from "forceteller-web";
 /** 수(水) 용신 개운법 — 색·방위·직업·활동 칩과 생활 팁/주의, 추천 알고리즘 배지까지 모두 채워진 기본 카드 */
 export function WaterFull() {
   return (
-    <div style={{ padding: 16, background: "#f7f8fa", width: 560 }}>
+    <div style={{ padding: 16, background: "#dfe7ff", width: 560 }}>
       <LuckyGuideCard
         recommendations={{
           summary:
@@ -42,7 +42,7 @@ export function WaterFull() {
 /** 화(火) 용신 — comparison 미제공으로 추천 배지 없이, 조후 보강 위주의 간결한 칩 구성 */
 export function FireMinimal() {
   return (
-    <div style={{ padding: 16, background: "#f7f8fa", width: 560 }}>
+    <div style={{ padding: 16, background: "#dfe7ff", width: 560 }}>
       <LuckyGuideCard
         recommendations={{
           summary:
@@ -63,7 +63,7 @@ export function FireMinimal() {
 /** 목(木) 용신 — 생활 팁만 있고 주의 항목이 없는 케이스(조건부 섹션 검증용) */
 export function WoodTipsOnly() {
   return (
-    <div style={{ padding: 16, background: "#f7f8fa", width: 560 }}>
+    <div style={{ padding: 16, background: "#dfe7ff", width: 560 }}>
       <LuckyGuideCard
         recommendations={{
           summary:
@@ -97,7 +97,7 @@ export function WoodTipsOnly() {
 /** 금(金) 용신 — 색·방위만 채우고 직업/활동을 비워 칩 행 누락(빈 배열 미렌더) 동작 확인 */
 export function MetalSparse() {
   return (
-    <div style={{ padding: 16, background: "#f7f8fa", width: 560 }}>
+    <div style={{ padding: 16, background: "#dfe7ff", width: 560 }}>
       <LuckyGuideCard
         recommendations={{
           summary:

@@ -19,7 +19,7 @@ const tenGods = {
 /** 오행/십성 분포 상세 — 목 우세(발달) 사주, 도넛 차트 + 음양 쌍 십성 비율. */
 export function MokDominant() {
   return (
-    <div style={{ padding: 16, background: "#f7f8fa", width: 760 }}>
+    <div style={{ padding: 16, background: "#dfe7ff", width: 760 }}>
       <ElementDistribution distribution={distribution} tenGods={tenGods} dominant={"목"} />
     </div>
   );
@@ -28,7 +28,7 @@ export function MokDominant() {
 /** 일부 오행 부족(수=0) 사례 — 부족 라벨 및 빈 비율(-) 표시 확인. */
 export function WithLackingElement() {
   return (
-    <div style={{ padding: 16, background: "#f7f8fa", width: 760 }}>
+    <div style={{ padding: 16, background: "#dfe7ff", width: 760 }}>
       <ElementDistribution
         distribution={{ 목: 1, 화: 4, 토: 2, 금: 1, 수: 0 }}
         tenGods={{
@@ -52,7 +52,7 @@ export function WithLackingElement() {
 /** dominant 미정(null) — 균형 잡힌 분포에서 중앙 라벨이 '-'로 표시되는 케이스. */
 export function NoDominant() {
   return (
-    <div style={{ padding: 16, background: "#f7f8fa", width: 760 }}>
+    <div style={{ padding: 16, background: "#dfe7ff", width: 760 }}>
       <ElementDistribution
         distribution={{ 목: 2, 화: 2, 토: 1, 금: 2, 수: 1 }}
         tenGods={{

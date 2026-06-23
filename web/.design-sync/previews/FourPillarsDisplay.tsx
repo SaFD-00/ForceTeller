@@ -66,7 +66,7 @@ const pillars = {
 /** 사주팔자(四柱八字) 4기둥 카드 — 년·월·일·시주 천간/지지 + 오행 뱃지·십성. */
 export function FullChart() {
   return (
-    <div style={{ padding: 16, background: "#f7f8fa", width: 720 }}>
+    <div style={{ padding: 16, background: "#dfe7ff", width: 720 }}>
       <FourPillarsDisplay pillars={pillars} />
     </div>
   );
@@ -133,7 +133,7 @@ export function EarthDayMaster() {
     },
   };
   return (
-    <div style={{ padding: 16, background: "#f7f8fa", width: 720 }}>
+    <div style={{ padding: 16, background: "#dfe7ff", width: 720 }}>
       <FourPillarsDisplay pillars={earthPillars} />
     </div>
   );

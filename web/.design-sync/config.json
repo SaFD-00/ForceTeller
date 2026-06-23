@@ -14,6 +14,7 @@
   "extraEntries": ["./stores/sajuStore.ts", "./.design-sync/ds-preview-setup.ts"],
   "componentSrcMap": {},
   "overrides": {
+    "Mascot": { "cardMode": "column" },
     "MessageBubble": { "cardMode": "column" },
     "AgentSelector": { "cardMode": "column" },
     "SuggestedQuestions": { "cardMode": "column" },

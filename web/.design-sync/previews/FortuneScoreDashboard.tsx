@@ -3,7 +3,7 @@ import { FortuneScoreDashboard } from "forceteller-web";
 /** 종합운/직업운/재물운/건강운/애정운 5개 운세 점수가 모두 채워진 전체 대시보드 (첫 항목 펼침) */
 export function AllFortunes() {
   return (
-    <div style={{ padding: 16, background: "#f7f8fa", width: 560 }}>
+    <div style={{ padding: 16, background: "#dfe7ff", width: 560 }}>
       <FortuneScoreDashboard
         scores={{
           general: {
@@ -66,7 +66,7 @@ export function AllFortunes() {
 /** 종합운 단일 항목 + 낮은 점수(흉) 케이스 — 점수바 색상이 위험 구간(rose)으로 표시되는 모습 */
 export function LowScoreSingle() {
   return (
-    <div style={{ padding: 16, background: "#f7f8fa", width: 480 }}>
+    <div style={{ padding: 16, background: "#dfe7ff", width: 480 }}>
       <FortuneScoreDashboard
         scores={{
           general: {
@@ -89,7 +89,7 @@ export function LowScoreSingle() {
 /** 재물운·애정운 2개 항목만 제공된 부분 케이스 — advice/행운색/방위 부가 정보 렌더 확인 */
 export function PartialFortunes() {
   return (
-    <div style={{ padding: 16, background: "#f7f8fa", width: 520 }}>
+    <div style={{ padding: 16, background: "#dfe7ff", width: 520 }}>
       <FortuneScoreDashboard
         scores={{
           wealth: {

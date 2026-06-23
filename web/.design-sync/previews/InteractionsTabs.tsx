@@ -87,7 +87,7 @@ const conflictOnly = {
 /** 전체 작용 — 합·충·형·공망 등 여러 탭이 모두 채워진 상태. */
 export function AllInteractions() {
   return (
-    <div style={{ padding: 16, background: "#f7f8fa", width: 720 }}>
+    <div style={{ padding: 16, background: "#dfe7ff", width: 720 }}>
       <InteractionsTabs interactions={fullInteractions} />
     </div>
   );
@@ -96,7 +96,7 @@ export function AllInteractions() {
 /** 충 단일 탭 — 자오충·묘유충 두 건만 존재하는 케이스. */
 export function ConflictOnly() {
   return (
-    <div style={{ padding: 16, background: "#f7f8fa", width: 720 }}>
+    <div style={{ padding: 16, background: "#dfe7ff", width: 720 }}>
       <InteractionsTabs interactions={conflictOnly} />
     </div>
   );

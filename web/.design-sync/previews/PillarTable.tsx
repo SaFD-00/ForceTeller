@@ -27,7 +27,7 @@ const pillars = {
 /** 사주팔자(四柱八字) 표 — 년·월·일·시주 + 지장간·십이운성·십이신살. */
 export function FullChart() {
   return (
-    <div style={{ padding: 16, background: "#f7f8fa" }}>
+    <div style={{ padding: 16, background: "#dfe7ff" }}>
       <PillarTable pillars={pillars} />
     </div>
   );
@@ -36,7 +36,7 @@ export function FullChart() {
 /** 간결형 — 지장간·십이운성·신살 숨김. */
 export function Compact() {
   return (
-    <div style={{ padding: 16, background: "#f7f8fa" }}>
+    <div style={{ padding: 16, background: "#dfe7ff" }}>
       <PillarTable pillars={pillars} showHiddenStems={false} showTwelvePhase={false} showTwelveShensha={false} />
     </div>
   );
