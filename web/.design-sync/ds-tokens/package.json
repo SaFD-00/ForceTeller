@@ -1,0 +1,6 @@
+{
+  "name": "ds-tokens",
+  "version": "1.0.0",
+  "private": true,
+  "description": "ForceTeller design tokens (design-sync tokensPkg). node_modules/ds-tokens 심링크로 노출 — README/NOTES 참조."
+}

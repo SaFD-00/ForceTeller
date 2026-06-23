@@ -1,0 +1,13 @@
+/* design-sync extraFonts: ForceTeller 브랜드 폰트 Pretendard 를 번들에 ship 한다.
+ * 앱(app/layout.tsx)은 jsDelivr CDN <link> 로 로드하지만, claude.ai/design 의
+ * 렌더는 그 link 가 없으므로 번들이 직접 @font-face 를 제공해야 시스템 폴백 대신
+ * Pretendard 로 렌더된다. 번들 CSS 의 font-sans 스택이 가리키는 family 이름은
+ * 'Pretendard'(앱 css 의 'Pretendard Variable' 아님)이므로 그 이름으로 선언한다.
+ * woff2 출처: orioncactus/pretendard@v1.3.9 variable (앱과 동일 버전). */
+@font-face {
+  font-family: 'Pretendard';
+  font-weight: 45 920;
+  font-style: normal;
+  font-display: swap;
+  src: url('./PretendardVariable.woff2') format('woff2-variations');
+}
