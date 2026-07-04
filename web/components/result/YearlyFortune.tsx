@@ -42,22 +42,22 @@ export function YearlyFortune({ sewun }: YearlyFortuneProps) {
             return (
               <div
                 key={item.year}
-                className={`flex-shrink-0 w-28 p-3 rounded-xl border text-center transition-all ${
+                className={`flex-shrink-0 w-28 p-3 rounded-xl border-[1.5px] text-center shadow-card hover:-translate-x-px hover:-translate-y-px hover:shadow-card-hover transition-all ${
                   isCurrent
-                    ? 'border-primary bg-primary/5 shadow-card'
+                    ? 'border-border bg-primary/5'
                     : 'border-border bg-muted'
                 }`}
               >
                 <div className="flex items-center justify-center gap-1 mb-2">
-                  <span className="text-sm font-semibold text-foreground">{item.year}</span>
+                  <span className="text-sm font-mono font-semibold text-foreground">{item.year}</span>
                   {isCurrent && (
-                    <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-primary/20 text-primary">
+                    <span className="text-[10px] px-1.5 py-0.5 rounded-lg bg-primary/20 text-primary">
                       올해
                     </span>
                   )}
                 </div>
                 <div
-                  className={`mx-auto mb-2 w-12 h-12 rounded-lg flex items-center justify-center ${color.bg} ${color.border} border`}
+                  className={`mx-auto mb-2 w-12 h-12 rounded-lg flex items-center justify-center ${color.bg} ${color.border} border-[1.5px]`}
                 >
                   <span className={`text-lg font-bold ${color.text}`}>{item.ganji_korean}</span>
                 </div>

@@ -154,7 +154,7 @@ export function ShenshaDetailCard({ shensha, pillars }: ShenshaDetailCardProps) 
                 setIsModalOpen(true);
               }
             }}
-            className="text-xl font-bold text-foreground underline decoration-white/30 hover:decoration-primary transition-colors"
+            className="text-xl font-bold text-foreground underline decoration-border/30 hover:decoration-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
           >
             신살(神煞)
           </button>
@@ -167,7 +167,7 @@ export function ShenshaDetailCard({ shensha, pillars }: ShenshaDetailCardProps) 
         <div className="flex gap-2 mb-4">
           <button
             onClick={() => setViewMode('pillar')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+            className={`btn-block block-press px-4 py-2 rounded-lg border-[1.5px] border-border text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
               viewMode === 'pillar'
                 ? 'bg-primary text-white'
                 : 'bg-muted text-muted-foreground hover:bg-muted hover:text-foreground'
@@ -177,7 +177,7 @@ export function ShenshaDetailCard({ shensha, pillars }: ShenshaDetailCardProps) 
           </button>
           <button
             onClick={() => setViewMode('type')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+            className={`btn-block block-press px-4 py-2 rounded-lg border-[1.5px] border-border text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
               viewMode === 'type'
                 ? 'bg-primary text-white'
                 : 'bg-muted text-muted-foreground hover:bg-muted hover:text-foreground'
@@ -267,7 +267,7 @@ export function ShenshaDetailCard({ shensha, pillars }: ShenshaDetailCardProps) 
               </div>
 
               {/* 구분선 */}
-              <div className="border-t border-border my-4" />
+              <div className="border-t-[1.5px] border-border my-4" />
 
               {/* 신살 섹션 헤더 */}
               <div className="text-sm text-muted-foreground mb-3">신살</div>
@@ -287,7 +287,7 @@ export function ShenshaDetailCard({ shensha, pillars }: ShenshaDetailCardProps) 
                             <button
                               key={`${item.name}-${idx}`}
                               onClick={() => handleShenshaClick(item.name)}
-                              className={`w-full text-left px-2 py-1 rounded text-xs ${colors.bg} ${colors.text} hover:brightness-110 transition-all`}
+                              className={`btn-block block-press w-full text-left px-2 py-1 rounded-lg border-[1.5px] border-border text-xs ${colors.bg} ${colors.text} hover:brightness-110 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary`}
                             >
                               {item.name}
                             </button>
@@ -327,8 +327,8 @@ export function ShenshaDetailCard({ shensha, pillars }: ShenshaDetailCardProps) 
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         onClick={() => handleShenshaClick(item.name)}
-                        className={`p-4 rounded-lg ${colors.bg} border ${colors.border}
-                          text-left transition-all hover:brightness-110`}
+                        className={`btn-block block-press p-4 rounded-xl ${colors.bg} border-[1.5px] border-border
+                          text-left shadow-block-sm transition-all hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary`}
                       >
                         <div className="flex items-start justify-between mb-2">
                           <div>
@@ -341,7 +341,7 @@ export function ShenshaDetailCard({ shensha, pillars }: ShenshaDetailCardProps) 
                               </span>
                             )}
                           </div>
-                          <span className={`text-xs px-2 py-1 rounded ${colors.bg} ${colors.text}`}>
+                          <span className={`text-xs px-2 py-1 rounded-lg ${colors.bg} ${colors.text}`}>
                             {positionNames[item.position] || item.position}
                           </span>
                         </div>

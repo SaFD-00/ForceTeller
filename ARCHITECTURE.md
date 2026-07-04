@@ -160,18 +160,18 @@ web/
 │   └── ui/           # 재사용 UI (9개)
 ├── stores/
 │   └── sajuStore.ts  # Zustand 상태관리
-└── lib/
-    ├── api/          # API 클라이언트 (client·manseol·chat)
-    └── ganji.ts      # 간지 표시 사전 (인덱스→한글/한자/오행, 표시 전용)
+├── lib/
+│   ├── api/          # API 클라이언트 (client·manseol·chat)
+│   └── ganji.ts      # 간지 표시 사전 (인덱스→한글/한자/오행, 표시 전용)
+├── .design-sync/     # claude.ai/design 디자인시스템 동기화 (synth-entry 번들)
+└── .ds-css/          # design-sync용 Tailwind v3 정적 CSS 컴파일
 ```
 
-**디자인 시스템:** Tetris(블록 게임 감성)의 고대비·놀이적 스타일을 적용한다.
-색상 토큰·타이포(Bangers/JetBrains Mono)·간격 스케일은 루트 [DESIGN.md](DESIGN.md)에
-정의되어 있고, Tailwind 설정(`web/tailwind.config.ts`)·`web/app/globals.css`가 이를 반영한다.
-
-**계산/표시 분리:** 간지·십성·12운성 계산은 백엔드(manseol) 단일 진실 공급원이 담당하고,
-프론트는 `lib/ganji.ts`의 정적 표시 사전으로 인덱스→한글/한자/오행만 조회한다.
-절기를 무시하던 프론트 근사 계산은 제거되었다.
+**Key Design:**
+- **컴포넌트 순수 props-driven**: result/chat 컴포넌트 대부분이 store 비결합 → 프리뷰·재사용·테스트 용이.
+- **UI 테마(tetris-refined 블록)**: [typeui.sh `tetris`](https://www.typeui.sh/design-skills/tetris) 기반 — 쿨블루 배경 + 비비드 퍼플 강조 + 딥네이비 잉크 + 하드 오프셋(솔리드) 그림자 + 1.5px 블록 테두리. 폰트 Pretendard(본문)·Bangers(라틴 디스플레이)·JetBrains Mono(숫자·간지). 색상 토큰·타이포·간격 스케일은 루트 [DESIGN.md](DESIGN.md)에 정의되고 `web/tailwind.config.ts`·`web/app/globals.css`가 이를 반영한다. 브랜드 마스코트 **"별이"**(`components/ui/Mascot.tsx`, 별·달 점성술사)가 채팅 아바타·로딩·설명봇·로고에 재사용된다.
+- **계산/표시 분리**: 간지·십성·12운성 계산은 백엔드(manseol) 단일 진실 공급원이 담당하고, 프론트는 `lib/ganji.ts`의 정적 표시 사전으로 인덱스→한글/한자/오행만 조회한다. 절기를 무시하던 프론트 근사 계산은 제거되었다.
+- **design-sync**: 앱을 DS 패키지처럼 synth-entry로 번들해 claude.ai/design에 게시한다(업로드는 별도 승인 단계). process shim·next/navigation no-op stub·framer-motion skipAnimations로 정적 헤드리스 렌더를 보정. 상세 재현 노트는 `web/.design-sync/NOTES.md`.
 
 ### 5. Persistence Layer (`db/`)
 

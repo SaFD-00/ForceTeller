@@ -59,7 +59,7 @@ export function ElementBadge({
   return (
     <span
       className={cn(
-        'inline-flex items-center justify-center rounded-full border font-medium',
+        'inline-flex items-center justify-center rounded-lg border-[1.5px] font-medium shadow-block-sm',
         colors.bg,
         colors.text,
         colors.border,

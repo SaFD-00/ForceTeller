@@ -25,9 +25,7 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: 'ForceTeller | 사주명리 AI',
   description: '사주팔자 계산 및 AI 해석 서비스',
-  icons: {
-    icon: '/favicon.ico',
-  },
+  // 파비콘은 App Router 규약(app/icon.svg)으로 자동 주입됩니다.
 };
 
 export default function RootLayout({
@@ -45,7 +43,8 @@ export default function RootLayout({
           rel="stylesheet"
           href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css"
         />
-        {/* 한글 디스플레이 서체 (Tetris) — Google Fonts. 실패 시 Pretendard 폴백 */}
+        {/* 한글 디스플레이 서체(Black Han Sans) — Google Fonts. 실패 시 Pretendard 폴백.
+            Bangers(라틴)·JetBrains Mono는 next/font로 번들되므로 여기서 로드하지 않는다. */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         {/* App Router에는 pages/_document.js가 없고, 한글 글리프는 next/font(latin subset)로

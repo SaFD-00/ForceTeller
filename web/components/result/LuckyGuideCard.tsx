@@ -21,7 +21,7 @@ function ChipRow({ label, items, icon }: { label: string; items?: string[]; icon
       {items.map((item, i) => (
         <span
           key={i}
-          className="px-2.5 py-1 text-sm rounded-full bg-primary/10 text-foreground border border-primary/20"
+          className="px-2.5 py-1 text-sm rounded-lg bg-primary/10 text-foreground border-[1.5px] border-border shadow-block-sm"
         >
           {item}
         </span>
@@ -49,7 +49,7 @@ export function LuckyGuideCard({ recommendations, comparison }: LuckyGuideCardPr
         <Icon name="solar:magic-stick-3-bold" size={24} className="text-primary" />
         <h2 className="text-xl font-bold text-foreground">용신 개운법</h2>
         {methodName && (
-          <span className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground border border-border">
+          <span className="text-xs px-2 py-0.5 rounded-lg bg-muted text-muted-foreground border-[1.5px] border-border">
             추천: {methodName}
           </span>
         )}
@@ -59,7 +59,7 @@ export function LuckyGuideCard({ recommendations, comparison }: LuckyGuideCardPr
         {/* 용신 오행 + 요약 */}
         <div className="flex items-center gap-3">
           <div
-            className={`w-14 h-14 rounded-xl flex items-center justify-center ${color.bg} ${color.border} border`}
+            className={`w-14 h-14 rounded-xl flex items-center justify-center ${color.bg} ${color.border} border-[1.5px] shadow-block-sm`}
           >
             <span className={`text-2xl font-bold ${color.text}`}>{element}</span>
           </div>
@@ -70,7 +70,7 @@ export function LuckyGuideCard({ recommendations, comparison }: LuckyGuideCardPr
         </div>
 
         {recommendations.summary && (
-          <p className="text-sm text-foreground leading-relaxed bg-muted rounded-lg p-3">
+          <p className="text-sm text-foreground leading-relaxed bg-muted rounded-lg p-3 border-[1.5px] border-border">
             {recommendations.summary}
           </p>
         )}

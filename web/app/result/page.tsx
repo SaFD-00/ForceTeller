@@ -235,7 +235,7 @@ export default function ResultPage() {
   }));
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-white to-background">
+    <main className="min-h-screen bg-background">
       <div className="flex">
         {/* Left: Results Section */}
         <div
@@ -444,6 +444,7 @@ export default function ResultPage() {
                   size="sm"
                   onClick={() => setIsChatOpen(false)}
                   className="text-muted-foreground hover:text-foreground"
+                  aria-label="AI 상담 닫기"
                 >
                   <Icon name="solar:close-circle-bold" size={20} />
                 </Button>
@@ -464,7 +465,7 @@ export default function ResultPage() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setIsChatOpen(true)}
-              className="bg-primary hover:bg-primary/90 text-white p-4 rounded-l-xl shadow-card-hover flex items-center gap-2"
+              className="bg-primary hover:bg-primary/90 text-white p-4 rounded-l-xl border-[1.5px] border-border shadow-card-hover flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
             >
               <Icon name="solar:chat-round-dots-bold" size={24} />
               <span className="font-medium">AI 상담</span>
@@ -484,7 +485,7 @@ export default function ResultPage() {
             className="fixed inset-0 z-50 bg-background"
           >
             <div className="h-full flex flex-col">
-              <div className="flex items-center justify-between p-4 border-b border-border">
+              <div className="flex items-center justify-between p-4 border-b-[1.5px] border-border">
                 <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
                   <Icon name="solar:chat-round-dots-bold" size={24} className="text-primary" />
                   AI 상담
@@ -494,6 +495,7 @@ export default function ResultPage() {
                   size="sm"
                   onClick={() => setIsChatOpen(false)}
                   className="text-muted-foreground hover:text-foreground"
+                  aria-label="AI 상담 닫기"
                 >
                   <Icon name="solar:close-circle-bold" size={24} />
                 </Button>

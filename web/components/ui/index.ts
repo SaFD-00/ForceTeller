@@ -7,3 +7,5 @@ export { LoadingOverlay } from './LoadingOverlay';
 export { GlossaryTooltip } from './GlossaryTooltip';
 export { GlossaryModal } from './GlossaryModal';
 export { Disclaimer } from './Disclaimer';
+export { Mascot, MascotBubble } from './Mascot';
+export type { MascotMood, MascotSize } from './Mascot';

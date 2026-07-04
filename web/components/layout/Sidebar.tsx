@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Icon } from '@/components/ui';
+import { Icon, Mascot } from '@/components/ui';
 import { cn } from '@/lib/utils';
 
 const NAV_ITEMS = [
@@ -15,18 +15,18 @@ export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="fixed left-0 top-0 z-40 hidden h-screen w-16 flex-col items-center border-r border-border bg-surface py-4 lg:flex">
-      {/* 로고 */}
+    <aside className="fixed left-0 top-0 z-40 hidden h-screen w-16 flex-col items-center border-r-[1.5px] border-border bg-surface py-4 lg:flex">
+      {/* 로고 (마스코트 별이) */}
       <Link
         href="/"
-        className="mb-6 flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-white"
+        className="mb-6 flex h-11 w-11 items-center justify-center"
         aria-label="ForceTeller 홈"
       >
-        <Icon name="solar:magic-stick-3-bold" size={22} />
+        <Mascot mood="idle" size="sm" />
       </Link>
 
       {/* 내비게이션 */}
-      <nav className="flex flex-col gap-1">
+      <nav className="flex flex-col gap-2">
         {NAV_ITEMS.map((item) => {
           const active = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href);
           return (
@@ -35,9 +35,9 @@ export function Sidebar() {
               href={item.href}
               title={item.label}
               className={cn(
-                'flex h-11 w-11 items-center justify-center rounded-xl transition-colors',
+                'flex h-11 w-11 items-center justify-center rounded-lg transition-all',
                 active
-                  ? 'bg-primary/10 text-primary'
+                  ? 'border-[1.5px] border-border bg-primary/15 text-primary shadow-block-sm'
                   : 'text-muted-foreground hover:bg-muted hover:text-foreground'
               )}
             >

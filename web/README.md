@@ -5,7 +5,9 @@
 ## 기술 스택
 
 - **프레임워크**: Next.js 14 (App Router)
-- **스타일링**: Tailwind CSS (Tetris 디자인 시스템)
+- **스타일링**: Tailwind CSS v3 (tetris-refined 블록 톤 — 비비드 컬러 블록 + 하드 오프셋 그림자)
+- **타이포**: Pretendard(본문) + Bangers(라틴 디스플레이) + JetBrains Mono(숫자·간지)
+- **마스코트**: "별이" — 별·달 점성술사 (간단한 SVG 블록으로 조립, 채팅·설명·로딩·로고에 재사용)
 - **상태관리**: Zustand
 - **차트**: Recharts
 - **아이콘**: Iconify (Solar 아이콘셋)
@@ -15,9 +17,9 @@
 ## 주요 기능
 
 ### 1. 히어로 섹션
-- 그라디언트 배경 + Framer Motion 진입 애니메이션
-- Glassmorphism 스타일 입력 폼
-- 생년월일, 출생시간, 출생도시, 성별, 달력유형 입력
+- tetris-refined 블록 디자인 — 쿨블루 배경 + 비비드 퍼플 포인트 + 마스코트 "별이" + Bangers 워드마크
+- Framer Motion 진입 애니메이션
+- 생년월일, 출생시간(시간 모름 옵션), 출생도시(자동완성), 성별, 달력유형(양력/음력/윤달) 입력
 
 ### 2. 기능 그리드
 - 9가지 분석 기능 소개 (3x3 그리드)
@@ -49,6 +51,7 @@ web/
 │   ├── layout.tsx          # 루트 레이아웃 (사이드바 + 폰트)
 │   ├── page.tsx            # 홈페이지
 │   ├── globals.css         # 글로벌 스타일
+│   ├── icon.svg            # 파비콘 (App Router 규약)
 │   ├── result/page.tsx     # 결과 페이지
 │   └── chat/page.tsx       # 채팅 페이지
 ├── components/
@@ -66,7 +69,9 @@ web/
 │   ├── transforms.ts       # 백엔드 응답 → 표시용 변환
 │   └── utils.ts            # 유틸리티
 ├── stores/                 # Zustand 스토어
-└── types/                  # TypeScript 타입
+├── types/                  # TypeScript 타입
+├── .design-sync/           # claude.ai/design 동기화 인프라 (아래 참고)
+└── .ds-css/                # design-sync용 Tailwind v3 정적 CSS 컴파일
 ```
 
 ## 시작하기
@@ -121,15 +126,52 @@ NEXT_PUBLIC_API_URL=https://api.example.com
 # API_PROXY_TARGET=http://backend:8000
 ```
 
+## 디자인 시스템 (tetris-refined 블록)
+
+[typeui.sh `tetris` 디자인 스킬](https://www.typeui.sh/design-skills/tetris) 기반 — 고대비 비비드 컬러 블록 + 하드 오프셋(솔리드) 그림자 + 컴팩트 게임감. 운세 분석 도구다운 신뢰감을 위해 모서리는 살짝 둥글리고(8~12px) 테두리는 1.5px로 절제했다.
+
+| 역할 | 토큰 | hex |
+|---|---|---|
+| 앱 배경(쿨블루) | `bg-background` | `#dfe7ff` |
+| 잉크(제목·본문·테두리) | `text-foreground`/`border-border` | `#1c202b` |
+| 카드/표면 | `bg-surface` | `#ffffff` |
+| 브랜드 강조(비비드 퍼플) | `bg-primary`/`text-primary` | `#7107e7` |
+| 보조 강조(네이비블루) | `accent` | `#1c398e` |
+| 보조 텍스트 | `text-muted-foreground` | `#54608a` |
+| 상태(성공/경고/위험) | `success`/`warning`/`danger` | `#16a34a`·`#d97706`·`#dc2626` |
+
+- **그림자(블록)**: `shadow-card`(3px 3px 0) · `shadow-card-hover`(5px 5px 0) · `shadow-block-sm`(2px 2px 0).
+- **공용 헬퍼**: `.glass-card`(블록 카드) · `.btn-block`(버튼 베이스) · `.block-press`(눌림) · `.gradient-text`.
+- **폰트**: `font-sans`(Pretendard) · `font-display`(Bangers, 라틴) · `font-mono`(JetBrains Mono, 숫자·간지).
+- **마스코트 "별이"**: `Mascot`/`MascotBubble` — mood(idle/happy/thinking/talking/curious/sleeping)·size(xs~xl) variant.
+
 ## 오행 색상 시스템
+
+디자인 토큰은 `tailwind.config.ts` 의 `theme.extend.colors.element` 에 정의되며, 유틸리티(`text-element-*`, `bg-element-*`, `.element-*`)로 사용합니다.
 
 | 오행 | 한자 | 색상 |
 |------|------|------|
-| 목(木) | 木 | `#22c55e` (Green) |
-| 화(火) | 火 | `#ef4444` (Red) |
-| 토(土) | 土 | `#eab308` (Yellow) |
-| 금(金) | 金 | `#a1a1aa` (Gray) |
-| 수(水) | 水 | `#3b82f6` (Blue) |
+| 목(木) | 木 | `#16A34A` (Green) |
+| 화(火) | 火 | `#DC2626` (Red) |
+| 토(土) | 土 | `#D97706` (Amber) |
+| 금(金) | 金 | `#64748B` (Slate) |
+| 수(水) | 水 | `#2563EB` (Blue) |
+
+> `tailwind.config.ts` 의 `element.*` 토큰과 차트(`lib/constants/elements.ts` 의 `ELEMENT_COLORS.hex`)는 동일한 hex 단일 소스를 사용합니다.
+
+## 디자인 시스템 동기화 (design-sync)
+
+`web/.design-sync/` 는 컴포넌트 라이브러리를 외부 서비스 **claude.ai/design** 디자인시스템과 동기화하는 인프라입니다(Next.js 앱을 synth-entry로 번들). 재현 gotcha는 `.design-sync/NOTES.md` 참고.
+
+```bash
+node .ds-css/compile.mjs          # Tailwind v3 정적 CSS 컴파일 → .ds-css/ds-compiled.css
+node .ds-sync/package-build.mjs --config .design-sync/config.json \
+  --node-modules ./node_modules --entry ./dist/index.js --out ./ds-bundle
+node .ds-sync/package-validate.mjs ./ds-bundle   # 헤드리스 렌더 체크 → ds-bundle/.review.html
+```
+
+- 프리뷰: `.design-sync/previews/<Name>.tsx` (직접 author, 커밋 대상). 빌드 산출물(`.ds-sync/`, `ds-bundle/`, `ds-compiled.css`)은 gitignore.
+- claude.ai 업로드(publish)는 별도 승인 단계입니다.
 
 ## 라이선스
 

@@ -94,9 +94,9 @@ export function PillarTable({
               {columns.map((col) => (
                 <th
                   key={col.key}
-                  className="text-center text-muted-foreground text-sm font-medium py-2 px-2 border-b border-border"
+                  className="text-center text-muted-foreground text-sm font-medium py-2 px-2 border-b-[1.5px] border-border"
                 >
-                  <span className="underline decoration-white/30">{col.label}</span>
+                  <span className="underline decoration-border/30">{col.label}</span>
                 </th>
               ))}
             </tr>
@@ -129,9 +129,9 @@ export function PillarTable({
                 return (
                   <td key={col.key} className="text-center py-2 px-2">
                     <div
-                      className={`inline-flex flex-col items-center justify-center w-14 h-14 rounded-lg ${ELEMENT_BG_COLORS[elementKorean as Element]}`}
+                      className={`inline-flex flex-col items-center justify-center w-14 h-14 rounded-lg border-[1.5px] border-border shadow-block-sm ${ELEMENT_BG_COLORS[elementKorean as Element]}`}
                     >
-                      <span className={`text-xl font-bold ${ELEMENT_TEXT_COLORS[elementKorean as Element]}`}>
+                      <span className={`text-xl font-bold font-mono ${ELEMENT_TEXT_COLORS[elementKorean as Element]}`}>
                         {stem.korean}
                         <span className="text-xs ml-0.5">{stem.hanja}</span>
                       </span>
@@ -156,9 +156,9 @@ export function PillarTable({
                 return (
                   <td key={col.key} className="text-center py-2 px-2">
                     <div
-                      className={`inline-flex flex-col items-center justify-center w-14 h-14 rounded-lg ${ELEMENT_BG_COLORS[elementKorean as Element]}`}
+                      className={`inline-flex flex-col items-center justify-center w-14 h-14 rounded-lg border-[1.5px] border-border shadow-block-sm ${ELEMENT_BG_COLORS[elementKorean as Element]}`}
                     >
-                      <span className={`text-xl font-bold ${ELEMENT_TEXT_COLORS[elementKorean as Element]}`}>
+                      <span className={`text-xl font-bold font-mono ${ELEMENT_TEXT_COLORS[elementKorean as Element]}`}>
                         {branch.korean}
                         <span className="text-xs ml-0.5">{branch.hanja}</span>
                       </span>

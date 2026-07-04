@@ -1,0 +1,38 @@
+{
+  "shape": "package",
+  "projectId": "f17c4807-52e8-496c-bf0f-1b58844eea77",
+  "pkg": "forceteller-web",
+  "globalName": "ForceTeller",
+  "srcDir": "components",
+  "tsconfig": "tsconfig.json",
+  "cssEntry": ".ds-css/ds-compiled.css",
+  "tokensPkg": "ds-tokens",
+  "tokensGlob": "*.css",
+  "extraFonts": [".design-sync/fonts/pretendard.css"],
+  "guidelinesGlob": [".design-sync/guidelines/*.md"],
+  "readmeHeader": ".design-sync/conventions.md",
+  "extraEntries": ["./stores/sajuStore.ts", "./.design-sync/ds-preview-setup.ts"],
+  "componentSrcMap": {},
+  "overrides": {
+    "Mascot": { "cardMode": "column" },
+    "MessageBubble": { "cardMode": "column" },
+    "AgentSelector": { "cardMode": "column" },
+    "SuggestedQuestions": { "cardMode": "column" },
+    "ElementDistribution": { "cardMode": "column" },
+    "FiveElementsChart": { "cardMode": "column" },
+    "FortuneCycleTimeline": { "cardMode": "column" },
+    "FortuneScoreDashboard": { "cardMode": "column" },
+    "FourPillarsDisplay": { "cardMode": "column" },
+    "InteractionsTabs": { "cardMode": "column" },
+    "LuckyGuideCard": { "cardMode": "column" },
+    "PentagonChart": { "cardMode": "column" },
+    "SchoolComparison": { "cardMode": "column" },
+    "ShenshaDetailCard": { "cardMode": "column" },
+    "StrengthMeter": { "cardMode": "column" },
+    "TenGodsDistribution": { "cardMode": "column" },
+    "YongshinCard": { "cardMode": "column" }
+  },
+  "libOverrides": {
+    "bundle.mjs": "Next.js synth-entry: process shim (lib/api/{client,chat}.ts process.env.NEXT_PUBLIC_API_URL + bundled remark/vfile) + next/navigation no-op stub (Sidebar usePathname, BirthInfoForm useRouter)"
+  }
+}

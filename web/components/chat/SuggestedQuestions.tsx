@@ -23,7 +23,7 @@ export function SuggestedQuestions({
   const displayQuestions = questions.slice(0, 3);
 
   return (
-    <div className="px-4 py-2 border-t border-border">
+    <div className="px-4 py-2 border-t-[1.5px] border-border">
       <div className="text-xs text-muted-foreground mb-2 flex items-center gap-1">
         <Icon icon="mdi:lightbulb-outline" className="w-3.5 h-3.5" />
         이어서 질문해보세요
@@ -37,11 +37,11 @@ export function SuggestedQuestions({
             onClick={() => !disabled && onQuestionClick(question)}
             disabled={disabled}
             className={`
-              inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full
-              text-sm transition-all duration-200 text-left
+              inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border-[1.5px] border-border
+              text-sm transition-all text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary
               ${disabled
                 ? 'bg-muted text-muted-foreground cursor-not-allowed'
-                : 'bg-muted text-muted-foreground hover:bg-accent/20 hover:text-foreground cursor-pointer'
+                : 'bg-primary/10 text-foreground hover:-translate-x-px hover:-translate-y-px hover:shadow-card-hover cursor-pointer'
               }
             `}
           >

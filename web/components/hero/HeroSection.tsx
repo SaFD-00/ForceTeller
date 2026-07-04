@@ -2,23 +2,26 @@
 
 import { motion } from 'framer-motion';
 import { BirthInfoForm } from './BirthInfoForm';
-import { Icon } from '@/components/ui';
+import { Icon, Mascot } from '@/components/ui';
 
 export function HeroSection() {
   return (
-    <section className="hero-gradient relative flex flex-col items-center px-4 pt-24 pb-16">
+    <section className="hero-gradient relative flex flex-col items-center px-4 pt-20 pb-16">
       <motion.div
         initial={{ opacity: 0, y: -12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
         className="text-center mb-10"
       >
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary mb-6">
+        <Mascot mood="happy" size="xl" floating className="mx-auto mb-5" />
+
+        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border-[1.5px] border-border bg-primary/10 text-primary shadow-block-sm mb-5">
           <Icon name="solar:magic-stick-3-bold" size={15} />
-          <span className="text-xs font-medium">AI 기반 사주명리 분석</span>
+          <span className="text-xs font-bold">AI 기반 사주명리 분석</span>
         </div>
 
-        <h1 className="font-display text-4xl md:text-5xl tracking-tight text-foreground mb-3">
+        <p className="font-display text-2xl tracking-wide text-primary mb-1">FORCETELLER</p>
+        <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground mb-3">
           사주, <span className="gradient-text">손쉽게 풀이.</span>
         </h1>
         <p className="text-muted-foreground text-base md:text-lg max-w-xl mx-auto">

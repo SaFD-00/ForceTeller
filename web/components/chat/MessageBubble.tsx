@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Icon } from '@/components/ui';
+import { Icon, Mascot } from '@/components/ui';
 import { cn } from '@/lib/utils';
 import { MarkdownRenderer } from './MarkdownRenderer';
 import type { ChatMessage } from '@/types/saju';
@@ -30,28 +30,23 @@ export function MessageBubble({ message, onSuggestedQuestionClick }: MessageBubb
       )}
     >
       {/* Avatar */}
-      <div
-        className={cn(
-          'w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0',
-          isUser
-            ? 'bg-primary/20'
-            : 'bg-gradient-to-br from-accent/25 to-info/25'
-        )}
-      >
-        <Icon
-          name={isUser ? 'solar:user-bold' : 'solar:magic-stick-3-bold'}
-          size={20}
-          className={isUser ? 'text-primary' : 'text-foreground'}
-        />
-      </div>
+      {isUser ? (
+        <div className="w-10 h-10 rounded-lg border-[1.5px] border-border bg-primary/15 flex items-center justify-center flex-shrink-0">
+          <Icon name="solar:user-bold" size={20} className="text-primary" />
+        </div>
+      ) : (
+        <div className="w-10 h-10 flex items-center justify-center flex-shrink-0">
+          <Mascot mood="talking" size="sm" />
+        </div>
+      )}
 
       {/* Message */}
       <div
         className={cn(
-          'max-w-[75%] p-4 rounded-2xl',
+          'max-w-[75%] p-4 rounded-xl border-[1.5px] border-border shadow-block-sm',
           isUser
-            ? 'bg-primary/20 border border-primary/30 rounded-tr-md'
-            : 'bg-muted border border-border rounded-tl-md'
+            ? 'bg-primary/15 rounded-tr-sm'
+            : 'bg-surface rounded-tl-sm'
         )}
       >
         {/* 에이전트 출처·신뢰도 배지 (어시스턴트) */}
@@ -62,7 +57,7 @@ export function MessageBubble({ message, onSuggestedQuestionClick }: MessageBubb
               {message.agent_display_name} 에이전트
             </span>
             {typeof message.confidence === 'number' && (
-              <span className="text-xs px-1.5 py-0.5 rounded-full bg-primary/10 text-muted-foreground">
+              <span className="text-xs px-1.5 py-0.5 rounded-md border-[1.5px] border-border bg-primary/10 text-foreground">
                 {confidenceLabel(message.confidence)}
               </span>
             )}
@@ -77,7 +72,7 @@ export function MessageBubble({ message, onSuggestedQuestionClick }: MessageBubb
           <MarkdownRenderer content={message.content} />
         )}
         {message.timestamp && (
-          <p className="text-xs text-muted-foreground mt-2">
+          <p className="text-xs text-muted-foreground mt-2 font-mono">
             {new Date(message.timestamp).toLocaleTimeString('ko-KR', {
               hour: '2-digit',
               minute: '2-digit',
@@ -93,8 +88,8 @@ export function MessageBubble({ message, onSuggestedQuestionClick }: MessageBubb
                 key={idx}
                 onClick={() => onSuggestedQuestionClick?.(question)}
                 className="px-3 py-1.5 text-sm bg-primary/10 hover:bg-primary/20
-                         border border-primary/30 rounded-full text-foreground
-                         transition-colors hover:text-foreground"
+                         border-[1.5px] border-border rounded-lg text-foreground
+                         shadow-block-sm transition-all hover:-translate-x-px hover:-translate-y-px"
               >
                 {question}
               </button>

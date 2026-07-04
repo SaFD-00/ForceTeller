@@ -36,25 +36,28 @@
 
 @layer components {
   /*
-   * 블록 카드 — 2px 딥네이비 보더 + 하드 섀도(네오브루탈리즘 블록 감성).
+   * 블록 카드 — 딥네이비 1.5px 보더 + 하드 오프셋 섀도(네오브루탈리즘 블록 감성).
    * .block-card 가 표준이며, 구 .card/.glass/.glass-card 는 호환용 별칭으로
-   * 동일 스타일을 공유한다(클래스명 유지).
+   * 동일 스타일을 공유한다(클래스명 유지). 테두리는 border-border(딥네이비)를 쓴다
+   * — primary 는 팔레트상 비비드 퍼플이므로 카드 테두리에 쓰지 않는다.
    */
   .block-card,
   .card,
   .glass,
   .glass-card {
-    @apply bg-surface border-2 border-primary rounded-md shadow-block;
+    @apply bg-surface border border-border rounded-md shadow-card;
+    border-width: 1.5px;
   }
 
-  /* 카드 컨테이너 기본 여백 — compact 밀도 (구 p-6 → p-4) */
+  /* 카드 컨테이너 기본 여백 — compact 밀도 */
   .block-card,
   .glass-card {
     @apply p-4;
   }
 
   .card-elevated {
-    @apply bg-surface border-2 border-primary rounded-md shadow-card-hover;
+    @apply bg-surface border border-border rounded-md shadow-card-hover;
+    border-width: 1.5px;
   }
 
   /*
@@ -62,29 +65,44 @@
    * active 시 오프셋만큼 눌려 들어가는 물리감(translate + 섀도 제거).
    */
   .glass-button {
-    @apply bg-surface border-2 border-primary rounded-md px-4 py-2 font-medium text-foreground
+    @apply bg-surface border border-border rounded-md px-4 py-2 font-medium text-foreground
            shadow-block-sm transition-all duration-150
            hover:bg-muted
            focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background
            active:translate-x-0.5 active:translate-y-0.5 active:shadow-none
            disabled:opacity-50 disabled:pointer-events-none;
+    border-width: 1.5px;
   }
 
-  /* 오행 배지 (element-* 토큰 = 시맨틱 상태색과 정렬) */
+  /* 블록 버튼 공통 베이스(채움/외곽 변형은 컴포넌트가 색만 얹음) */
+  .btn-block {
+    @apply inline-flex items-center justify-center font-bold border border-border rounded-lg shadow-card transition-all duration-150;
+    border-width: 1.5px;
+  }
+  .btn-block:hover {
+    @apply -translate-x-px -translate-y-px shadow-card-hover;
+  }
+
+  /* 눌림 효과 — active 시 그림자 쪽으로 밀려들어가며 그림자 제거 */
+  .block-press:active {
+    @apply translate-x-[3px] translate-y-[3px] shadow-none;
+  }
+
+  /* 오행 배지 (element-* 토큰 = ELEMENT_COLORS 정렬, 블록 톤 채움 15% + 텍스트 + 테두리) */
   .element-wood {
-    @apply bg-element-wood/10 text-element-wood border-element-wood/30;
+    @apply bg-element-wood/15 text-element-wood border-element-wood/50;
   }
   .element-fire {
-    @apply bg-element-fire/10 text-element-fire border-element-fire/30;
+    @apply bg-element-fire/15 text-element-fire border-element-fire/50;
   }
   .element-earth {
-    @apply bg-element-earth/10 text-element-earth border-element-earth/30;
+    @apply bg-element-earth/15 text-element-earth border-element-earth/50;
   }
   .element-metal {
-    @apply bg-element-metal/10 text-element-metal border-element-metal/30;
+    @apply bg-element-metal/15 text-element-metal border-element-metal/50;
   }
   .element-water {
-    @apply bg-element-water/10 text-element-water border-element-water/30;
+    @apply bg-element-water/15 text-element-water border-element-water/50;
   }
 }
 
@@ -98,12 +116,12 @@
     @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background;
   }
 
-  /* 강조 텍스트 그라데이션 (navy → vivid purple) */
+  /* 강조 텍스트 그라데이션 (vivid purple → navy) */
   .gradient-text {
     @apply bg-gradient-to-r from-primary via-accent to-accent bg-clip-text text-transparent;
   }
 
-  /* 히어로 배경 그라데이션 (쿨 블루) */
+  /* 히어로 배경 그라데이션 (쿨 블루 + 퍼플 라디얼) */
   .hero-gradient {
     background:
       radial-gradient(60% 50% at 50% 0%, rgba(113, 7, 231, 0.08) 0%, rgba(113, 7, 231, 0) 100%),
@@ -113,8 +131,8 @@
 
 /* Scrollbar styling (딥 네이비 계열, 팔레트 정합) */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
 }
 
 ::-webkit-scrollbar-track {

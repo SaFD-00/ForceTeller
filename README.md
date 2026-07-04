@@ -488,20 +488,20 @@ Tetris 디자인 시스템에 맞춘 오행별 시맨틱 색상(`web/lib/constan
 - `SuggestedQuestions` - 추천 질문
 - `AgentSelector` - 에이전트 선택
 
-### UI 컴포넌트 (9개, `components/ui/`)
+### UI 컴포넌트 (`components/ui/`)
 - `Button`, `Input` - 기본 입력
-- `GlassCard` - 카드 표면 컨테이너
+- `GlassCard` - 블록 카드 (흰 배경 + 딥네이비 1.5px 테두리 + 하드 오프셋 그림자)
+- `Mascot` / `MascotBubble` - 브랜드 마스코트 "별이"(별·달 점성술사) + 말풍선 헬퍼
 - `Icon` - 아이콘 래퍼
 - `ElementBadge` - 오행 배지
-- `GlossaryTooltip`, `GlossaryModal` - 용어 설명
+- `GlossaryTooltip`, `GlossaryModal` - 용어 설명 (설명봇 별이 동반)
 - `Disclaimer` - 면책 고지 (결과·채팅 하단 상시)
-- `LoadingOverlay` - 로딩 상태
+- `LoadingOverlay` - 로딩 상태 (별이 등장)
 
 ### 레이아웃 컴포넌트 (`components/layout/`)
-- `Sidebar` - 좌측 아이콘 내비게이션 (홈/결과/채팅)
+- `Sidebar` - 좌측 아이콘 내비게이션 (홈/결과/채팅, 로고는 마스코트 "별이")
 
-> UI 테마: **Tetris 디자인 시스템** (블록 게임 감성의 고대비·놀이적 스타일,
-> Bangers/JetBrains Mono 타이포). 토큰·팔레트는 [DESIGN.md](DESIGN.md) 참조.
+> UI 테마: [typeui.sh `tetris`](https://www.typeui.sh/design-skills/tetris) 기반 tetris-refined 블록 디자인 — 쿨블루 배경(`#dfe7ff`) + 비비드 퍼플 포인트(`#7107e7`) + 딥네이비 잉크 + 하드 오프셋 그림자. 폰트 Pretendard·Bangers·JetBrains Mono. 토큰·팔레트는 [DESIGN.md](DESIGN.md) 참조.
 
 ## 데이터 상수 (config/constants.py)
 
