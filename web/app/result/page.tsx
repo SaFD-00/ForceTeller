@@ -21,6 +21,7 @@ import {
   LifetimeReport,
 } from '@/components/result';
 import { ChatContainer } from '@/components/chat';
+import { TEN_GOD_GROUP } from '@/lib/ganji';
 import type { Element, HiddenStemDisplay, ShenshaDisplay } from '@/types/saju';
 
 // 지장간 배열을 문자열로 변환
@@ -43,85 +44,6 @@ function getBranchTenGod(hiddenStems?: HiddenStemDisplay[]): string {
   // 마지막 항목이 본기
   const mainQi = hiddenStems[hiddenStems.length - 1];
   return mainQi.ten_god || '-';
-}
-
-// 십성 계산 함수 (대운용)
-function calculateTenGod(dayMasterElement: Element, stemElement: Element): string {
-  const relations: Record<Element, Record<Element, string>> = {
-    '목': { '목': '비겁', '화': '식상', '토': '재성', '금': '관성', '수': '인성' },
-    '화': { '목': '인성', '화': '비겁', '토': '식상', '금': '재성', '수': '관성' },
-    '토': { '목': '관성', '화': '인성', '토': '비겁', '금': '식상', '수': '재성' },
-    '금': { '목': '재성', '화': '관성', '토': '인성', '금': '비겁', '수': '식상' },
-    '수': { '목': '식상', '화': '재성', '토': '관성', '금': '인성', '수': '비겁' },
-  };
-  return relations[dayMasterElement]?.[stemElement] || '-';
-}
-
-// 천간 한글명 → 인덱스 매핑 (12운성 계산용)
-const STEM_INDEX_MAP: Record<string, number> = {
-  '갑': 0, '을': 1, '병': 2, '정': 3, '무': 4,
-  '기': 5, '경': 6, '신': 7, '임': 8, '계': 9,
-};
-
-// 지지 한글명 → 인덱스 매핑
-const BRANCH_INDEX_MAP: Record<string, number> = {
-  '자': 0, '축': 1, '인': 2, '묘': 3, '진': 4, '사': 5,
-  '오': 6, '미': 7, '신': 8, '유': 9, '술': 10, '해': 11,
-};
-
-// 지지의 본기 천간 인덱스 (지장간 본기)
-const BRANCH_MAIN_STEM: Record<number, number> = {
-  0: 9, 1: 5, 2: 0, 3: 1, 4: 4, 5: 2,
-  6: 3, 7: 5, 8: 6, 9: 7, 10: 4, 11: 8,
-};
-
-// 천간 데이터 (오행 정보 포함)
-const STEMS: Array<{ korean: string; element: Element }> = [
-  { korean: '갑', element: '목' },
-  { korean: '을', element: '목' },
-  { korean: '병', element: '화' },
-  { korean: '정', element: '화' },
-  { korean: '무', element: '토' },
-  { korean: '기', element: '토' },
-  { korean: '경', element: '금' },
-  { korean: '신', element: '금' },
-  { korean: '임', element: '수' },
-  { korean: '계', element: '수' },
-];
-
-// 12운성 순서
-const TWELVE_PHASES = ['장생', '목욕', '관대', '건록', '제왕', '쇠', '병', '사', '묘', '절', '태', '양'];
-
-// 천간별 장생 위치 (지지 인덱스)
-const CHANGSHENG_POSITIONS: Record<number, number> = {
-  0: 11, 1: 6, 2: 2, 3: 9, 4: 2, 5: 9, 6: 5, 7: 0, 8: 8, 9: 3,
-};
-
-function getDayStemIndex(koreanStem: string): number | undefined {
-  return STEM_INDEX_MAP[koreanStem];
-}
-
-// 지지 십성 계산 (본기 기준)
-function calculateBranchTenGod(dayMasterElement: Element, branchKorean: string): string {
-  const branchIndex = BRANCH_INDEX_MAP[branchKorean];
-  if (branchIndex === undefined) return '-';
-  const mainStemIndex = BRANCH_MAIN_STEM[branchIndex];
-  const mainStemElement = STEMS[mainStemIndex].element;
-  return calculateTenGod(dayMasterElement, mainStemElement);
-}
-
-// 12운성 계산
-function calculateTwelvePhase(dayStemIndex: number, branchKorean: string): string {
-  const branchIndex = BRANCH_INDEX_MAP[branchKorean];
-  if (branchIndex === undefined) return '-';
-
-  const isYang = dayStemIndex % 2 === 0;
-  const changshengBranch = CHANGSHENG_POSITIONS[dayStemIndex];
-  const distance = isYang
-    ? (branchIndex - changshengBranch + 12) % 12
-    : (changshengBranch - branchIndex + 12) % 12;
-
-  return TWELVE_PHASES[distance];
 }
 
 export default function ResultPage() {
@@ -287,19 +209,14 @@ export default function ResultPage() {
   // Day master element
   const dayMaster = result.four_pillars.day.heavenly_stem.element;
 
-  // Day stem index for 12운성 calculation
-  const dayStemIndex = getDayStemIndex(result.four_pillars.day.heavenly_stem.korean);
-
-  // Transform fortune cycles for slider
+  // Transform fortune cycles for slider (십성·12운성은 백엔드 값을 그대로 사용)
   const fortuneItems = result.fortune_cycles?.map((cycle) => ({
     age: cycle.start_age,
-    ten_god: calculateTenGod(dayMaster, cycle.heavenly_stem.element),
+    ten_god: cycle.ten_god ?? '-',
     heavenly_stem: cycle.heavenly_stem,
     earthly_branch: cycle.earthly_branch,
-    branch_ten_god: calculateBranchTenGod(dayMaster, cycle.earthly_branch.korean),
-    twelve_phase: dayStemIndex !== undefined
-      ? calculateTwelvePhase(dayStemIndex, cycle.earthly_branch.korean)
-      : '-',
+    branch_ten_god: cycle.branch_ten_god || '-',
+    twelve_phase: cycle.twelve_phase ?? '-',
     is_current: currentAge >= cycle.start_age && currentAge < (cycle.start_age + 10),
   })) || [];
 
@@ -309,10 +226,11 @@ export default function ResultPage() {
   const strengthType = result.strength?.type || (isStrong ? '신강' : '신약');
 
   // 평생운 리포트용 대운 단계 (fortuneItems 재사용)
+  // 백엔드 ten_god은 세부명(비견…)이므로 그룹명(비겁…)으로 축약해 테마에 매핑
   const lifeStages = fortuneItems.map((item) => ({
     age: item.age,
     ganji: `${item.heavenly_stem.korean}${item.earthly_branch.korean}`,
-    tenGodGroup: item.ten_god,
+    tenGodGroup: TEN_GOD_GROUP[item.ten_god] ?? item.ten_god,
     isCurrent: item.is_current,
   }));
 
@@ -457,8 +375,8 @@ export default function ResultPage() {
                 subtitle="좌우로 슬라이드 해보세요."
                 items={fortuneItems}
                 startAge={fortuneItems[0]?.age}
-                dayMasterElement={dayMaster}
-                dayStemIndex={dayStemIndex}
+                fortuneRanges={result.fortune_ranges}
+                currentFortune={result.current_fortune}
                 showAge
               />
             )}

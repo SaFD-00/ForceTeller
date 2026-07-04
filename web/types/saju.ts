@@ -120,8 +120,44 @@ export interface FortuneCycle {
   branch_index: number;
   ganji_korean: string;
   ganji_chinese: string;
+  ten_god?: string;
+  branch_ten_god?: string;
+  twelve_phase?: string;
+}
+
+// 현재 운세(연/월/일운) 및 슬라이더 범위 — 백엔드 단일 진실 공급원 계약
+// Entry 공통 필드 + 종류별 라벨(year/month/calendar_month/date)
+export interface CurrentFortuneEntry {
+  stem: string;
+  branch: string;
+  stem_hanja: string;
+  branch_hanja: string;
+  stem_index: number;
+  branch_index: number;
+  element: Element;
+  ganji_korean: string;
+  ganji_chinese: string;
   ten_god: string;
+  branch_ten_god: string;
   twelve_phase: string;
+  // 라벨 (종류에 따라 일부만 존재)
+  year?: number;
+  month?: number; // 절기월
+  calendar_month?: number; // 달력월 (fortune_ranges.monthly 전용)
+  date?: string; // "YYYY-MM-DD"
+}
+
+export interface CurrentFortune {
+  reference_datetime: string;
+  yearly: CurrentFortuneEntry;
+  monthly: CurrentFortuneEntry;
+  daily: CurrentFortuneEntry;
+}
+
+export interface FortuneRanges {
+  yearly: CurrentFortuneEntry[]; // 현재±5년 (11)
+  monthly: CurrentFortuneEntry[]; // 해당 절기연 12개월 (12)
+  daily: CurrentFortuneEntry[]; // 현재±7일 (15)
 }
 
 export interface FortuneCycleData {
@@ -262,6 +298,8 @@ export interface SajuResult {
   yongsin_recommendations?: YongsinRecommendations;
   school_comparison?: SchoolComparisonResult;
   fortune_scores?: FortuneScores;
+  current_fortune?: CurrentFortune;
+  fortune_ranges?: FortuneRanges;
 }
 
 // API 요청/응답 타입
@@ -321,6 +359,7 @@ export interface HeavenlyStemDisplay {
   hanja: string;
   korean: string;
   element: Element;
+  index?: number;
 }
 
 export interface HiddenStemDisplay {
@@ -377,6 +416,9 @@ export interface FortuneCycleDisplay {
   start_age: number;
   heavenly_stem: HeavenlyStemDisplay;
   earthly_branch: EarthlyBranchDisplay;
+  ten_god?: string;
+  branch_ten_god?: string;
+  twelve_phase?: string;
 }
 
 export interface BirthInfo {
@@ -420,6 +462,8 @@ export interface SajuResultDisplay {
   yongsin_recommendations?: YongsinRecommendations;
   school_comparison?: SchoolComparisonResult;
   fortune_scores?: FortuneScores;
+  current_fortune?: CurrentFortune;
+  fortune_ranges?: FortuneRanges;
 }
 
 // 유틸리티: 백엔드 응답을 프론트엔드 타입으로 변환하는 함수 타입

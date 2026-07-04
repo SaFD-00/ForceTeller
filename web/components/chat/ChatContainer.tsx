@@ -8,127 +8,7 @@ import { SuggestedQuestions } from './SuggestedQuestions';
 import { GlassCard, Disclaimer } from '@/components/ui';
 import { streamChatMessage } from '@/lib/api/chat';
 import { useSajuStore, useChatStore } from '@/stores/sajuStore';
-import type { AgentType, ChatMessage, Element } from '@/types/saju';
-
-// 천간/지지 데이터
-const STEMS = [
-  { korean: '갑', hanja: '甲', element: '목' as Element },
-  { korean: '을', hanja: '乙', element: '목' as Element },
-  { korean: '병', hanja: '丙', element: '화' as Element },
-  { korean: '정', hanja: '丁', element: '화' as Element },
-  { korean: '무', hanja: '戊', element: '토' as Element },
-  { korean: '기', hanja: '己', element: '토' as Element },
-  { korean: '경', hanja: '庚', element: '금' as Element },
-  { korean: '신', hanja: '辛', element: '금' as Element },
-  { korean: '임', hanja: '壬', element: '수' as Element },
-  { korean: '계', hanja: '癸', element: '수' as Element },
-];
-
-const BRANCHES = [
-  { korean: '자', hanja: '子', element: '수' as Element },
-  { korean: '축', hanja: '丑', element: '토' as Element },
-  { korean: '인', hanja: '寅', element: '목' as Element },
-  { korean: '묘', hanja: '卯', element: '목' as Element },
-  { korean: '진', hanja: '辰', element: '토' as Element },
-  { korean: '사', hanja: '巳', element: '화' as Element },
-  { korean: '오', hanja: '午', element: '화' as Element },
-  { korean: '미', hanja: '未', element: '토' as Element },
-  { korean: '신', hanja: '申', element: '금' as Element },
-  { korean: '유', hanja: '酉', element: '금' as Element },
-  { korean: '술', hanja: '戌', element: '토' as Element },
-  { korean: '해', hanja: '亥', element: '수' as Element },
-];
-
-// 십성 계산 함수
-function calculateTenGod(dayMasterElement: Element, stemElement: Element): string {
-  const relations: Record<Element, Record<Element, string>> = {
-    '목': { '목': '비겁', '화': '식상', '토': '재성', '금': '관성', '수': '인성' },
-    '화': { '목': '인성', '화': '비겁', '토': '식상', '금': '재성', '수': '관성' },
-    '토': { '목': '관성', '화': '인성', '토': '비겁', '금': '식상', '수': '재성' },
-    '금': { '목': '재성', '화': '관성', '토': '인성', '금': '비겁', '수': '식상' },
-    '수': { '목': '식상', '화': '재성', '토': '관성', '금': '인성', '수': '비겁' },
-  };
-  return relations[dayMasterElement]?.[stemElement] || '-';
-}
-
-// 연도로부터 간지 계산
-function getYearGanji(year: number) {
-  const stemIndex = (year - 4) % 10;
-  const branchIndex = (year - 4) % 12;
-  return {
-    stem: STEMS[stemIndex >= 0 ? stemIndex : stemIndex + 10],
-    branch: BRANCHES[branchIndex >= 0 ? branchIndex : branchIndex + 12],
-  };
-}
-
-// 월로부터 간지 계산
-function getMonthGanji(year: number, month: number) {
-  const yearStemIndex = (year - 4) % 10;
-  const monthStemBase = (yearStemIndex % 5) * 2;
-  const monthStemIndex = (monthStemBase + month - 1) % 10;
-  const monthBranchIndex = (month + 1) % 12;
-  return {
-    stem: STEMS[monthStemIndex],
-    branch: BRANCHES[monthBranchIndex],
-  };
-}
-
-// 일주 간지 계산
-function getDayGanji(date: Date) {
-  const baseDate = new Date(1900, 0, 31);
-  const diffTime = date.getTime() - baseDate.getTime();
-  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-  const stemIndex = ((diffDays % 10) + 10) % 10;
-  const branchIndex = ((diffDays % 12) + 12) % 12;
-  return {
-    stem: STEMS[stemIndex],
-    branch: BRANCHES[branchIndex],
-  };
-}
-
-// 현재 운세 데이터 생성
-function getCurrentFortuneData(dayMasterElement: Element) {
-  const now = new Date();
-  const currentYear = now.getFullYear();
-  const currentMonth = now.getMonth() + 1;
-
-  // 연운
-  const yearGanji = getYearGanji(currentYear);
-  const yearlyFortune = {
-    year: currentYear,
-    stem: yearGanji.stem.korean,
-    branch: yearGanji.branch.korean,
-    ten_god: calculateTenGod(dayMasterElement, yearGanji.stem.element),
-    element: yearGanji.stem.element,
-  };
-
-  // 월운
-  const monthGanji = getMonthGanji(currentYear, currentMonth);
-  const monthlyFortune = {
-    year: currentYear,
-    month: currentMonth,
-    stem: monthGanji.stem.korean,
-    branch: monthGanji.branch.korean,
-    ten_god: calculateTenGod(dayMasterElement, monthGanji.stem.element),
-    element: monthGanji.stem.element,
-  };
-
-  // 일운
-  const dayGanji = getDayGanji(now);
-  const dailyFortune = {
-    date: now.toISOString().split('T')[0],
-    stem: dayGanji.stem.korean,
-    branch: dayGanji.branch.korean,
-    ten_god: calculateTenGod(dayMasterElement, dayGanji.stem.element),
-    element: dayGanji.stem.element,
-  };
-
-  return {
-    yearly: yearlyFortune,
-    monthly: monthlyFortune,
-    daily: dailyFortune,
-  };
-}
+import type { AgentType, ChatMessage } from '@/types/saju';
 
 // 상담 분야별 첫 질문 (종합 상담 제외)
 const INITIAL_QUESTIONS: Record<Exclude<AgentType, 'general'>, string> = {
@@ -178,11 +58,7 @@ export function ChatContainer() {
       setIsReasoningComplete(false);
 
       try {
-        // 현재 운세 데이터 계산
-        const dayMasterElement = result.four_pillars.day.heavenly_stem.element;
-        const currentFortunes = getCurrentFortuneData(dayMasterElement);
-
-        // 현재 대운 찾기
+        // 현재 대운 찾기 (연/월/일운은 서버가 단일 진실 공급원으로 재계산하므로 전송하지 않는다)
         const birthYear = new Date(result.birth_info.birth_date).getFullYear();
         const currentAge = new Date().getFullYear() - birthYear;
         const currentDaewun = result.fortune_cycles?.find(
@@ -200,11 +76,8 @@ export function ChatContainer() {
               start_age: currentDaewun.start_age,
               stem: currentDaewun.heavenly_stem.korean,
               branch: currentDaewun.earthly_branch.korean,
-              ten_god: calculateTenGod(dayMasterElement, currentDaewun.heavenly_stem.element),
+              ten_god: currentDaewun.ten_god ?? '-',
             } : undefined,
-            yearly: currentFortunes.yearly,
-            monthly: currentFortunes.monthly,
-            daily: currentFortunes.daily,
           },
         };
 

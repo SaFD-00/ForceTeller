@@ -13,6 +13,7 @@ import type {
   HiddenStemDisplay,
   ShenshaDisplay,
 } from '@/types/saju';
+import { STEMS, BRANCHES } from '@/lib/ganji';
 
 /**
  * 백엔드 Pillar 데이터를 프론트엔드 Display 타입으로 변환
@@ -42,6 +43,7 @@ function transformPillar(pillar: PillarData | null): PillarDisplay {
       hanja: pillar.stem.chinese,
       korean: pillar.stem.korean,
       element: pillar.stem.element,
+      index: pillar.stem.index,
     },
     earthly_branch: {
       hanja: pillar.branch.chinese,
@@ -56,29 +58,30 @@ function transformPillar(pillar: PillarData | null): PillarDisplay {
 
 /**
  * 대운 데이터를 프론트엔드 Display 타입으로 변환
+ *
+ * 간지·십성·12운성의 계산은 백엔드가 담당한다. 여기서는 인덱스 → 표시 속성만
+ * ganji.ts 사전으로 조회하고, 백엔드 ten_god/branch_ten_god/twelve_phase는 그대로 통과시킨다.
  */
 function transformFortuneCycle(cycle: FortuneCycle): FortuneCycleDisplay {
-  // 천간/지지 인덱스로부터 한글/한자 매핑
-  const stems = ['갑', '을', '병', '정', '무', '기', '경', '신', '임', '계'];
-  const stemsHanja = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'];
-  const branches = ['자', '축', '인', '묘', '진', '사', '오', '미', '신', '유', '술', '해'];
-  const branchesHanja = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'];
-
-  const stemElements: Element[] = ['목', '목', '화', '화', '토', '토', '금', '금', '수', '수'];
-  const branchElements: Element[] = ['수', '토', '목', '목', '토', '화', '화', '토', '금', '금', '토', '수'];
+  const stem = STEMS[cycle.stem_index];
+  const branch = BRANCHES[cycle.branch_index];
 
   return {
     start_age: cycle.start_age,
     heavenly_stem: {
-      hanja: stemsHanja[cycle.stem_index] || cycle.ganji_chinese[0],
-      korean: stems[cycle.stem_index] || cycle.ganji_korean[0],
-      element: stemElements[cycle.stem_index] || '토',
+      hanja: stem?.hanja || cycle.ganji_chinese[0],
+      korean: stem?.korean || cycle.ganji_korean[0],
+      element: stem?.element || ('토' as Element),
+      index: cycle.stem_index,
     },
     earthly_branch: {
-      hanja: branchesHanja[cycle.branch_index] || cycle.ganji_chinese[1],
-      korean: branches[cycle.branch_index] || cycle.ganji_korean[1],
-      element: branchElements[cycle.branch_index] || '토',
+      hanja: branch?.hanja || cycle.ganji_chinese[1],
+      korean: branch?.korean || cycle.ganji_korean[1],
+      element: branch?.element || ('토' as Element),
     },
+    ten_god: cycle.ten_god,
+    branch_ten_god: cycle.branch_ten_god,
+    twelve_phase: cycle.twelve_phase,
   };
 }
 
@@ -98,6 +101,8 @@ export function transformSajuResult(result: SajuResult): SajuResultDisplay {
     yongsin_recommendations,
     school_comparison,
     fortune_scores,
+    current_fortune,
+    fortune_ranges,
   } = result;
 
   // Four Pillars 변환
@@ -196,5 +201,7 @@ export function transformSajuResult(result: SajuResult): SajuResultDisplay {
     yongsin_recommendations: yongsin_recommendations,
     school_comparison: school_comparison,
     fortune_scores: fortune_scores,
+    current_fortune: current_fortune,
+    fortune_ranges: fortune_ranges,
   };
 }
