@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import { Providers } from './providers';
 import { Sidebar } from '@/components/layout/Sidebar';
 import './globals.css';
 
@@ -25,12 +24,10 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen bg-background text-foreground font-sans">
-        <Providers>
-          <div className="flex min-h-screen">
-            <Sidebar />
-            <div className="flex-1 min-w-0 lg:pl-16">{children}</div>
-          </div>
-        </Providers>
+        <div className="flex min-h-screen">
+          <Sidebar />
+          <div className="flex-1 min-w-0 lg:pl-16">{children}</div>
+        </div>
       </body>
     </html>
   );

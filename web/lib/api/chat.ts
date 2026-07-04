@@ -1,7 +1,6 @@
 // 채팅 API 함수
 
-import { apiClient } from './client';
-import type { ChatResponse, AgentType } from '@/types/saju';
+import type { AgentType } from '@/types/saju';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || '';
 
@@ -28,54 +27,6 @@ export interface StreamChunk {
   agent?: string;
   display_name?: string;
   confidence?: number;
-}
-
-export async function sendChatMessage(data: ChatMessageRequest): Promise<ChatResponse> {
-  const response = await apiClient.post<ChatResponse>('/api/chat', {
-    message: data.message,
-    saju_data: data.saju_context,
-    session_id: data.session_id,
-    focus: data.agent_type,
-  });
-
-  return response;
-}
-
-export interface SessionInfo {
-  session_id: string;
-  created_at: string;
-  last_activity: string;
-  message_count: number;
-  name: string;
-}
-
-export async function getSessions(): Promise<{
-  success: boolean;
-  sessions: SessionInfo[];
-  total: number;
-}> {
-  return apiClient.get('/api/chat/sessions');
-}
-
-export async function getSession(sessionId: string): Promise<{
-  success: boolean;
-  session: Record<string, unknown>;
-}> {
-  return apiClient.get(`/api/chat/sessions/${sessionId}`);
-}
-
-export async function deleteSession(sessionId: string): Promise<{
-  success: boolean;
-  message: string;
-}> {
-  return apiClient.delete(`/api/chat/sessions/${sessionId}`);
-}
-
-export async function clearSessionHistory(sessionId: string): Promise<{
-  success: boolean;
-  message: string;
-}> {
-  return apiClient.post(`/api/chat/sessions/${sessionId}/clear`, {});
 }
 
 /**

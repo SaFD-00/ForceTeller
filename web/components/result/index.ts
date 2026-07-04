@@ -1,9 +1,3 @@
-export { FourPillarsDisplay } from './FourPillarsDisplay';
-export { PillarCard } from './PillarCard';
-export { FiveElementsChart } from './FiveElementsChart';
-export { TenGodsDistribution } from './TenGodsDistribution';
-export { FortuneCycleTimeline } from './FortuneCycleTimeline';
-export { StrengthMeter } from './StrengthMeter';
 export { ShenshaDetailCard } from './ShenshaDetailCard';
 export { InteractionsTabs } from './InteractionsTabs';
 export { PillarTable } from './PillarTable';

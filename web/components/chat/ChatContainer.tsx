@@ -6,7 +6,7 @@ import { MessageList } from './MessageList';
 import { ChatInput } from './ChatInput';
 import { SuggestedQuestions } from './SuggestedQuestions';
 import { GlassCard, Disclaimer } from '@/components/ui';
-import { sendChatMessage, streamChatMessage } from '@/lib/api/chat';
+import { streamChatMessage } from '@/lib/api/chat';
 import { useSajuStore, useChatStore } from '@/stores/sajuStore';
 import type { AgentType, ChatMessage, Element } from '@/types/saju';
 

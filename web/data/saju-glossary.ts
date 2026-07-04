@@ -1035,22 +1035,6 @@ export const SAJU_GLOSSARY: Record<string, GlossaryEntry> = {
   ...SECTION_GLOSSARY,
 };
 
-// 카테고리별 용어 목록 조회
-export const getGlossaryByCategory = (category: GlossaryEntry['category']): GlossaryEntry[] => {
-  return Object.values(SAJU_GLOSSARY).filter(entry => entry.category === category);
-};
-
-// 용어 검색
-export const searchGlossary = (query: string): GlossaryEntry[] => {
-  const lowerQuery = query.toLowerCase();
-  return Object.values(SAJU_GLOSSARY).filter(
-    entry =>
-      entry.term.toLowerCase().includes(lowerQuery) ||
-      entry.hanja.includes(query) ||
-      entry.shortDesc.toLowerCase().includes(lowerQuery)
-  );
-};
-
 // 용어 조회
 export const getGlossaryEntry = (term: string): GlossaryEntry | undefined => {
   return SAJU_GLOSSARY[term];

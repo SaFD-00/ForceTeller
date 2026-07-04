@@ -68,15 +68,3 @@ export async function searchCities(query: string, limit: number = 20): Promise<C
     );
   }
 }
-
-// 하위 호환성을 위한 별칭
-export const fetchCities = () => searchCities('');
-
-export async function getCityInfo(cityName: string): Promise<{
-  success: boolean;
-  city: string;
-  latitude: number;
-  longitude: number;
-}> {
-  return apiClient.get(`/api/manseol/city/${encodeURIComponent(cityName)}`);
-}
