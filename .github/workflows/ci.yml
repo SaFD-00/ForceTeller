@@ -19,7 +19,7 @@ jobs:
           enable-cache: true
 
       - name: Set up Python
-        run: uv python install 3.13
+        run: uv python install 3.11
 
       - name: Install dependencies
         run: uv sync
@@ -28,15 +28,14 @@ jobs:
       - name: Run tests
         run: uv run pytest -q
 
-      # 린트/포맷/타입은 아직 전면 정리 전이라 정보성(비차단)으로만 실행
-      - name: Ruff (non-blocking)
+      # 린트·포맷은 차단 게이트 (ruff로 일원화)
+      - name: Ruff
         run: uv run ruff check .
-        continue-on-error: true
 
-      - name: Ruff format --check (non-blocking)
+      - name: Ruff format --check
         run: uv run ruff format --check .
-        continue-on-error: true
 
+      # 타입 체크는 점진 강화 중이라 아직 정보성(비차단)
       - name: Mypy (non-blocking)
         run: uv run mypy .
         continue-on-error: true
@@ -60,8 +59,14 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Lint
+        run: npm run lint
+
       - name: Type check
         run: npx tsc --noEmit
+
+      - name: Test
+        run: npm test
 
       - name: Build
         run: npm run build

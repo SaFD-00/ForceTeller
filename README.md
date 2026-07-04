@@ -15,8 +15,9 @@ ForceTeller는 정확한 만세력 계산과 AI 해석을 결합한 사주팔자
 │   │   ├── chat.py               # 채팅/대화 엔드포인트
 │   │   ├── manseol.py            # 사주 계산 엔드포인트
 │   │   └── analysis.py           # 분석 엔드포인트
-│   ├── converters.py             # 데이터 변환 유틸
+│   ├── converters.py             # 데이터 변환 유틸 (enrich_with_analysis)
 │   ├── dependencies.py           # 의존성 주입
+│   ├── errors.py                 # 오류 응답 헬퍼 (예외 상세 DEBUG 게이팅)
 │   ├── formatters.py             # 응답 포맷팅
 │   ├── schemas.py                # Pydantic 데이터 모델
 │   └── server.py                 # FastAPI 앱 설정
@@ -29,6 +30,7 @@ ForceTeller는 정확한 만세력 계산과 AI 해석을 결합한 사주팔자
 │   │   ├── hidden_stems.py       # 지장간(地藏干) 계산
 │   │   ├── twelve_phases.py      # 십이운성(十二運星) 계산
 │   │   ├── fortune_cycle.py      # 대운(大運) 계산
+│   │   ├── current_fortune.py    # 현재 연운·월운·일운 (단일 진실 공급원)
 │   │   └── interactions.py       # 오행/지지 상호작용
 │   ├── core/                     # 핵심 유틸리티
 │   │   ├── astronomical.py       # PyEphem 천문 계산
@@ -80,8 +82,7 @@ ForceTeller는 정확한 만세력 계산과 AI 해석을 결합한 사주팔자
 │
 ├── conversation/                 # 세션 관리
 │   ├── session_manager.py        # Session/Message dataclass + 인메모리 매니저(레거시)
-│   ├── db_session_manager.py     # DB 백엔드 세션 매니저 (영속화, async)
-│   └── context_builder.py        # 대화 컨텍스트
+│   └── db_session_manager.py     # DB 백엔드 세션 매니저 (영속화, async)
 │
 ├── db/                           # DB 영속화 (SQLAlchemy 2.0 async)
 │   ├── base.py                   # 비동기 엔진·세션 팩토리·Base
@@ -94,44 +95,43 @@ ForceTeller는 정확한 만세력 계산과 AI 해석을 결합한 사주팔자
 ├── config/                       # 설정
 │   ├── settings.py               # Pydantic 환경 설정
 │   ├── constants.py              # 도메인 상수
-│   └── logging_config.py         # 로깅 설정
+│   ├── logging_config.py         # 로깅 설정
+│   └── version.py                # 버전 단일 상수 (__version__, pyproject와 동기)
 │
 ├── utils/
 │   ├── llm_client.py             # OpenRouter 클라이언트 (스트리밍/reasoning)
 │   └── protocols.py              # 타입 프로토콜 정의
 │
-├── tests/                        # 테스트
+├── tests/                        # 테스트 (pytest, unit/integration)
 │   ├── unit/                     # 단위 테스트
-│   ├── integration/              # 통합 테스트
-│   └── e2e/                      # E2E 테스트
-│
-├── docs/                         # 문서
-│   └── plans/                    # 프로젝트 계획
+│   └── integration/              # 통합 테스트 (api/)
 │
 ├── web/                          # Next.js 14 프론트엔드
 │   ├── app/
 │   │   ├── page.tsx              # 홈 페이지
 │   │   ├── layout.tsx            # 루트 레이아웃
 │   │   ├── result/page.tsx       # 결과 표시
-│   │   ├── chat/page.tsx         # 채팅 인터페이스
-│   │   └── providers.tsx         # 앱 프로바이더
+│   │   └── chat/page.tsx         # 채팅 인터페이스
 │   ├── components/
 │   │   ├── hero/                 # 랜딩 히어로 섹션
 │   │   ├── features/             # 기능 그리드
-│   │   ├── result/               # 결과 표시 (14개 컴포넌트)
-│   │   ├── chat/                 # 채팅 UI (10개 컴포넌트)
-│   │   └── ui/                   # 재사용 UI (8개 컴포넌트)
+│   │   ├── layout/               # Sidebar (아이콘 내비게이션)
+│   │   ├── result/               # 결과 표시 (13개 컴포넌트)
+│   │   ├── chat/                 # 채팅 UI (8개 컴포넌트)
+│   │   └── ui/                   # 재사용 UI (9개 컴포넌트)
 │   ├── data/
 │   │   └── saju-glossary.ts      # 사주 용어 사전
 │   ├── stores/
 │   │   └── sajuStore.ts          # Zustand 상태관리
 │   ├── lib/
-│   │   ├── api/                  # API 클라이언트
+│   │   ├── api/                  # API 클라이언트 (client·manseol·chat)
 │   │   ├── constants/            # 프론트엔드 상수
+│   │   ├── ganji.ts              # 간지(干支) 표시 사전 (인덱스→한글/한자/오행)
 │   │   ├── transforms.ts         # 데이터 변환
 │   │   └── utils.ts              # 유틸리티
 │   ├── types/
 │   │   └── saju.ts               # TypeScript 타입
+│   ├── next.config.js            # rewrites 프록시 (API_PROXY_TARGET)
 │   ├── package.json
 │   └── tailwind.config.ts
 │
@@ -152,8 +152,11 @@ ForceTeller는 정확한 만세력 계산과 AI 해석을 결합한 사주팔자
 | Pydantic | 2.0 | 데이터 검증 |
 | Uvicorn | 0.27 | ASGI 서버 |
 | LangGraph | 0.2+ | 에이전트 그래프 (Supervisor 패턴) |
-| LangChain (OpenAI) | 0.3+ | OpenRouter 연동 (OpenAI 호환) |
-| OpenAI SDK | 1.0+ | OpenRouter Chat Completions 클라이언트 |
+| langchain-core | 0.3+ | 메시지·러너블 추상화 |
+| langchain-openai | 0.2+ | OpenRouter 연동 (OpenAI 호환 ChatOpenAI) |
+| OpenAI SDK | 1.0+ | OpenRouter Chat Completions 클라이언트 (스트리밍) |
+| SQLAlchemy | 2.0+ | 비동기 ORM (세션·대화 영속화) |
+| Alembic | 1.13+ | DB 마이그레이션 |
 | PyEphem | 4.1 | 천문 계산 |
 | Korean-Lunar-Calendar | 0.3 | 음력 변환 |
 | Click | 8.0 | CLI 프레임워크 |
@@ -163,15 +166,15 @@ ForceTeller는 정확한 만세력 계산과 AI 해석을 결합한 사주팔자
 | 기술 | 버전 | 용도 |
 |------|------|------|
 | Next.js | 14.2 | App Router 프레임워크 |
-| React | 18.3 | UI 라이브러리 |
+| React | 18.2 | UI 라이브러리 |
 | TypeScript | 5.0 | 타입 안전성 |
 | Tailwind CSS | 3.4 | 스타일링 |
 | Zustand | 4.5 | 상태관리 |
 | Recharts | 2.14 | 데이터 시각화 |
 | Framer Motion | 11.0 | 애니메이션 |
-| React Query | 5.60 | 데이터 페칭 |
-| Iconify | 5.0 | Solar 아이콘셋 |
-| React Markdown | 10.1 | 마크다운 렌더링 |
+| Iconify (@iconify/react) | 5.0 | 아이콘셋 |
+| React Markdown | 10.1 | 마크다운 렌더링 (remark-gfm) |
+| Vitest | 4.1 | 단위 테스트 (lib 순수 함수) |
 
 ## 주요 기능
 
@@ -223,6 +226,7 @@ ForceTeller는 정확한 만세력 계산과 AI 해석을 결합한 사주팔자
 - 사주 데이터 기반 맞춤 해석
 - 후속 질문 자동 추천
 - 스트리밍 응답에 **에이전트별 전문 프롬프트 라우팅**(focus 지정 시 해당 에이전트, 없으면 RouterDecision 자동 선택)과 **출처·신뢰도 배지** 노출
+- 스트리밍 시 현재 연/월/일운을 **매 메시지 서버 재계산**(절기 기반 월운). 세션 저장 스냅샷의 프론트 근사 대신 백엔드 단일 진실 공급원 사용
 - 모든 해석 하단에 **면책 고지(Disclaimer)** 상시 표시 (참고용 콘텐츠 안내)
 - 답변 생성 중 자동 스크롤은 **사용자가 채팅 하단(생성 영역)에 있을 때만** 동작(채팅 컨테이너 한정) — 사주 결과 등 다른 창이 끌려 내려가지 않음
 - OpenRouter 6개 모델 지원 (gpt-oss / gemma-4 / deepseek-v4)
@@ -235,6 +239,7 @@ ForceTeller는 정확한 만세력 계산과 AI 해석을 결합한 사주팔자
 - **5학파 비교 해석** + 학파 일치도(신뢰도) 배지
 - **운세 유형별 점수**(종합/직업/재물/건강/애정) 대시보드
 - **평생운 흐름**(10년 대운 내러티브) 리포트
+- **현재 운세**(`current_fortune`) 및 슬라이더용 범위(`fortune_ranges`): 서버 KST 시각 기준 연/월/일운을 단일 진실 공급원으로 산출 (절기 기반, 프론트 재계산 제거)
 - 출생시간 **시간 미상(時不知)** 입력 지원
 
 ## 시작하기
@@ -278,15 +283,22 @@ uv run uvicorn api.server:app --reload --host 0.0.0.0 --port 8000
 
 ```bash
 # dev 의존성은 uv sync 시 기본 포함 (프로덕션만 원하면 uv sync --no-dev)
-uv run pytest              # 테스트 실행
-uv run ruff check .        # 린트
-uv run black .             # 포맷
-uv run mypy .              # 타입 체크
+uv run pytest              # 테스트 실행 (278개)
+uv run ruff check .        # 린트 (ruff로 일원화)
+uv run ruff format .       # 포맷 (--check로 검사만)
+uv run mypy .              # 타입 체크 (CI 비차단)
+
+# 프론트엔드 (web/)
+cd web && npm run lint     # ESLint
+cd web && npm test         # Vitest 단위 테스트 (21개)
 
 # 의존성 추가/제거
 uv add <패키지>            # 런타임 의존성
 uv add --dev <패키지>      # 개발 의존성
 ```
+
+> 린트·포맷은 ruff로 일원화했습니다(black/isort 제거). CI는 `ruff check`·
+> `ruff format --check`를 차단 게이트로, mypy는 정보성(비차단)으로 실행합니다.
 
 ### 프론트엔드 설치 및 실행
 
@@ -326,9 +338,9 @@ uv run python main.py info
 
 | 메서드 | 경로 | 설명 |
 |--------|------|------|
-| POST | `/api/manseol` | 사주 계산 (응답 `data`에 interactions·sewun·yongsin_comparison·yongsin_recommendations·school_comparison·fortune_scores 포함) |
-| POST | `/api/manseol/quick` | 빠른 계산 |
-| GET | `/api/manseol/cities` | 도시 목록 |
+| POST | `/api/manseol` | 사주 계산 (응답 `data`에 결정론 계산으로 interactions·sewun·current_fortune·fortune_ranges, 분석 보강으로 yongsin_comparison·yongsin_recommendations·school_comparison·fortune_scores 포함) |
+| POST | `/api/manseol/quick` | 빠른 계산 (쿼리 파라미터: name·birth_date·gender·birth_time) |
+| GET | `/api/manseol/cities` | 도시 목록 (한글/영어 검색) |
 | GET | `/api/manseol/city/{name}` | 도시 정보 |
 
 **사주 계산 요청 예시:**
@@ -337,7 +349,7 @@ uv run python main.py info
   "name": "홍길동",
   "birth_date": "1990-01-15",
   "birth_time": "14:30",
-  "calendar_type": "solar",
+  "calendar": "solar",
   "city": "Seoul",
   "gender": "male",
   "jajasi": false
@@ -348,19 +360,20 @@ uv run python main.py info
 
 | 메서드 | 경로 | 설명 |
 |--------|------|------|
-| POST | `/api/chat` | AI 대화 |
+| POST | `/api/chat` | AI 대화 (Supervisor 동적 라우팅) |
+| POST | `/api/chat/stream` | 스트리밍 대화 (SSE, reasoning·출처/신뢰도 배지, 월운 서버 재계산) |
 | GET | `/api/chat/sessions` | 세션 목록 |
 | GET | `/api/chat/sessions/{id}` | 세션 상세 |
 | DELETE | `/api/chat/sessions/{id}` | 세션 삭제 |
 | POST | `/api/chat/sessions/{id}/clear` | 대화 기록 삭제 |
 
-**채팅 요청 예시:**
+**채팅 요청 예시:** (`focus`는 선택 — 지정 시 해당 전문 에이전트, 생략 시 자동 라우팅)
 ```json
 {
   "session_id": "uuid",
   "saju_data": { ... },
   "message": "제 적성에 맞는 직업은 무엇인가요?",
-  "interpretation_type": "SPECIFIC"
+  "focus": "career"
 }
 ```
 
@@ -369,6 +382,7 @@ uv run python main.py info
 | 메서드 | 경로 | 설명 |
 |--------|------|------|
 | POST | `/api/analysis` | 상세 분석 |
+| GET | `/api/analysis/types` | 분석 유형·용신 방법·학파 코드 목록 |
 
 ### 시스템 API
 
@@ -397,18 +411,27 @@ OPENROUTER_TEMPERATURE=0.7
 # 지원 모델: openai/gpt-oss-120b:free, openai/gpt-oss-20b:free,
 #           google/gemma-4-26b-a4b-it:free, google/gemma-4-31b-it:free,
 #           deepseek/deepseek-v4-flash, deepseek/deepseek-v4-pro
+# OPENROUTER_ALLOWED_MODELS=...  # 요청 허용 모델 화이트리스트(콤마). 기본=지원 6종
 
 # 서버 설정
 API_HOST=0.0.0.0
 API_PORT=8000
-DEBUG=false
+DEBUG=false                  # true일 때만 예외 상세를 응답에 노출
+CORS_ORIGINS=*               # 콤마 구분 도메인. "*"이면 자격증명(credentials) 차단
 
 # DB 영속화 (선택) — 미설정 시 로컬 SQLite. 배포 시 PostgreSQL 주입
 # DATABASE_URL=postgresql+asyncpg://user:password@host:5432/forceteller
 
 # 세션 설정
 SESSION_MAX_HISTORY=20
-SESSION_TIMEOUT_MINUTES=60   # 세션 TTL(분). 경과 시 조회 불가·정리
+SESSION_TIMEOUT_MINUTES=60      # 세션 TTL(분). 경과 시 조회 불가·정리
+MAX_SESSIONS=100               # 인메모리 매니저 최대 동시 세션
+SESSION_CLEANUP_PERCENTAGE=0.2 # 상한 초과 시 정리 비율
+CONVERSATION_HISTORY_LIMIT=10  # LLM에 전달할 최근 대화 턴 수
+
+# 로깅 설정
+LOG_LEVEL=INFO                 # DEBUG | INFO | WARNING | ERROR | CRITICAL
+LOG_FORMAT=%(asctime)s - %(name)s - %(levelname)s - %(message)s
 
 # 만세력 설정
 DEFAULT_CITY=Seoul
@@ -418,62 +441,67 @@ USE_TRUE_SOLAR_TIME=true
 ### 프론트엔드 (web/.env.local)
 
 ```env
+# 런타임: 클라이언트가 호출할 백엔드 절대 URL. 배포 시 백엔드 도메인으로 오버라이드.
+# 비워두면 동일 출처(/api/*)로 요청하고 아래 rewrite 프록시를 탄다.
 NEXT_PUBLIC_API_URL=http://localhost:8000
+
+# 빌드타임: next.config.js의 rewrites() 프록시 대상. NEXT_PUBLIC_API_URL을 비워
+# 동일 출처로 호출할 때 /api/* 요청이 이 주소로 전달된다. 기본값 http://localhost:8000.
+# API_PROXY_TARGET=http://localhost:8000
 ```
 
 ## 오행 색상 시스템
 
+Tetris 디자인 시스템에 맞춘 오행별 시맨틱 색상(`web/lib/constants/elements.ts`):
+
 | 오행 | 한자 | 색상 코드 | 의미 |
 |------|------|-----------|------|
-| 목(木) | 木 | `#22c55e` (Green) | 성장, 창조 |
-| 화(火) | 火 | `#ef4444` (Red) | 열정, 활동 |
-| 토(土) | 土 | `#eab308` (Yellow) | 안정, 중재 |
-| 금(金) | 金 | `#a1a1aa` (Gray) | 결단, 정의 |
-| 수(水) | 水 | `#3b82f6` (Blue) | 지혜, 유연 |
+| 목(木) | 木 | `#16A34A` (Green) | 성장, 창조 |
+| 화(火) | 火 | `#DC2626` (Red) | 열정, 활동 |
+| 토(土) | 土 | `#D97706` (Amber) | 안정, 중재 |
+| 금(金) | 金 | `#64748B` (Slate) | 결단, 정의 |
+| 수(水) | 水 | `#2563EB` (Blue) | 지혜, 유연 |
 
 ## 프론트엔드 컴포넌트
 
-### 결과 표시 컴포넌트
+### 결과 표시 컴포넌트 (13개, `components/result/`)
 - `YearlyFortune` - 세운(연도별 운세) 카드
 - `LuckyGuideCard` - 용신 개운법(색/방위/직업/생활)
 - `SchoolComparison` - 5학파 일치도·비교 탭
 - `FortuneScoreDashboard` - 운세 유형별 점수
 - `LifetimeReport` - 평생운(10년 대운) 내러티브
-- `FourPillarsDisplay` - 사주팔자 시각화
-- `PillarCard`, `PillarTable` - 주별 카드/테이블
+- `PillarTable` - 사주팔자 주별 테이블
 - `PentagonChart` - 오각형 강도 차트
-- `StrengthMeter` - 일간 강도 미터
-- `FiveElementsChart` - 오행 분포 차트
-- `ElementDistribution` - 오행 균형
-- `TenGodsDistribution` - 십성 분포
+- `ElementDistribution` - 오행 분포·균형
 - `YongshinCard` - 용신 정보
 - `ShenshaDetailCard` - 신살 정보
 - `InteractionsTabs` - 오행 상호작용
-- `FortuneCycleTimeline` - 대운 타임라인
-- `FortuneCycleSlider` - 대운 슬라이더
+- `FortuneCycleSlider` - 대운/현재 운세 슬라이더
 - `StrengthDistributionChart` - 강도 분포
 
-### 채팅 컴포넌트 (10개)
+### 채팅 컴포넌트 (8개, `components/chat/`)
 - `ChatContainer` - 메인 채팅 컨테이너
 - `MessageList`, `MessageBubble` - 메시지 표시
 - `ChatInput` - 사용자 입력
 - `MarkdownRenderer` - 마크다운 렌더링
 - `ReasoningDisplay` - AI 추론 과정 표시
 - `SuggestedQuestions` - 추천 질문
-- `AnalysisButtons` - 빠른 분석 버튼
 - `AgentSelector` - 에이전트 선택
 
-### UI 컴포넌트
-- `Sidebar` - 좌측 아이콘 내비게이션 (홈/결과/채팅)
+### UI 컴포넌트 (9개, `components/ui/`)
 - `Button`, `Input` - 기본 입력
-- `GlassCard` - 라이트 카드 (흰 배경 + 얇은 테두리 + 부드러운 그림자)
+- `GlassCard` - 카드 표면 컨테이너
 - `Icon` - 아이콘 래퍼
 - `ElementBadge` - 오행 배지
 - `GlossaryTooltip`, `GlossaryModal` - 용어 설명
 - `Disclaimer` - 면책 고지 (결과·채팅 하단 상시)
 - `LoadingOverlay` - 로딩 상태
 
-> UI 테마: FigureLabs 스타일 라이트·미니멀 디자인 (흰 배경 + 바이올렛 포인트).
+### 레이아웃 컴포넌트 (`components/layout/`)
+- `Sidebar` - 좌측 아이콘 내비게이션 (홈/결과/채팅)
+
+> UI 테마: **Tetris 디자인 시스템** (블록 게임 감성의 고대비·놀이적 스타일,
+> Bangers/JetBrains Mono 타이포). 토큰·팔레트는 [DESIGN.md](DESIGN.md) 참조.
 
 ## 데이터 상수 (config/constants.py)
 
@@ -576,6 +604,12 @@ docker run -p 8000:8000 \
 | Vercel | 100GB 대역폭/월, 무제한 배포 |
 | Railway | $5 크레딧/월 (약 500시간) |
 | OpenRouter | `:free` 모델(gpt-oss, gemma-4)은 무료 / deepseek-v4는 종량제 |
+
+## 알려진 한계
+
+- **인증·레이트리밋 미구현**: 현재 API는 인증 및 요청 제한이 없다. 공개 배포 전 도입 필요.
+- **절기 경계 판정의 시스템 오프셋**: 천문 계산에 쓰는 ephem이 naive datetime을 UTC로 해석하므로, 엔진이 KST로 다루는 시각과 사이에 약 9시간의 오프셋이 존재한다. 절기 경계 부근(예: 입춘·소한) 출생·현행 시각에서 간지 판정이 어긋날 수 있다. 다만 출생 계산과 현행(current_fortune) 계산이 **동일한 규약**을 쓰므로 서비스 내부적으로는 자기 일관적이며, 절대 정합화는 후속 과제다.
+- **지장간은 월률분야 표준표 채택**: 지장간(여기·중기·본기) 및 각 분야 배분은 여러 유파 표가 존재하나 본 프로젝트는 월률분야 표준표를 단일 기준으로 채택한다(왕지 자·묘·유는 여기+본기 2개).
 
 ## 라이선스
 

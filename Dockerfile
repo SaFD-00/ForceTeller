@@ -22,8 +22,20 @@ COPY . .
 # .venv 실행 파일을 PATH 앞에 추가
 ENV PATH="/app/.venv/bin:$PATH"
 
+# 비root 유저로 실행 (uid 고정). /app 전체(소스 + uv가 만든 .venv)를 유저 소유로
+# 넘겨야 부팅 시 alembic 마이그레이션과 기본 SQLite 파일(./forceteller.db) 생성이
+# 가능하다 — DATABASE_URL 미주입 경로가 /app에 쓰기 권한을 요구한다.
+RUN useradd --create-home --uid 10001 appuser \
+    && chown -R appuser:appuser /app
+USER appuser
+
 # 포트 노출
 EXPOSE 8000
+
+# 헬스체크: slim 이미지에 curl이 없으므로 python 표준 라이브러리로 /health 조회.
+# start-period는 부팅 시 alembic 마이그레이션 시간을 고려해 넉넉히 둔다.
+HEALTHCHECK --interval=30s --timeout=5s --start-period=40s --retries=3 \
+    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/health').read()" || exit 1
 
 # 서버 실행: 먼저 DB 마이그레이션(alembic) 적용 후 uvicorn 기동
 # (DATABASE_URL 미설정 시 로컬 SQLite, 배포 시 PostgreSQL을 환경변수로 주입)

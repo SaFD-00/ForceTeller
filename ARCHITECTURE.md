@@ -137,12 +137,14 @@ api/
 ```
 
 **Endpoints:**
-- `POST /api/manseol` - 사주 계산 (`api/converters.py:enrich_with_analysis`로 용신 4방법·개운법·5학파·운세점수를 응답에 보강. interactions·sewun은 json_exporter가 직접 산출)
+- `POST /api/manseol` - 사주 계산 (`api/converters.py:enrich_with_analysis`로 용신 4방법·개운법·5학파·운세점수를 응답에 보강. interactions·sewun·current_fortune·fortune_ranges는 json_exporter가 직접 산출)
+- `POST /api/manseol/quick` - 빠른 계산 (쿼리 파라미터: name·birth_date·gender·birth_time)
 - `POST /api/chat` - AI 대화
-- `POST /api/chat/stream` - 스트리밍 대화 (focus 지정 시 에이전트별 프롬프트, 없으면 `agents.nodes.route_question`의 RouterDecision 라우팅 → `agent_selected` SSE 이벤트로 출처·신뢰도 전달)
+- `POST /api/chat/stream` - 스트리밍 대화 (focus 지정 시 에이전트별 프롬프트, 없으면 `agents.nodes.route_question`의 RouterDecision 라우팅 → `agent_selected` SSE 이벤트로 출처·신뢰도 전달. 현재 연/월/일운은 `_build_current_fortune_from_saju`로 매 메시지 서버 재계산)
 - `POST /api/analysis` - 상세 분석
+- `GET /api/analysis/types` - 분석 유형·용신 방법·학파 코드 목록
 
-> **계산 vs 분석 분리:** 결정론 계산(사주팔자·상호작용·세운)은 `manseol/output/json_exporter.py`에서, 해석 라이브러리(용신·유파·운세) 조립은 API 계층의 `enrich_with_analysis`에서 `SajuDataConverter.to_analysis_format` 입력으로 수행한다. `/api/manseol` 응답 `data`는 `Dict`이므로 스키마 변경 없이 키를 주입해 노출한다.
+> **계산 vs 분석 분리:** 결정론 계산(사주팔자·상호작용·세운·현재운세)은 `manseol/output/json_exporter.py`에서, 해석 라이브러리(용신·유파·운세) 조립은 API 계층의 `enrich_with_analysis`에서 `SajuDataConverter.to_analysis_format` 입력으로 수행한다. `current_fortune`·`fortune_ranges`는 `manseol/calculator/current_fortune.py`가 단일 진실 공급원으로 산출한다(서버 KST 시각, 절기 기반). `/api/manseol` 응답 `data`는 `Dict`이므로 스키마 변경 없이 키를 주입해 노출한다.
 
 ### 4. Frontend (`web/`)
 
@@ -150,16 +152,26 @@ Next.js 14 App Router 기반 프론트엔드입니다.
 
 ```
 web/
-├── app/              # App Router
+├── app/              # App Router (page/layout, result, chat)
 ├── components/
-│   ├── result/       # 결과 표시 (14개)
-│   ├── chat/         # 채팅 UI (10개)
-│   └── ui/           # 재사용 UI (8개)
+│   ├── layout/       # Sidebar
+│   ├── result/       # 결과 표시 (13개)
+│   ├── chat/         # 채팅 UI (8개)
+│   └── ui/           # 재사용 UI (9개)
 ├── stores/
 │   └── sajuStore.ts  # Zustand 상태관리
 └── lib/
-    └── api/          # API 클라이언트
+    ├── api/          # API 클라이언트 (client·manseol·chat)
+    └── ganji.ts      # 간지 표시 사전 (인덱스→한글/한자/오행, 표시 전용)
 ```
+
+**디자인 시스템:** Tetris(블록 게임 감성)의 고대비·놀이적 스타일을 적용한다.
+색상 토큰·타이포(Bangers/JetBrains Mono)·간격 스케일은 루트 [DESIGN.md](DESIGN.md)에
+정의되어 있고, Tailwind 설정(`web/tailwind.config.ts`)·`web/app/globals.css`가 이를 반영한다.
+
+**계산/표시 분리:** 간지·십성·12운성 계산은 백엔드(manseol) 단일 진실 공급원이 담당하고,
+프론트는 `lib/ganji.ts`의 정적 표시 사전으로 인덱스→한글/한자/오행만 조회한다.
+절기를 무시하던 프론트 근사 계산은 제거되었다.
 
 ### 5. Persistence Layer (`db/`)
 
@@ -183,7 +195,7 @@ migrations/        # Alembic (env.py 비동기, versions/0001_initial.py)
   `await sm.save_session(session)`로 명시적 flush 해야 영속된다(chat 3곳·analysis 1곳).
 - **Postgres(배포) + SQLite(로컬) 동일 코드**: `settings.DATABASE_URL`로 전환
   (`sqlite+aiosqlite:///...` / `postgresql+asyncpg://...`). JSON 컬럼은 PG에서 JSONB variant.
-- **`Session`/`Message` dataclass 유지**: `conversation.context_builder`·프롬프트 빌드는 무변경.
+- **`Session`/`Message` dataclass 유지**: LLM 프롬프트 빌드 경로는 무변경.
   `DBSessionManager`는 DB row ↔ dataclass 변환만 담당.
 - **스키마**: `sessions`(session_id PK, saju_data/interpretation_cache/metadata JSON, created_at, last_activity 인덱스),
   `messages`(id PK, session_id FK ON DELETE CASCADE, seq, role, content, metadata, timestamp).
@@ -213,13 +225,18 @@ api/routes/{chat,analysis}  --await-->  DBSessionManager  -->  SessionRepository
     +-- ten_gods.py --> 십성 계산
     +-- shensha.py --> 신살 계산
     +-- fortune_cycle.py --> 대운 계산
+    +-- current_fortune.py --> 현재 연/월/일운 + 슬라이더 범위
     |
     v
 [SajuResult Model]
-    |
+    |  (interactions·sewun·current_fortune·fortune_ranges 필드 포함)
     v
 [JSON Response]
 ```
+
+> `SajuResult`(`manseol/models/saju_result.py`)는 기본 4주·분석 외에
+> `interactions`, `sewun`, `current_fortune`, `fortune_ranges` 필드를 노출한다.
+> `current_fortune`/`fortune_ranges`는 서버 KST 시각 기준 단일 진실 공급원이다.
 
 ### 2. AI Interpretation Flow
 
@@ -348,23 +365,31 @@ def create_llm(model: str | None = None, temperature: float = 0.7) -> BaseChatMo
 ## Security Considerations
 
 1. **API Key Protection**: 환경 변수로 관리
-2. **CORS**: 허용 도메인 명시적 설정
-3. **Rate Limiting**: API 요청 제한 (미구현)
-4. **Input Validation**: Pydantic 스키마 검증
+2. **CORS**: 허용 도메인 명시적 설정. 와일드카드(`*`) 출처에는 자격증명(credentials)을
+   허용하지 않는다(CORS 명세상 무효 조합 회피, `api/server.py`).
+3. **Error Detail Gating**: 예외 상세(str(exc)/트레이스백)는 서버 로그에만 남기고,
+   클라이언트에는 일반화 메시지만 반환한다. `settings.DEBUG=True`일 때만 상세 노출
+   (`api/errors.py`).
+4. **Rate Limiting**: API 요청 제한 (미구현)
+5. **Input Validation**: Pydantic 스키마 검증
 
 ## Dependencies
 
 ### Backend
 - Python 3.11+
 - FastAPI 0.110+
-- LangGraph 0.x
-- LangChain 0.3+
+- LangGraph 0.2+
+- langchain-core 0.3+ · langchain-openai 0.2+ · openai 1.0+
 - PyEphem 4.1+
 - SQLAlchemy 2.0+ (async) · Alembic 1.13+
 - asyncpg (PostgreSQL) · aiosqlite (SQLite) · greenlet
 
+> 버전은 `config/version.py`의 `__version__`(현재 1.0.0)이 단일 진실 공급원이며
+> `pyproject.toml`과 동기화한다. 린트·포맷은 ruff로 일원화(black/isort 제거).
+
 ### Frontend
 - Node.js 18+
 - Next.js 14.2+
-- React 18.3+
+- React 18.2+
 - TypeScript 5.0+
+- Vitest (lib 단위 테스트) · ESLint (next/core-web-vitals)
