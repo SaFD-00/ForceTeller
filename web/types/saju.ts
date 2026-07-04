@@ -469,68 +469,8 @@ export interface SajuResultDisplay {
 // 유틸리티: 백엔드 응답을 프론트엔드 타입으로 변환하는 함수 타입
 export type TransformSajuResult = (result: SajuResult) => SajuResultDisplay;
 
-// ============== 분석 API 타입 ==============
-
-// 분석 유형
-export type AnalysisType =
-  | 'fortune_general'
-  | 'fortune_career'
-  | 'fortune_wealth'
-  | 'fortune_health'
-  | 'fortune_love'
-  | 'yongsin'
-  | 'school_compare'
-  | 'yongsin_method';
-
-// 용신 분석 방법론
-export type YongSinMethodType = 'strength' | 'seasonal' | 'mediation' | 'disease';
-
-// 유파 코드
-export type SchoolCodeType = 'ziping' | 'dts' | 'qtbj' | 'modern' | 'shensha';
-
-// 분석 요청
-export interface AnalysisRequest {
-  session_id?: string;
-  saju_data?: SajuResult;
-  analysis_type: AnalysisType;
-  yongsin_method?: YongSinMethodType;
-  schools?: SchoolCodeType[];
-  message?: string;
-  llm_provider?: 'openai' | 'gemini';
-}
-
-// 운세 분석 결과
-export interface FortuneResult {
-  fortune_type: string;
-  score: number;
-  summary: string;
-  positive: string[];
-  negative: string[];
-  advice: string[];
-  lucky_colors: string[];
-  lucky_numbers: number[];
-  lucky_directions: string[];
-}
-
-// 용신 분석 결과
-export interface YongSinResult {
-  primary_yongsin: string;
-  secondary_yongsin?: string;
-  xi_sin: string[];
-  ji_sin: string[];
-  chou_sin: string[];
-  day_master_strength: string;
-  reasoning: string;
-  method: string;
-  confidence: number;
-  recommendations: {
-    colors: string[];
-    directions: string[];
-    careers: string[];
-    activities: string[];
-    cautions: string[];
-  };
-}
+// ============== 유파 비교 타입 ==============
+// (SajuResult.school_comparison / SajuResultDisplay.school_comparison에서 사용)
 
 // 유파 해석 결과
 export interface SchoolInterpretation {
@@ -567,32 +507,4 @@ export interface SchoolComparisonResult {
   }>;
   recommendation: string;
   confidence?: number;
-}
-
-// 분석 응답
-export interface AnalysisResponse {
-  success: boolean;
-  session_id: string;
-  analysis_type: string;
-  message: string;
-  fortune_result?: FortuneResult;
-  yongsin_result?: YongSinResult;
-  school_comparison?: SchoolComparisonResult;
-  suggested_questions: string[];
-  error?: string;
-}
-
-// 분석 유형 정보
-export interface AnalysisTypeInfo {
-  code: string;
-  name: string;
-  description: string;
-}
-
-// 분석 유형 목록 응답
-export interface AnalysisTypesResponse {
-  success: boolean;
-  fortune_types: AnalysisTypeInfo[];
-  yongsin_methods: AnalysisTypeInfo[];
-  school_codes: AnalysisTypeInfo[];
 }

@@ -57,6 +57,7 @@ export function ChatInput({
         </div>
         <Button
           type="submit"
+          aria-label="메시지 전송"
           disabled={disabled || !message.trim()}
           className="px-4 h-12"
         >

@@ -87,6 +87,7 @@ export function GlossaryModal({ entry, isOpen, onClose }: GlossaryModalProps) {
               </div>
               <button
                 onClick={onClose}
+                aria-label="닫기"
                 className="p-2 rounded-full hover:bg-muted transition-colors"
               >
                 <Icon name="solar:close-circle-bold" size={24} className="text-muted-foreground" />

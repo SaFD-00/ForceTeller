@@ -37,6 +37,8 @@ export function BirthInfoForm() {
   const [cityQuery, setCityQuery] = useState('');
   const [showCityDropdown, setShowCityDropdown] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
+  // 도시 목록이 백엔드가 아닌 오프라인 폴백에서 온 경우 표시(주요 도시만 제공됨을 안내)
+  const [citiesFallback, setCitiesFallback] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [timeUnknown, setTimeUnknown] = useState(false);
 
@@ -47,11 +49,13 @@ export function BirthInfoForm() {
   const handleCitySearch = useCallback(async (query: string) => {
     setIsSearching(true);
     try {
-      const results = await searchCities(query, 15);
+      const { cities: results, isFallback } = await searchCities(query, 15);
       setCities(results);
+      setCitiesFallback(isFallback);
     } catch (err) {
       console.error('Failed to search cities:', err);
       setCities([]);
+      setCitiesFallback(false);
     } finally {
       setIsSearching(false);
     }
@@ -224,16 +228,23 @@ export function BirthInfoForm() {
                     검색 중...
                   </div>
                 ) : cities.length > 0 ? (
-                  cities.map((city) => (
-                    <button
-                      key={`${city.name}-${city.country}`}
-                      type="button"
-                      className="w-full px-4 py-2 text-left text-foreground hover:bg-muted transition-colors"
-                      onClick={() => handleCitySelect(city)}
-                    >
-                      {city.name_ko || city.name}, {city.country_ko || city.country}
-                    </button>
-                  ))
+                  <>
+                    {citiesFallback && (
+                      <div className="px-4 py-2 text-xs text-muted-foreground border-b border-border">
+                        오프라인 기본 도시 목록입니다 (주요 도시만 제공)
+                      </div>
+                    )}
+                    {cities.map((city) => (
+                      <button
+                        key={`${city.name}-${city.country}`}
+                        type="button"
+                        className="w-full px-4 py-2 text-left text-foreground hover:bg-muted transition-colors"
+                        onClick={() => handleCitySelect(city)}
+                      >
+                        {city.name_ko || city.name}, {city.country_ko || city.country}
+                      </button>
+                    ))}
+                  </>
                 ) : cityQuery.length > 0 ? (
                   <div className="px-4 py-3 text-muted-foreground text-center">
                     검색 결과가 없습니다

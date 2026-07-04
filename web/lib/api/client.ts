@@ -1,5 +1,10 @@
 // API 클라이언트
-
+//
+// 경로 정책(next.config.js와 한 쌍):
+//  - 기본값: API_BASE=''  → `/api/*`를 same-origin으로 호출하고 next.config.js의 rewrite가
+//    백엔드(API_PROXY_TARGET, 기본 localhost:8000)로 프록시한다. 개발·단일 호스트 배포의 기본 경로.
+//  - 오버라이드: NEXT_PUBLIC_API_URL을 설정하면 그 절대 URL을 prefix로 붙여 백엔드를 직접 호출한다.
+//    프론트/백엔드를 다른 호스트로 분리 배포할 때 사용(이때 rewrite는 경유하지 않음).
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || '';
 
 interface ApiError {

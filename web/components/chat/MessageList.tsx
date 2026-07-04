@@ -50,7 +50,7 @@ export function MessageList({
         <div className="text-center text-muted-foreground">
           <Icon name="solar:chat-round-dots-bold" size={48} className="mx-auto mb-4" />
           <p>AI 상담사에게 사주에 대해 질문해보세요</p>
-          <p className="text-sm mt-2">예: "제 성격은 어떤가요?" "직업운은 어떤가요?"</p>
+          <p className="text-sm mt-2">예: “제 성격은 어떤가요?” “직업운은 어떤가요?”</p>
         </div>
       </div>
     );

@@ -48,6 +48,9 @@ export default function RootLayout({
         {/* 한글 디스플레이 서체 (Tetris) — Google Fonts. 실패 시 Pretendard 폴백 */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        {/* App Router에는 pages/_document.js가 없고, 한글 글리프는 next/font(latin subset)로
+            번들할 수 없어 <head> <link>가 유일한 로드 경로다. 규칙이 가정하는 상황과 달라 비활성화한다. */}
+        {/* eslint-disable-next-line @next/next/no-page-custom-font */}
         <link
           rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&display=swap"

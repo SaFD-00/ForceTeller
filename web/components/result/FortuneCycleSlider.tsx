@@ -193,6 +193,7 @@ function FortuneSection({
         <div className="relative">
           <button
             onClick={scrollLeft}
+            aria-label="이전"
             className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-primary/80 hover:bg-primary p-1.5 rounded-full text-primary-foreground transition-colors hidden md:block"
           >
             <Icon name="solar:alt-arrow-left-bold" size={16} />
@@ -200,6 +201,7 @@ function FortuneSection({
 
           <button
             onClick={scrollRight}
+            aria-label="다음"
             className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-primary/80 hover:bg-primary p-1.5 rounded-full text-primary-foreground transition-colors hidden md:block"
           >
             <Icon name="solar:alt-arrow-right-bold" size={16} />

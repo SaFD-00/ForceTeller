@@ -49,13 +49,13 @@ export function LifetimeReport({ stages, overallSummary }: LifetimeReportProps) 
           <div className="absolute left-2 top-1 bottom-1 w-px bg-border" />
 
           <div className="space-y-4">
-            {stages.map((stage, idx) => {
+            {stages.map((stage) => {
               const meta = STAGE_THEME[stage.tenGodGroup] ?? {
                 theme: '운의 흐름이 전환되는 시기입니다.',
                 icon: 'solar:star-bold',
               };
               return (
-                <div key={idx} className="relative">
+                <div key={stage.age} className="relative">
                   {/* 타임라인 점 */}
                   <div
                     className={`absolute -left-[18px] top-1 w-3 h-3 rounded-full border-2 ${
