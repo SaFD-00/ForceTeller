@@ -5,10 +5,11 @@ LangGraph 상태 정의
 add_messages reducer를 사용하여 메시지를 자동 누적합니다.
 """
 
-from typing import Annotated, Optional, Any
-from typing_extensions import TypedDict
-from langgraph.graph.message import add_messages
+from typing import Annotated, Any
+
 from langchain_core.messages import BaseMessage
+from langgraph.graph.message import add_messages
+from typing_extensions import TypedDict
 
 
 class AgentState(TypedDict):
@@ -27,6 +28,7 @@ class AgentState(TypedDict):
         final_output: 최종 종합 출력
         error: 에러 정보
     """
+
     # 메시지 히스토리 (자동 누적)
     messages: Annotated[list[BaseMessage], add_messages]
 
@@ -37,7 +39,7 @@ class AgentState(TypedDict):
     current_agent: str
 
     # 라우팅 결정
-    next_agent: Optional[str]
+    next_agent: str | None
 
     # 해석 결과 누적
     interpretations: dict[str, dict]
@@ -46,15 +48,14 @@ class AgentState(TypedDict):
     iteration: int
 
     # 최종 출력
-    final_output: Optional[str]
+    final_output: str | None
 
     # 에러 정보
-    error: Optional[str]
+    error: str | None
 
 
 def create_initial_state(
-    saju_data: dict[str, Any],
-    messages: list[BaseMessage] | None = None
+    saju_data: dict[str, Any], messages: list[BaseMessage] | None = None
 ) -> AgentState:
     """초기 상태 생성
 

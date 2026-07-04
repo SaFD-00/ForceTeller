@@ -9,15 +9,14 @@ LangGraph 노드 함수
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 from langchain_core.runnables import RunnableConfig
 
-from agents.state import AgentState
-from agents.schemas import InterpretationResult, RouterDecision, SynthesisResult
-from agents.llm import create_structured_llm, ainvoke_structured
+from agents.agent_configs import AGENT_CONFIGS
+from agents.llm import ainvoke_structured, create_structured_llm
 from agents.prompts.system_prompts import (
     ORCHESTRATOR_SYSTEM_PROMPT,
     format_saju_context,
 )
-from agents.agent_configs import AGENT_CONFIGS
-
+from agents.schemas import InterpretationResult, RouterDecision, SynthesisResult
+from agents.state import AgentState
 
 # 최대 반복 횟수 (무한 루프 방지)
 MAX_ITERATIONS = 10
@@ -194,9 +193,9 @@ async def interpreter_node(
         return {
             "interpretations": interpretations,
             "current_agent": agent_name,
-            "messages": [AIMessage(
-                content=f"[{agent_config.display_name}]\n\n{result.interpretation}"
-            )],
+            "messages": [
+                AIMessage(content=f"[{agent_config.display_name}]\n\n{result.interpretation}")
+            ],
             "iteration": state.get("iteration", 0) + 1,
         }
     except Exception as e:
@@ -232,10 +231,12 @@ async def synthesis_node(state: AgentState, config: RunnableConfig) -> dict:
             "messages": [AIMessage(content="[종합 분석] 해석 결과가 없습니다.")],
         }
 
-    interpretations_summary = "\n\n".join([
-        f"### {AGENT_CONFIGS.get(name).display_name if AGENT_CONFIGS.get(name) else name} 해석\n{data.get('interpretation', '')}"
-        for name, data in interpretations.items()
-    ])
+    interpretations_summary = "\n\n".join(
+        [
+            f"### {AGENT_CONFIGS.get(name).display_name if AGENT_CONFIGS.get(name) else name} 해석\n{data.get('interpretation', '')}"
+            for name, data in interpretations.items()
+        ]
+    )
 
     # 사주 컨텍스트
     saju_context = format_saju_context(state["saju_data"])
@@ -276,8 +277,10 @@ def create_interpreter_node(agent_name: str):
         >>> personality_node = create_interpreter_node("personality")
         >>> graph.add_node("personality", personality_node)
     """
+
     async def node(state: AgentState, config: RunnableConfig) -> dict:
         return await interpreter_node(state, agent_name, config)
+
     return node
 
 

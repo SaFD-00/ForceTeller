@@ -17,7 +17,6 @@ from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_ex
 
 from config.settings import settings
 
-
 T = TypeVar("T", bound=BaseModel)
 
 
@@ -102,9 +101,7 @@ def create_llm_with_fallback(
 @retry(
     stop=stop_after_attempt(3),
     wait=wait_exponential(multiplier=1, min=1, max=8),
-    retry=retry_if_exception_type(
-        (ValidationError, OutputParserException, json.JSONDecodeError)
-    ),
+    retry=retry_if_exception_type((ValidationError, OutputParserException, json.JSONDecodeError)),
     reraise=True,
 )
 async def ainvoke_structured(chain: Any, payload: dict) -> Any:

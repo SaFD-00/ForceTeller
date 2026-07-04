@@ -585,16 +585,19 @@ def _format_display_context(saju_result: dict) -> str:
 
     # 십성 분포 포맷
     ten_gods_counts = ten_gods.get("counts", {}) if isinstance(ten_gods, dict) else {}
-    ten_gods_str = "\n".join([
-        f"- {k}: {v}개" for k, v in ten_gods_counts.items() if v > 0
-    ]) or "정보 없음"
+    ten_gods_str = (
+        "\n".join([f"- {k}: {v}개" for k, v in ten_gods_counts.items() if v > 0]) or "정보 없음"
+    )
 
     # 대운 포맷
     if fortune_cycles and isinstance(fortune_cycles, list):
-        daewun_str = ", ".join([
-            f"{c.get('heavenly_stem', {}).get('hanja', '')}{c.get('earthly_branch', {}).get('hanja', '')}({c.get('start_age', 0)}세~)"
-            for c in fortune_cycles[:5] if isinstance(c, dict)
-        ])
+        daewun_str = ", ".join(
+            [
+                f"{c.get('heavenly_stem', {}).get('hanja', '')}{c.get('earthly_branch', {}).get('hanja', '')}({c.get('start_age', 0)}세~)"
+                for c in fortune_cycles[:5]
+                if isinstance(c, dict)
+            ]
+        )
     else:
         daewun_str = "정보 없음"
 
@@ -611,7 +614,9 @@ def _format_display_context(saju_result: dict) -> str:
     if isinstance(twelve_phases, dict) and twelve_phases:
         phases_list = []
         for pos in ["year", "month", "day", "hour"]:
-            pos_name = {"year": "년주", "month": "월주", "day": "일주", "hour": "시주"}.get(pos, pos)
+            pos_name = {"year": "년주", "month": "월주", "day": "일주", "hour": "시주"}.get(
+                pos, pos
+            )
             phase = twelve_phases.get(pos, "")
             if phase:
                 phases_list.append(f"- {pos_name}: {phase}")
@@ -635,7 +640,7 @@ def _format_display_context(saju_result: dict) -> str:
             "지지형": "지지형",
             "지지파": "지지파",
             "지지해": "지지해",
-            "공망": "공망"
+            "공망": "공망",
         }
         for key, name in interaction_names.items():
             items = interactions.get(key, [])
@@ -704,9 +709,11 @@ def _format_display_context(saju_result: dict) -> str:
         twelve_phases=twelve_phases_str,
         shensha_list=shensha_str,
         interactions=interactions_str,
-        daewun_start=fortune_cycles[0].get("start_age", 0) if fortune_cycles and isinstance(fortune_cycles, list) and len(fortune_cycles) > 0 else 0,
+        daewun_start=fortune_cycles[0].get("start_age", 0)
+        if fortune_cycles and isinstance(fortune_cycles, list) and len(fortune_cycles) > 0
+        else 0,
         daewun_direction="",
-        daewun_cycles=daewun_str
+        daewun_cycles=daewun_str,
     )
 
 
@@ -720,16 +727,25 @@ def _format_original_context(saju_result: dict) -> str:
 
     # 십성 분포 포맷
     ten_gods = analysis.get("ten_gods_dist", {}) if isinstance(analysis, dict) else {}
-    ten_gods_str = "\n".join([
-        f"- {k}: {v}개" for k, v in ten_gods.items() if v > 0
-    ]) if isinstance(ten_gods, dict) else ""
+    ten_gods_str = (
+        "\n".join([f"- {k}: {v}개" for k, v in ten_gods.items() if v > 0])
+        if isinstance(ten_gods, dict)
+        else ""
+    )
 
     # 신살 포맷
     shensha = analysis.get("shensha", []) if isinstance(analysis, dict) else []
-    shensha_str = "\n".join([
-        f"- {s['name']} ({s['position']}): {s['description']}"
-        for s in shensha if isinstance(s, dict)
-    ]) if shensha else "없음"
+    shensha_str = (
+        "\n".join(
+            [
+                f"- {s['name']} ({s['position']}): {s['description']}"
+                for s in shensha
+                if isinstance(s, dict)
+            ]
+        )
+        if shensha
+        else "없음"
+    )
 
     # 12운성 포맷
     twelve_phases = analysis.get("twelve_phases", {}) if isinstance(analysis, dict) else {}
@@ -737,7 +753,9 @@ def _format_original_context(saju_result: dict) -> str:
     if isinstance(twelve_phases, dict) and twelve_phases:
         phases_list = []
         for pos in ["year", "month", "day", "hour"]:
-            pos_name = {"year": "년주", "month": "월주", "day": "일주", "hour": "시주"}.get(pos, pos)
+            pos_name = {"year": "년주", "month": "월주", "day": "일주", "hour": "시주"}.get(
+                pos, pos
+            )
             phase = twelve_phases.get(pos, "")
             if phase:
                 phases_list.append(f"- {pos_name}: {phase}")
@@ -761,7 +779,7 @@ def _format_original_context(saju_result: dict) -> str:
             "지지형": "지지형",
             "지지파": "지지파",
             "지지해": "지지해",
-            "공망": "공망"
+            "공망": "공망",
         }
         for key, name in interaction_names.items():
             items = interactions.get(key, [])
@@ -777,10 +795,17 @@ def _format_original_context(saju_result: dict) -> str:
 
     # 대운 포맷
     cycles = fortune.get("cycles", [])[:5] if isinstance(fortune, dict) else []
-    daewun_str = ", ".join([
-        f"{c['ganji_korean']}({c['start_age']}-{c['end_age']}세)"
-        for c in cycles if isinstance(c, dict)
-    ]) if cycles else "정보 없음"
+    daewun_str = (
+        ", ".join(
+            [
+                f"{c['ganji_korean']}({c['start_age']}-{c['end_age']}세)"
+                for c in cycles
+                if isinstance(c, dict)
+            ]
+        )
+        if cycles
+        else "정보 없음"
+    )
 
     # 안전한 값 추출 헬퍼
     def safe_get(obj, *keys, default=""):
@@ -831,5 +856,5 @@ def _format_original_context(saju_result: dict) -> str:
         interactions=interactions_str,
         daewun_start=fortune.get("start_age", 0) if isinstance(fortune, dict) else 0,
         daewun_direction=fortune.get("direction", "") if isinstance(fortune, dict) else "",
-        daewun_cycles=daewun_str
+        daewun_cycles=daewun_str,
     )

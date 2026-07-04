@@ -2,11 +2,9 @@
 SessionManager 단위 테스트
 """
 
-import pytest
 from datetime import datetime, timedelta
-from unittest.mock import patch, MagicMock
 
-from conversation.session_manager import SessionManager, Session, Message
+from conversation.session_manager import Message, Session, SessionManager
 
 
 class TestMessage:
@@ -44,7 +42,7 @@ class TestMessage:
             "role": "assistant",
             "content": "응답입니다",
             "timestamp": "2026-01-05T12:00:00",
-            "metadata": {"agent": "career"}
+            "metadata": {"agent": "career"},
         }
         msg = Message.from_dict(data)
 
@@ -58,10 +56,7 @@ class TestSession:
 
     def test_session_creation(self, sample_saju_data):
         """세션 생성 테스트"""
-        session = Session(
-            session_id="test-123",
-            saju_data=sample_saju_data
-        )
+        session = Session(session_id="test-123", saju_data=sample_saju_data)
 
         assert session.session_id == "test-123"
         assert session.saju_data == sample_saju_data
@@ -72,7 +67,7 @@ class TestSession:
         """메시지 추가 테스트"""
         session = Session(session_id="test", saju_data=sample_saju_data)
 
-        msg = session.add_message("user", "질문입니다")
+        session.add_message("user", "질문입니다")
 
         assert len(session.messages) == 1
         assert session.messages[0].role == "user"
@@ -179,7 +174,7 @@ class TestSession:
             "interpretation_cache": {"personality": {"interpretation": "캐시된 해석"}},
             "created_at": "2026-01-05T10:00:00",
             "last_activity": "2026-01-05T11:00:00",
-            "metadata": {"source": "import"}
+            "metadata": {"source": "import"},
         }
 
         session = Session.from_dict(data)
@@ -256,22 +251,14 @@ class TestSessionManager:
         """세션에 메시지 추가"""
         session = session_manager.create_session(sample_saju_data)
 
-        msg = session_manager.add_message(
-            session.session_id,
-            "user",
-            "테스트 메시지"
-        )
+        msg = session_manager.add_message(session.session_id, "user", "테스트 메시지")
 
         assert msg is not None
         assert msg.content == "테스트 메시지"
 
     def test_add_message_to_nonexistent_session(self, session_manager):
         """존재하지 않는 세션에 메시지 추가"""
-        msg = session_manager.add_message(
-            "nonexistent",
-            "user",
-            "테스트"
-        )
+        msg = session_manager.add_message("nonexistent", "user", "테스트")
 
         assert msg is None
 
@@ -350,7 +337,7 @@ class TestSessionManager:
             "interpretation_cache": {},
             "created_at": datetime.now().isoformat(),
             "last_activity": datetime.now().isoformat(),
-            "metadata": {}
+            "metadata": {},
         }
 
         imported = session_manager.import_session(data)
@@ -383,6 +370,7 @@ class TestSessionManager:
 
         # 잠시 대기 후 조회
         import time
+
         time.sleep(0.01)
 
         retrieved = session_manager.get_session(session.session_id)

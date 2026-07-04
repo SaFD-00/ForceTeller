@@ -3,22 +3,17 @@
 역사적 시간대 변경 및 일광절약시간(DST) 정보
 """
 
-from datetime import datetime, date, timedelta
-from typing import Tuple, Optional
-
+from datetime import date, datetime, timedelta
 
 # KST 표준시 변천 역사
 # (시작일, 종료일, 표준 자오선 경도, UTC 오프셋)
 KST_HISTORY = [
     # 대한제국 시대 (1908.04.01 ~ 1911.12.31)
     (date(1908, 4, 1), date(1911, 12, 31), 127.5, 8.5),
-
     # 일제강점기 및 초기 대한민국 (1912.01.01 ~ 1954.03.20)
     (date(1912, 1, 1), date(1954, 3, 20), 135.0, 9.0),
-
     # 이승만 정부 변경 (1954.03.21 ~ 1961.08.09)
     (date(1954, 3, 21), date(1961, 8, 9), 127.5, 8.5),
-
     # 현재 표준시 (1961.08.10 ~ 현재)
     (date(1961, 8, 10), date(9999, 12, 31), 135.0, 9.0),
 ]

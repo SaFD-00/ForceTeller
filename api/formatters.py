@@ -4,7 +4,7 @@
 분석 결과를 사용자에게 보여줄 메시지로 변환합니다.
 """
 
-from typing import Any, List
+from typing import Any
 
 from api.schemas import AnalysisType
 
@@ -45,7 +45,9 @@ class FortuneFormatter:
         if fortune_result.lucky_elements.colors:
             lines.append(f"**행운의 색상**: {', '.join(fortune_result.lucky_elements.colors)}")
         if fortune_result.lucky_elements.numbers:
-            lines.append(f"**행운의 숫자**: {', '.join(map(str, fortune_result.lucky_elements.numbers))}")
+            lines.append(
+                f"**행운의 숫자**: {', '.join(map(str, fortune_result.lucky_elements.numbers))}"
+            )
         if fortune_result.lucky_elements.directions:
             lines.append(f"**유리한 방향**: {', '.join(fortune_result.lucky_elements.directions)}")
 
@@ -67,20 +69,24 @@ class YongsinFormatter:
         if yongsin_result.secondary_yongsin:
             lines.append(f"**보조 용신**: {yongsin_result.secondary_yongsin.value}")
 
-        lines.extend([
-            "",
-            f"**분석 방법**: {yongsin_result.method.value}",
-            f"**일간 강약**: {yongsin_result.day_master_strength.value}",
-            f"**신뢰도**: {yongsin_result.confidence * 100:.0f}%",
-            "",
-            f"**선정 이유**: {yongsin_result.reasoning}",
-            "",
-        ])
+        lines.extend(
+            [
+                "",
+                f"**분석 방법**: {yongsin_result.method.value}",
+                f"**일간 강약**: {yongsin_result.day_master_strength.value}",
+                f"**신뢰도**: {yongsin_result.confidence * 100:.0f}%",
+                "",
+                f"**선정 이유**: {yongsin_result.reasoning}",
+                "",
+            ]
+        )
 
         if yongsin_result.xi_sin:
             lines.append(f"**희신 (도움)**: {', '.join(e.value for e in yongsin_result.xi_sin)}")
         if yongsin_result.ji_sin:
-            lines.append(f"**기신 (피해야 할)**: {', '.join(e.value for e in yongsin_result.ji_sin)}")
+            lines.append(
+                f"**기신 (피해야 할)**: {', '.join(e.value for e in yongsin_result.ji_sin)}"
+            )
 
         lines.append("")
         lines.append("### 추천")
@@ -110,18 +116,22 @@ class SchoolComparisonFormatter:
         ]
 
         for interp in comparison_result.interpretations:
-            lines.extend([
-                f"### {interp.school_name}",
-                f"**용신**: {interp.yong_sin.value}",
-            ])
+            lines.extend(
+                [
+                    f"### {interp.school_name}",
+                    f"**용신**: {interp.yong_sin.value}",
+                ]
+            )
             if interp.geok_guk:
                 lines.append(f"**격국**: {interp.geok_guk}")
-            lines.extend([
-                f"**신뢰도**: {interp.confidence * 100:.0f}%",
-                "",
-                interp.overall,
-                "",
-            ])
+            lines.extend(
+                [
+                    f"**신뢰도**: {interp.confidence * 100:.0f}%",
+                    "",
+                    interp.overall,
+                    "",
+                ]
+            )
 
         if comparison_result.consensus:
             lines.append("### 합의점")
@@ -268,12 +278,12 @@ class SuggestedQuestionsGenerator:
     ]
 
     @classmethod
-    def for_analysis_type(cls, analysis_type: AnalysisType) -> List[str]:
+    def for_analysis_type(cls, analysis_type: AnalysisType) -> list[str]:
         """분석 유형에 따른 추천 질문 반환"""
         return cls._QUESTIONS_BY_TYPE.get(analysis_type, cls._DEFAULT_QUESTIONS)
 
     @classmethod
-    def from_context(cls, user_question: str, ai_response: str) -> List[str]:
+    def from_context(cls, user_question: str, ai_response: str) -> list[str]:
         """질문/응답 컨텍스트 기반 추천 질문 생성"""
         # 키워드 매칭
         for keyword, questions in cls._QUESTIONS_BY_KEYWORD.items():

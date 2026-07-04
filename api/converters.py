@@ -4,7 +4,7 @@
 프론트엔드/백엔드 데이터 형식 변환 및 Enum 변환을 담당합니다.
 """
 
-from typing import Dict, Any, Optional
+from typing import Any
 
 from api.schemas import AnalysisType, SchoolCodeType, YongSinMethodType
 from manseol.analysis import FortuneType, SchoolCode
@@ -14,7 +14,7 @@ class SajuDataConverter:
     """사주 데이터 형식 변환기"""
 
     @staticmethod
-    def to_analysis_format(saju_data: Dict[str, Any]) -> Dict[str, Any]:
+    def to_analysis_format(saju_data: dict[str, Any]) -> dict[str, Any]:
         """
         다양한 형식의 사주 데이터를 분석 함수용 형식으로 변환
 
@@ -40,7 +40,7 @@ class SajuDataConverter:
         return saju_data
 
     @staticmethod
-    def _convert_display_format(saju_data: Dict[str, Any]) -> Dict[str, Any]:
+    def _convert_display_format(saju_data: dict[str, Any]) -> dict[str, Any]:
         """
         프론트엔드 display 형식을 분석 형식으로 변환
 
@@ -55,12 +55,18 @@ class SajuDataConverter:
 
         # day_pillar 변환
         day_pillar_data = four_pillars.get("day", {})
-        day_stem = day_pillar_data.get("heavenly_stem", {}) if isinstance(day_pillar_data, dict) else {}
+        day_stem = (
+            day_pillar_data.get("heavenly_stem", {}) if isinstance(day_pillar_data, dict) else {}
+        )
         stem_element = day_stem.get("element", "목") if isinstance(day_stem, dict) else "목"
 
         # wuxing_count 변환 (distribution을 그대로 사용)
-        distribution = five_elements.get("distribution", {}) if isinstance(five_elements, dict) else {}
-        wuxing_count = distribution if distribution else {"목": 2, "화": 2, "토": 2, "금": 1, "수": 1}
+        distribution = (
+            five_elements.get("distribution", {}) if isinstance(five_elements, dict) else {}
+        )
+        wuxing_count = (
+            distribution if distribution else {"목": 2, "화": 2, "토": 2, "금": 1, "수": 1}
+        )
 
         # strength 변환
         if isinstance(strength, dict):
@@ -86,7 +92,7 @@ class SajuDataConverter:
         }
 
     @staticmethod
-    def _convert_original_format(saju_data: Dict[str, Any]) -> Dict[str, Any]:
+    def _convert_original_format(saju_data: dict[str, Any]) -> dict[str, Any]:
         """
         백엔드 원본 형식을 분석 형식으로 변환
         """
@@ -99,7 +105,11 @@ class SajuDataConverter:
         stem_element = day_stem.get("element", "목") if isinstance(day_stem, dict) else "목"
         # 원본 천간 오행은 영문(wood/fire/...)일 수 있어 분석 라이브러리가 쓰는 한글로 정규화
         element_to_korean = {
-            "wood": "목", "fire": "화", "earth": "토", "metal": "금", "water": "수",
+            "wood": "목",
+            "fire": "화",
+            "earth": "토",
+            "metal": "금",
+            "water": "수",
         }
         stem_element = element_to_korean.get(stem_element, stem_element)
 
@@ -115,7 +125,9 @@ class SajuDataConverter:
 
         # 신강/신약
         strength_info = analysis.get("strength", {}) if isinstance(analysis, dict) else {}
-        level = strength_info.get("level", "medium") if isinstance(strength_info, dict) else "medium"
+        level = (
+            strength_info.get("level", "medium") if isinstance(strength_info, dict) else "medium"
+        )
 
         return {
             "day_pillar": {
@@ -129,7 +141,7 @@ class SajuDataConverter:
         }
 
 
-def enrich_with_analysis(result_dict: Dict[str, Any]) -> Dict[str, Any]:
+def enrich_with_analysis(result_dict: dict[str, Any]) -> dict[str, Any]:
     """만세력 결과(dict)에 이미 구현된 분석 라이브러리 결과를 덧붙인다.
 
     json_exporter는 결정론 계산만 담당하고, 용신 4방법·개운법·유파 비교·
@@ -142,7 +154,7 @@ def enrich_with_analysis(result_dict: Dict[str, Any]) -> Dict[str, Any]:
     Returns:
         결과 dict에 병합할 추가 키들 (yongsin_comparison, yongsin_recommendations 등)
     """
-    enriched: Dict[str, Any] = {}
+    enriched: dict[str, Any] = {}
 
     try:
         analysis_data = SajuDataConverter.to_analysis_format(result_dict)
@@ -158,9 +170,7 @@ def enrich_with_analysis(result_dict: Dict[str, Any]) -> Dict[str, Any]:
 
         enriched["yongsin_comparison"] = compare_yongsin_methods(analysis_data)
         yongsin_result = select_yongsin_auto(analysis_data)
-        enriched["yongsin_recommendations"] = generate_detailed_recommendations(
-            yongsin_result
-        )
+        enriched["yongsin_recommendations"] = generate_detailed_recommendations(yongsin_result)
     except Exception:
         pass
 
@@ -239,7 +249,7 @@ class EnumConverter:
     """Enum 타입 변환기"""
 
     @staticmethod
-    def to_fortune_type(analysis_type: AnalysisType) -> Optional[FortuneType]:
+    def to_fortune_type(analysis_type: AnalysisType) -> FortuneType | None:
         """AnalysisType을 FortuneType으로 변환"""
         mapping = {
             AnalysisType.FORTUNE_GENERAL: FortuneType.GENERAL,
@@ -251,7 +261,7 @@ class EnumConverter:
         return mapping.get(analysis_type)
 
     @staticmethod
-    def to_school_code(code: SchoolCodeType) -> Optional[SchoolCode]:
+    def to_school_code(code: SchoolCodeType) -> SchoolCode | None:
         """SchoolCodeType을 SchoolCode로 변환"""
         mapping = {
             SchoolCodeType.ZIPING: SchoolCode.ZIPING,

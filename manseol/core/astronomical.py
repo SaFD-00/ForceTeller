@@ -3,9 +3,9 @@
 ephem 라이브러리를 활용한 천문 계산
 """
 
-import ephem
 from datetime import datetime, timedelta
-from typing import Optional, Tuple
+
+import ephem
 
 
 class AstronomicalCalculator:
@@ -54,10 +54,7 @@ class AstronomicalCalculator:
         return float(ecl.lon) * 180 / ephem.pi
 
     def find_sun_longitude_time(
-        self,
-        target_longitude: float,
-        start_dt: datetime,
-        precision_minutes: float = 1.0
+        self, target_longitude: float, start_dt: datetime, precision_minutes: float = 1.0
     ) -> datetime:
         """
         태양이 특정 황경에 도달하는 시각 찾기

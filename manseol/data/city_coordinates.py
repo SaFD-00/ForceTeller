@@ -4,22 +4,22 @@ geonamescache를 사용한 전세계 도시 지원 + 한글 지원
 """
 
 import re
-from typing import Dict, List, Optional, Tuple
+
 from geonamescache import GeonamesCache
 
-from .korean_names import get_korean_country_name, get_korean_city_name
+from .korean_names import get_korean_city_name, get_korean_country_name
 
 # GeonamesCache 인스턴스 (싱글톤)
 _gc = GeonamesCache()
-_cities_cache: Optional[Dict] = None
-_countries_cache: Optional[Dict] = None
-_korean_search_index: Optional[Dict[str, List[str]]] = None
+_cities_cache: dict | None = None
+_countries_cache: dict | None = None
+_korean_search_index: dict[str, list[str]] | None = None
 
 # 한글 문자 패턴 (가-힣)
-_korean_pattern = re.compile(r'[\uAC00-\uD7A3]+')
+_korean_pattern = re.compile(r"[\uAC00-\uD7A3]+")
 
 
-def _get_cities() -> Dict:
+def _get_cities() -> dict:
     """도시 데이터 캐시 반환"""
     global _cities_cache
     if _cities_cache is None:
@@ -27,7 +27,7 @@ def _get_cities() -> Dict:
     return _cities_cache
 
 
-def _get_countries() -> Dict:
+def _get_countries() -> dict:
     """국가 데이터 캐시 반환"""
     global _countries_cache
     if _countries_cache is None:
@@ -39,10 +39,10 @@ def _get_country_name(country_code: str) -> str:
     """국가 코드로 영어 국가명 반환"""
     countries = _get_countries()
     country = countries.get(country_code, {})
-    return country.get('name', country_code)
+    return country.get("name", country_code)
 
 
-def _build_korean_search_index() -> Dict[str, List[str]]:
+def _build_korean_search_index() -> dict[str, list[str]]:
     """
     한글 이름 → geonameid 매핑 인덱스 구축
     alternatenames에서 한글 이름을 추출하여 검색 인덱스 생성
@@ -55,7 +55,7 @@ def _build_korean_search_index() -> Dict[str, List[str]]:
     cities = _get_cities()
 
     for geonameid, city in cities.items():
-        alt_names = city.get('alternatenames', [])
+        alt_names = city.get("alternatenames", [])
         if isinstance(alt_names, str):
             alt_names = [alt_names]
 
@@ -70,7 +70,7 @@ def _build_korean_search_index() -> Dict[str, List[str]]:
     return _korean_search_index
 
 
-def _get_korean_city_name_from_alt(city: Dict) -> Optional[str]:
+def _get_korean_city_name_from_alt(city: dict) -> str | None:
     """
     도시의 한글 이름 추출 (주요 도시 매핑 → alternatenames 순)
 
@@ -84,7 +84,7 @@ def _get_korean_city_name_from_alt(city: Dict) -> Optional[str]:
     Returns:
         한글 도시명 또는 None
     """
-    city_name = city.get('name', '')
+    city_name = city.get("name", "")
 
     # 1. 주요 도시 매핑 확인 (우선순위 최상)
     mapped_name = get_korean_city_name(city_name)
@@ -92,7 +92,7 @@ def _get_korean_city_name_from_alt(city: Dict) -> Optional[str]:
         return mapped_name
 
     # 2. alternatenames에서 한글 이름 추출
-    alt_names = city.get('alternatenames', [])
+    alt_names = city.get("alternatenames", [])
     if isinstance(alt_names, str):
         alt_names = [alt_names]
 
@@ -105,7 +105,7 @@ def _get_korean_city_name_from_alt(city: Dict) -> Optional[str]:
         return None
 
     # 행정구역 접미사 (우선순위 낮음)
-    suffixes = ('특별시', '광역시', '특별자치시', '특별자치도', '시', '군', '구', '도', '현')
+    suffixes = ("특별시", "광역시", "특별자치시", "특별자치도", "시", "군", "구", "도", "현")
 
     # 점수 계산: 짧을수록, 접미사 없을수록 높은 점수
     def score(name: str) -> tuple:
@@ -121,19 +121,19 @@ class CityCoordinates:
     """도시 좌표 데이터 접근 클래스 (geonamescache 기반, 한글 지원)"""
 
     @staticmethod
-    def get_coordinates(city_name: str) -> Optional[Tuple[float, float]]:
+    def get_coordinates(city_name: str) -> tuple[float, float] | None:
         """도시의 (위도, 경도) 반환"""
         cities = _get_cities()
 
         # 정확한 이름 매칭 먼저 시도
         for city in cities.values():
-            if city['name'].lower() == city_name.lower():
-                return (city['latitude'], city['longitude'])
+            if city["name"].lower() == city_name.lower():
+                return (city["latitude"], city["longitude"])
 
         # 부분 매칭
         for city in cities.values():
-            if city_name.lower() in city['name'].lower():
-                return (city['latitude'], city['longitude'])
+            if city_name.lower() in city["name"].lower():
+                return (city["latitude"], city["longitude"])
 
         return None
 
@@ -154,7 +154,7 @@ class CityCoordinates:
         return default
 
     @staticmethod
-    def list_cities(limit: int = 100) -> List[Dict]:
+    def list_cities(limit: int = 100) -> list[dict]:
         """
         등록된 도시 목록 반환 (인구 기준 상위)
 
@@ -162,34 +162,34 @@ class CityCoordinates:
             도시 정보 리스트 [{name, name_ko, country, country_ko, ...}, ...]
         """
         cities = _get_cities()
-        sorted_cities = sorted(
-            cities.values(),
-            key=lambda x: x.get('population', 0),
-            reverse=True
-        )[:limit]
+        sorted_cities = sorted(cities.values(), key=lambda x: x.get("population", 0), reverse=True)[
+            :limit
+        ]
 
         result = []
         for city in sorted_cities:
-            country_code = city['countrycode']
+            country_code = city["countrycode"]
             country_name_en = _get_country_name(country_code)
             country_name_ko = get_korean_country_name(country_code, country_name_en)
             korean_name = _get_korean_city_name_from_alt(city)
 
-            result.append({
-                'name': city['name'],
-                'name_ko': korean_name,
-                'country': country_name_en,
-                'country_ko': country_name_ko,
-                'countrycode': country_code,
-                'latitude': city['latitude'],
-                'longitude': city['longitude'],
-                'population': city.get('population', 0)
-            })
+            result.append(
+                {
+                    "name": city["name"],
+                    "name_ko": korean_name,
+                    "country": country_name_en,
+                    "country_ko": country_name_ko,
+                    "countrycode": country_code,
+                    "latitude": city["latitude"],
+                    "longitude": city["longitude"],
+                    "population": city.get("population", 0),
+                }
+            )
 
         return result
 
     @staticmethod
-    def search_city(keyword: str, limit: int = 20) -> List[Dict]:
+    def search_city(keyword: str, limit: int = 20) -> list[dict]:
         """
         키워드로 도시 검색 (한글 검색 지원)
 
@@ -227,11 +227,11 @@ class CityCoordinates:
             for korean_name, geoname_ids in korean_index.items():
                 match_type = None
                 if korean_name == keyword_lower:
-                    match_type = 'exact'
+                    match_type = "exact"
                 elif korean_name.startswith(keyword_lower):
-                    match_type = 'starts'
+                    match_type = "starts"
                 elif keyword_lower in korean_name:
-                    match_type = 'contains'
+                    match_type = "contains"
 
                 if match_type:
                     for gid in geoname_ids:
@@ -239,9 +239,9 @@ class CityCoordinates:
                             continue
                         city = cities.get(gid)
                         if city:
-                            if match_type == 'exact':
+                            if match_type == "exact":
                                 exact_matches.append(city)
-                            elif match_type == 'starts':
+                            elif match_type == "starts":
                                 starts_with.append(city)
                             else:
                                 contains.append(city)
@@ -249,7 +249,7 @@ class CityCoordinates:
         else:
             # 영어 검색: 기존 로직 사용
             for gid, city in cities.items():
-                city_name = city['name']
+                city_name = city["name"]
                 city_lower = city_name.lower()
 
                 if city_lower == keyword_lower:
@@ -266,33 +266,35 @@ class CityCoordinates:
         # 각 그룹 내에서는 인구 기준 정렬
         results = []
         for group in [exact_matches, starts_with, contains]:
-            group.sort(key=lambda x: x.get('population', 0), reverse=True)
+            group.sort(key=lambda x: x.get("population", 0), reverse=True)
             for city in group:
                 if len(results) >= limit:
                     break
 
-                country_code = city['countrycode']
+                country_code = city["countrycode"]
                 country_name_en = _get_country_name(country_code)
                 country_name_ko = get_korean_country_name(country_code, country_name_en)
                 korean_name = _get_korean_city_name_from_alt(city)
 
-                results.append({
-                    'name': city['name'],
-                    'name_ko': korean_name,
-                    'country': country_name_en,
-                    'country_ko': country_name_ko,
-                    'countrycode': country_code,
-                    'latitude': city['latitude'],
-                    'longitude': city['longitude'],
-                    'population': city.get('population', 0)
-                })
+                results.append(
+                    {
+                        "name": city["name"],
+                        "name_ko": korean_name,
+                        "country": country_name_en,
+                        "country_ko": country_name_ko,
+                        "countrycode": country_code,
+                        "latitude": city["latitude"],
+                        "longitude": city["longitude"],
+                        "population": city.get("population", 0),
+                    }
+                )
             if len(results) >= limit:
                 break
 
         return results
 
     @staticmethod
-    def get_city_by_name(city_name: str) -> Optional[Dict]:
+    def get_city_by_name(city_name: str) -> dict | None:
         """
         도시명으로 상세 정보 조회
 
@@ -307,44 +309,44 @@ class CityCoordinates:
 
         # 정확한 매칭 우선
         for city in cities.values():
-            if city['name'].lower() == city_lower:
-                country_code = city['countrycode']
+            if city["name"].lower() == city_lower:
+                country_code = city["countrycode"]
                 country_name_en = _get_country_name(country_code)
                 country_name_ko = get_korean_country_name(country_code, country_name_en)
                 korean_name = _get_korean_city_name_from_alt(city)
 
                 return {
-                    'name': city['name'],
-                    'name_ko': korean_name,
-                    'country': country_name_en,
-                    'country_ko': country_name_ko,
-                    'countrycode': country_code,
-                    'latitude': city['latitude'],
-                    'longitude': city['longitude']
+                    "name": city["name"],
+                    "name_ko": korean_name,
+                    "country": country_name_en,
+                    "country_ko": country_name_ko,
+                    "countrycode": country_code,
+                    "latitude": city["latitude"],
+                    "longitude": city["longitude"],
                 }
 
         # 부분 매칭 (인구 기준 상위)
         matches = []
         for city in cities.values():
-            if city_lower in city['name'].lower():
+            if city_lower in city["name"].lower():
                 matches.append(city)
 
         if matches:
-            matches.sort(key=lambda x: x.get('population', 0), reverse=True)
+            matches.sort(key=lambda x: x.get("population", 0), reverse=True)
             city = matches[0]
-            country_code = city['countrycode']
+            country_code = city["countrycode"]
             country_name_en = _get_country_name(country_code)
             country_name_ko = get_korean_country_name(country_code, country_name_en)
             korean_name = _get_korean_city_name_from_alt(city)
 
             return {
-                'name': city['name'],
-                'name_ko': korean_name,
-                'country': country_name_en,
-                'country_ko': country_name_ko,
-                'countrycode': country_code,
-                'latitude': city['latitude'],
-                'longitude': city['longitude']
+                "name": city["name"],
+                "name_ko": korean_name,
+                "country": country_name_en,
+                "country_ko": country_name_ko,
+                "countrycode": country_code,
+                "latitude": city["latitude"],
+                "longitude": city["longitude"],
             }
 
         return None

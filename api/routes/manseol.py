@@ -3,14 +3,14 @@
 사주 계산 엔드포인트
 """
 
-from datetime import datetime, time
+from datetime import datetime
+
 from fastapi import APIRouter, HTTPException
 
-from api.schemas import ManseolRequest, ManseolResponse, ErrorResponse
 from api.converters import enrich_with_analysis
-from manseol.models.input_model import SajuInput, CalendarType, Gender
+from api.schemas import ErrorResponse, ManseolRequest, ManseolResponse
+from manseol.models.input_model import CalendarType, Gender, SajuInput
 from manseol.output.json_exporter import JsonExporter
-
 
 router = APIRouter(prefix="/api/manseol", tags=["manseol"])
 
@@ -18,12 +18,9 @@ router = APIRouter(prefix="/api/manseol", tags=["manseol"])
 @router.post(
     "",
     response_model=ManseolResponse,
-    responses={
-        400: {"model": ErrorResponse},
-        500: {"model": ErrorResponse}
-    },
+    responses={400: {"model": ErrorResponse}, 500: {"model": ErrorResponse}},
     summary="사주 계산",
-    description="생년월일시를 입력받아 사주팔자를 계산합니다."
+    description="생년월일시를 입력받아 사주팔자를 계산합니다.",
 )
 async def calculate_saju(request: ManseolRequest) -> ManseolResponse:
     """
@@ -41,8 +38,7 @@ async def calculate_saju(request: ManseolRequest) -> ManseolResponse:
                 birth_time = datetime.strptime(request.birth_time, "%H:%M").time()
             except ValueError:
                 raise HTTPException(
-                    status_code=400,
-                    detail="시간 형식이 잘못되었습니다. HH:MM 형식으로 입력하세요."
+                    status_code=400, detail="시간 형식이 잘못되었습니다. HH:MM 형식으로 입력하세요."
                 )
 
         # 입력 데이터 생성
@@ -55,7 +51,7 @@ async def calculate_saju(request: ManseolRequest) -> ManseolResponse:
             gender=Gender(request.gender.value),
             jajasi=request.jajasi,
             longitude=request.longitude,
-            apply_time_correction=request.apply_time_correction
+            apply_time_correction=request.apply_time_correction,
         )
 
         # 사주 계산
@@ -66,10 +62,7 @@ async def calculate_saju(request: ManseolRequest) -> ManseolResponse:
         data = result.to_dict()
         data.update(enrich_with_analysis(data))
 
-        return ManseolResponse(
-            success=True,
-            data=data
-        )
+        return ManseolResponse(success=True, data=data)
 
     except HTTPException:
         raise
@@ -83,13 +76,10 @@ async def calculate_saju(request: ManseolRequest) -> ManseolResponse:
     "/quick",
     response_model=ManseolResponse,
     summary="빠른 사주 계산",
-    description="최소 정보로 빠르게 사주를 계산합니다."
+    description="최소 정보로 빠르게 사주를 계산합니다.",
 )
 async def quick_calculate(
-    name: str,
-    birth_date: str,
-    gender: str,
-    birth_time: str = None
+    name: str, birth_date: str, gender: str, birth_time: str = None
 ) -> ManseolResponse:
     """
     빠른 사주 계산 (쿼리 파라미터)
@@ -107,20 +97,14 @@ async def quick_calculate(
 
         # 입력 데이터
         saju_input = SajuInput(
-            name=name,
-            birth_date=parsed_date,
-            birth_time=parsed_time,
-            gender=Gender(gender)
+            name=name, birth_date=parsed_date, birth_time=parsed_time, gender=Gender(gender)
         )
 
         # 계산
         exporter = JsonExporter(saju_input)
         result = exporter.generate_result()
 
-        return ManseolResponse(
-            success=True,
-            data=result.to_dict()
-        )
+        return ManseolResponse(success=True, data=result.to_dict())
 
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -131,7 +115,7 @@ async def quick_calculate(
 @router.get(
     "/cities",
     summary="도시 검색",
-    description="전세계 도시를 검색합니다. 한글/영어 모두 지원합니다."
+    description="전세계 도시를 검색합니다. 한글/영어 모두 지원합니다.",
 )
 async def search_cities(q: str = "", limit: int = 20):
     """
@@ -151,26 +135,16 @@ async def search_cities(q: str = "", limit: int = 20):
     if not q:
         # 검색어가 없으면 인구 기준 상위 도시 반환
         cities = CityCoordinates.list_cities(limit=limit)
-        return {
-            "success": True,
-            "cities": cities,
-            "total": len(cities)
-        }
+        return {"success": True, "cities": cities, "total": len(cities)}
 
     # 검색어로 도시 검색 (한글/영어 모두 지원)
     results = CityCoordinates.search_city(q, limit=limit)
 
-    return {
-        "success": True,
-        "cities": results,
-        "total": len(results)
-    }
+    return {"success": True, "cities": results, "total": len(results)}
 
 
 @router.get(
-    "/city/{city_name}",
-    summary="도시 정보",
-    description="특정 도시의 좌표 정보를 반환합니다."
+    "/city/{city_name}", summary="도시 정보", description="특정 도시의 좌표 정보를 반환합니다."
 )
 async def get_city_info(city_name: str):
     """도시 좌표 정보 반환"""
@@ -183,8 +157,8 @@ async def get_city_info(city_name: str):
 
     return {
         "success": True,
-        "city": city_info['name'],
-        "country": city_info['country'],
-        "latitude": city_info['latitude'],
-        "longitude": city_info['longitude']
+        "city": city_info["name"],
+        "country": city_info["country"],
+        "latitude": city_info["latitude"],
+        "longitude": city_info["longitude"],
     }

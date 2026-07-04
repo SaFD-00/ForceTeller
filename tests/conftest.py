@@ -2,20 +2,20 @@
 테스트 공통 fixtures
 """
 
+from datetime import datetime
+from typing import Any
+from unittest.mock import AsyncMock, MagicMock
+
 import pytest
 import pytest_asyncio
-import asyncio
-from typing import Dict, Any, List, AsyncGenerator
-from unittest.mock import AsyncMock, MagicMock
-from datetime import datetime
-
 
 # ============================================================================
 # Sample Data Fixtures
 # ============================================================================
 
+
 @pytest.fixture
-def sample_saju_data() -> Dict[str, Any]:
+def sample_saju_data() -> dict[str, Any]:
     """샘플 사주 계산 결과 데이터"""
     return {
         "input": {
@@ -24,54 +24,37 @@ def sample_saju_data() -> Dict[str, Any]:
             "birth_time": "14:30",
             "gender": "male",
             "calendar": "solar",
-            "city": "Seoul"
+            "city": "Seoul",
         },
         "pillars": {
             "year": {"stem": "경", "branch": "오", "element": "금", "polarity": "양"},
             "month": {"stem": "신", "branch": "사", "element": "금", "polarity": "음"},
             "day": {"stem": "갑", "branch": "자", "element": "목", "polarity": "양"},
-            "hour": {"stem": "임", "branch": "신", "element": "수", "polarity": "양"}
+            "hour": {"stem": "임", "branch": "신", "element": "수", "polarity": "양"},
         },
-        "elements": {
-            "wood": 2,
-            "fire": 1,
-            "earth": 1,
-            "metal": 3,
-            "water": 1
-        },
-        "ten_gods": {
-            "year_stem": "편관",
-            "month_stem": "정관",
-            "hour_stem": "편인"
-        },
-        "day_master_strength": {
-            "strength": "약함",
-            "score": 35
-        },
-        "yongsin": {
-            "yongsin": "수",
-            "heesin": "목",
-            "geesin": "화"
-        }
+        "elements": {"wood": 2, "fire": 1, "earth": 1, "metal": 3, "water": 1},
+        "ten_gods": {"year_stem": "편관", "month_stem": "정관", "hour_stem": "편인"},
+        "day_master_strength": {"strength": "약함", "score": 35},
+        "yongsin": {"yongsin": "수", "heesin": "목", "geesin": "화"},
     }
 
 
 @pytest.fixture
-def sample_saju_data_display_format() -> Dict[str, Any]:
+def sample_saju_data_display_format() -> dict[str, Any]:
     """프론트엔드 display 형식의 사주 데이터"""
     return {
         "birth_info": {
             "name": "테스트",
             "birth_date": "1990-05-15",
             "birth_time": "14:30",
-            "gender": "male"
+            "gender": "male",
         },
         "four_pillars": {
             "year": {"천간": "경", "지지": "오"},
             "month": {"천간": "신", "지지": "사"},
             "day": {"천간": "갑", "지지": "자"},
-            "hour": {"천간": "임", "지지": "신"}
-        }
+            "hour": {"천간": "임", "지지": "신"},
+        },
     }
 
 
@@ -79,10 +62,12 @@ def sample_saju_data_display_format() -> Dict[str, Any]:
 # Session Fixtures
 # ============================================================================
 
+
 @pytest.fixture
 def session_manager():
     """SessionManager 인스턴스"""
     from conversation.session_manager import SessionManager
+
     return SessionManager(max_sessions=100, session_ttl_hours=24)
 
 
@@ -96,6 +81,7 @@ def sample_session(session_manager, sample_saju_data):
 # DB 영속화 Fixtures (DBSessionManager / SessionRepository 테스트용)
 # ============================================================================
 
+
 @pytest_asyncio.fixture
 async def db_url(tmp_path):
     """테스트용 임시 SQLite DB URL (테스트마다 격리)"""
@@ -105,8 +91,8 @@ async def db_url(tmp_path):
 @pytest_asyncio.fixture
 async def db_session_manager(db_url):
     """임시 DB에 스키마를 만들고 DBSessionManager를 제공 (teardown에서 엔진 정리)"""
-    from db.base import configure_engine, dispose_engine, init_models
     from conversation.db_session_manager import DBSessionManager
+    from db.base import configure_engine, dispose_engine, init_models
 
     configure_engine(db_url)
     await init_models()
@@ -120,16 +106,13 @@ async def db_session_manager(db_url):
 # Mock LLM Client Fixtures
 # ============================================================================
 
+
 @pytest.fixture
-def mock_llm_response() -> Dict[str, Any]:
+def mock_llm_response() -> dict[str, Any]:
     """LLM 응답 모킹 데이터"""
     return {
         "interpretation": "테스트 해석 결과입니다. 사주팔자를 분석한 결과...",
-        "suggested_questions": [
-            "직업운은 어떤가요?",
-            "올해 운세는 어떤가요?",
-            "궁합을 봐주세요"
-        ]
+        "suggested_questions": ["직업운은 어떤가요?", "올해 운세는 어떤가요?", "궁합을 봐주세요"],
     }
 
 
@@ -171,10 +154,12 @@ def mock_llm_client_error():
 # API Test Fixtures
 # ============================================================================
 
+
 @pytest.fixture
 def test_client():
     """FastAPI TestClient"""
     from fastapi.testclient import TestClient
+
     from api.server import create_app
 
     app = create_app()
@@ -185,6 +170,7 @@ def test_client():
 def async_test_client():
     """비동기 테스트 클라이언트"""
     import httpx
+
     from api.server import create_app
 
     app = create_app()
@@ -195,15 +181,15 @@ def async_test_client():
 # Utility Fixtures
 # ============================================================================
 
+
 @pytest.fixture
 def freeze_time():
     """시간 고정 fixture (테스트용)"""
     from unittest.mock import patch
-    from datetime import datetime
 
     fixed_time = datetime(2026, 1, 5, 12, 0, 0)
 
-    with patch('conversation.session_manager.datetime') as mock_datetime:
+    with patch("conversation.session_manager.datetime") as mock_datetime:
         mock_datetime.now.return_value = fixed_time
         mock_datetime.fromisoformat = datetime.fromisoformat
         yield fixed_time
@@ -212,6 +198,7 @@ def freeze_time():
 # ============================================================================
 # Test Markers
 # ============================================================================
+
 
 def pytest_configure(config):
     """pytest 마커 등록"""

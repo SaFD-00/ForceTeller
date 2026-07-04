@@ -2,9 +2,8 @@
 설정 모듈 테스트
 """
 
-import pytest
-from unittest.mock import patch
 import os
+from unittest.mock import patch
 
 
 class TestSettings:
@@ -77,11 +76,14 @@ class TestSettings:
         """환경변수로 설정 오버라이드 확인"""
         from config.settings import Settings
 
-        with patch.dict(os.environ, {
-            "CONVERSATION_HISTORY_LIMIT": "20",
-            "LOG_LEVEL": "DEBUG",
-            "MAX_SESSIONS": "50",
-        }):
+        with patch.dict(
+            os.environ,
+            {
+                "CONVERSATION_HISTORY_LIMIT": "20",
+                "LOG_LEVEL": "DEBUG",
+                "MAX_SESSIONS": "50",
+            },
+        ):
             test_settings = Settings()
 
             assert test_settings.CONVERSATION_HISTORY_LIMIT == 20
@@ -112,12 +114,13 @@ class TestLoggingConfig:
 
     def test_logger_has_handlers(self):
         """로거에 핸들러가 설정되어 있는지 확인"""
-        from config.logging_config import setup_logging, get_logger
+        from config.logging_config import get_logger, setup_logging
 
         setup_logging()
         logger = get_logger("test_handlers")
 
         # 루트 로거 또는 현재 로거에 핸들러가 있어야 함
         import logging
+
         root_logger = logging.getLogger()
         assert len(root_logger.handlers) > 0 or len(logger.handlers) > 0

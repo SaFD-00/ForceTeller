@@ -2,9 +2,9 @@
 Protocol 인터페이스 테스트
 """
 
-import pytest
 from unittest.mock import AsyncMock, MagicMock
-from typing import Dict, List, Any, Optional
+
+import pytest
 
 from utils.protocols import LLMClientProtocol, SessionManagerProtocol
 
@@ -14,8 +14,9 @@ class TestLLMClientProtocol:
 
     def test_protocol_is_runtime_checkable(self):
         """프로토콜이 런타임에 체크 가능한지 확인"""
-        assert hasattr(LLMClientProtocol, '__protocol_attrs__') or \
-               hasattr(LLMClientProtocol, '_is_runtime_protocol')
+        assert hasattr(LLMClientProtocol, "__protocol_attrs__") or hasattr(
+            LLMClientProtocol, "_is_runtime_protocol"
+        )
 
     def test_mock_implements_protocol(self):
         """Mock 객체가 프로토콜을 구현하는지 확인"""
@@ -59,8 +60,9 @@ class TestSessionManagerProtocol:
 
     def test_protocol_is_runtime_checkable(self):
         """프로토콜이 런타임에 체크 가능한지 확인"""
-        assert hasattr(SessionManagerProtocol, '__protocol_attrs__') or \
-               hasattr(SessionManagerProtocol, '_is_runtime_protocol')
+        assert hasattr(SessionManagerProtocol, "__protocol_attrs__") or hasattr(
+            SessionManagerProtocol, "_is_runtime_protocol"
+        )
 
     def test_mock_implements_protocol(self):
         """Mock 객체가 프로토콜을 구현하는지 확인 (Python 3.13: spec 필요)"""
@@ -69,8 +71,8 @@ class TestSessionManagerProtocol:
 
         assert isinstance(mock_manager, SessionManagerProtocol)
         # save_session 포함 핵심 메서드 노출 확인
-        assert hasattr(mock_manager, 'create_session')
-        assert hasattr(mock_manager, 'save_session')
+        assert hasattr(mock_manager, "create_session")
+        assert hasattr(mock_manager, "save_session")
 
     def test_mock_session_manager_create_session(self):
         """Mock 세션 매니저 create_session 테스트"""
@@ -121,10 +123,7 @@ class TestSessionManagerProtocol:
     def test_mock_session_manager_get_conversation_history(self):
         """Mock 세션 매니저 get_conversation_history 테스트"""
         mock_manager = MagicMock()
-        history = [
-            {"role": "user", "content": "질문"},
-            {"role": "assistant", "content": "응답"}
-        ]
+        history = [{"role": "user", "content": "질문"}, {"role": "assistant", "content": "응답"}]
         mock_manager.get_conversation_history = MagicMock(return_value=history)
 
         result = mock_manager.get_conversation_history("session-id")
@@ -137,7 +136,7 @@ class TestSessionManagerProtocol:
         mock_manager = MagicMock()
         sessions = [
             {"session_id": "s1", "name": "테스트1"},
-            {"session_id": "s2", "name": "테스트2"}
+            {"session_id": "s2", "name": "테스트2"},
         ]
         mock_manager.list_sessions = MagicMock(return_value=sessions)
 

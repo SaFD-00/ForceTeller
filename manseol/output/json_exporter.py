@@ -3,28 +3,38 @@ JSON 출력 모듈
 사주 계산 결과를 JSON 형식으로 변환
 """
 
-import json
 from datetime import datetime
-from typing import Dict, Any, Optional
 
-from manseol.models.saju_result import (
-    SajuResult, MetaInfo, InputSummary, TimeCorrection,
-    FourPillars, PillarData, StemData, BranchData,
-    SajuAnalysis, DayMasterAnalysis, FiveElementsAnalysis,
-    TenGodsDistribution, StrengthAnalysis, UsefulGodAnalysis,
-    FortuneCycleData, FortuneCycle, ShenshaData
-)
-from manseol.models.input_model import SajuInput
+from config.constants import BRANCHES, STEM_ELEMENT_COLORS, STEMS
+from manseol.calculator.fortune_cycle import FortuneCycleCalculator
+from manseol.calculator.hidden_stems import HiddenStemsCalculator
+from manseol.calculator.interactions import InteractionsCalculator
 from manseol.calculator.pillar_engine import PillarEngine
+from manseol.calculator.shensha import ShenshaCalculator
 from manseol.calculator.ten_gods import TenGodsCalculator
 from manseol.calculator.twelve_phases import TwelvePhasesCalculator
-from manseol.calculator.hidden_stems import HiddenStemsCalculator
-from manseol.calculator.shensha import ShenshaCalculator
-from manseol.calculator.fortune_cycle import FortuneCycleCalculator
-from manseol.calculator.interactions import InteractionsCalculator
-from manseol.core.time_correction import TimeCorrector
 from manseol.core.calendar_converter import CalendarConverter
-from config.constants import STEMS, BRANCHES, SIXTY_JIAZI_METAPHORS, STEM_ELEMENT_COLORS
+from manseol.core.time_correction import TimeCorrector
+from manseol.models.input_model import SajuInput
+from manseol.models.saju_result import (
+    BranchData,
+    DayMasterAnalysis,
+    FiveElementsAnalysis,
+    FortuneCycle,
+    FortuneCycleData,
+    FourPillars,
+    InputSummary,
+    MetaInfo,
+    PillarData,
+    SajuAnalysis,
+    SajuResult,
+    ShenshaData,
+    StemData,
+    StrengthAnalysis,
+    TenGodsDistribution,
+    TimeCorrection,
+    UsefulGodAnalysis,
+)
 
 
 class JsonExporter:
@@ -54,9 +64,7 @@ class JsonExporter:
 
             if self.input.apply_time_correction:
                 corrector = TimeCorrector(
-                    calc_datetime,
-                    longitude=self.input.longitude,
-                    city=self.input.city
+                    calc_datetime, longitude=self.input.longitude, city=self.input.city
                 )
                 true_solar_time, corrections = corrector.calculate_true_solar_time()
                 calc_datetime = true_solar_time
@@ -69,20 +77,15 @@ class JsonExporter:
                     dst_correction_minutes=corrections["dst_minutes"],
                     total_correction_minutes=round(corrections["total_minutes"], 2),
                     standard_meridian=corrections["standard_meridian"],
-                    birth_longitude=corrections["birth_longitude"]
+                    birth_longitude=corrections["birth_longitude"],
                 )
         else:
             # 시간 미상 - 날짜만 사용
-            calc_datetime = datetime.combine(
-                self.input.birth_date,
-                datetime.min.time()
-            )
+            calc_datetime = datetime.combine(self.input.birth_date, datetime.min.time())
 
         # 2. 사주 4주 계산
         pillars_raw = self.pillar_engine.calculate_all_pillars(
-            calc_datetime,
-            jajasi=self.input.jajasi,
-            include_hour=self.input.has_time
+            calc_datetime, jajasi=self.input.jajasi, include_hour=self.input.has_time
         )
 
         # 3. 일간 정보
@@ -92,8 +95,8 @@ class JsonExporter:
         # 3.5 음력 변환
         calendar_converter = CalendarConverter()
         solar_date = self.input.birth_date
-        lunar_year, lunar_month, lunar_day, is_leap_month = (
-            calendar_converter.solar_to_lunar(solar_date.year, solar_date.month, solar_date.day)
+        lunar_year, lunar_month, lunar_day, is_leap_month = calendar_converter.solar_to_lunar(
+            solar_date.year, solar_date.month, solar_date.day
         )
 
         # 3.6 일주 정보 (metaphor, animal)
@@ -119,32 +122,28 @@ class JsonExporter:
 
         # 6. 분석 정보 생성
         analysis = self._build_analysis(
-            pillars_raw, day_stem_idx, day_branch_idx,
-            ten_gods_calc, twelve_phases_calc, hidden_stems_calc
+            pillars_raw,
+            day_stem_idx,
+            day_branch_idx,
+            ten_gods_calc,
+            twelve_phases_calc,
+            hidden_stems_calc,
         )
 
         # 7. 대운 계산
         fortune_cycles = None
         if self.input.has_time:
-            fortune_cycles = self._build_fortune_cycles(
-                calc_datetime, pillars_raw
-            )
+            fortune_cycles = self._build_fortune_cycles(calc_datetime, pillars_raw)
 
         # 7.5 천간/지지 상호작용 (합·충·형·파·해·공망)
         interactions = self._build_interactions(pillars_raw)
 
         # 7.6 세운(歲運) - 올해부터 향후 수년간 연운 (시간 미상과 무관)
-        sewun = self._build_sewun(
-            calc_datetime, pillars_raw, ten_gods_calc, twelve_phases_calc
-        )
+        sewun = self._build_sewun(calc_datetime, pillars_raw, ten_gods_calc, twelve_phases_calc)
 
         # 8. 최종 결과 조립
         return SajuResult(
-            meta=MetaInfo(
-                version="1.0.0",
-                generated_at=datetime.now(),
-                engine="ForceTeller"
-            ),
+            meta=MetaInfo(version="1.0.0", generated_at=datetime.now(), engine="ForceTeller"),
             input=InputSummary(
                 name=self.input.name,
                 birth_date=self.input.birth_date.isoformat(),
@@ -162,20 +161,20 @@ class JsonExporter:
                 day_ganji_korean=day_ganji_korean,
                 day_ganji_chinese=day_ganji_chinese,
                 day_metaphor=day_metaphor,
-                day_animal=day_animal
+                day_animal=day_animal,
             ),
             adjusted_time=time_correction,
             pillars=pillars,
             analysis=analysis,
             fortune_cycles=fortune_cycles,
             interactions=interactions,
-            sewun=sewun
+            sewun=sewun,
         )
 
     def _build_sewun(
         self,
         calc_datetime: datetime,
-        pillars_raw: Dict,
+        pillars_raw: dict,
         ten_gods_calc: TenGodsCalculator,
         twelve_phases_calc: TwelvePhasesCalculator,
         years: int = 6,
@@ -197,7 +196,7 @@ class JsonExporter:
             result.append(sewun)
         return result
 
-    def _build_interactions(self, pillars_raw: Dict) -> Dict[str, list]:
+    def _build_interactions(self, pillars_raw: dict) -> dict[str, list]:
         """천간/지지 상호작용 계산 (합·충·형·파·해·공망)"""
         calc = InteractionsCalculator(
             year_pillar=pillars_raw["year"],
@@ -209,10 +208,10 @@ class JsonExporter:
 
     def _build_pillars(
         self,
-        pillars_raw: Dict,
+        pillars_raw: dict,
         ten_gods_calc: TenGodsCalculator,
         twelve_phases_calc: TwelvePhasesCalculator,
-        hidden_stems_calc: HiddenStemsCalculator
+        hidden_stems_calc: HiddenStemsCalculator,
     ) -> FourPillars:
         """4주 상세 정보 구성"""
 
@@ -228,7 +227,7 @@ class JsonExporter:
                 korean=stem["korean"],
                 chinese=stem["chinese"],
                 element=stem["element"].value,
-                polarity=stem["polarity"].value
+                polarity=stem["polarity"].value,
             )
 
             branch_data = BranchData(
@@ -238,7 +237,7 @@ class JsonExporter:
                 element=branch["element"].value,
                 polarity=branch["polarity"].value,
                 animal=branch["animal"],
-                hidden_stems=hidden_stems
+                hidden_stems=hidden_stems,
             )
 
             # 십성 (일주 제외)
@@ -255,7 +254,7 @@ class JsonExporter:
                 ganji_korean=f"{stem['korean']}{branch['korean']}",
                 ganji_chinese=f"{stem['chinese']}{branch['chinese']}",
                 ten_god=ten_god,
-                twelve_phase=twelve_phase
+                twelve_phase=twelve_phase,
             )
 
         year = build_pillar("year", *pillars_raw["year"])
@@ -270,12 +269,12 @@ class JsonExporter:
 
     def _build_analysis(
         self,
-        pillars_raw: Dict,
+        pillars_raw: dict,
         day_stem_idx: int,
         day_branch_idx: int,
         ten_gods_calc: TenGodsCalculator,
         twelve_phases_calc: TwelvePhasesCalculator,
-        hidden_stems_calc: HiddenStemsCalculator
+        hidden_stems_calc: HiddenStemsCalculator,
     ) -> SajuAnalysis:
         """분석 정보 구성"""
 
@@ -295,7 +294,7 @@ class JsonExporter:
             korean=day_stem["korean"],
             chinese=day_stem["chinese"],
             metaphor=metaphor_text,
-            characteristics=characteristics
+            characteristics=characteristics,
         )
 
         # 오행 분석
@@ -307,16 +306,22 @@ class JsonExporter:
 
         # 신강/신약
         strength_score = twelve_phases_calc.get_strength_score(pillars_raw)
-        strength_level = "신강" if strength_score >= 55 else ("신약" if strength_score <= 45 else "중화")
+        strength_level = (
+            "신강" if strength_score >= 55 else ("신약" if strength_score <= 45 else "중화")
+        )
 
         strength = StrengthAnalysis(
             level=strength_level,
             score=strength_score,
-            supporting_count=sum(1 for g in ["비견", "겁재", "편인", "정인"]
-                                if ten_gods_dist_dict.get(g, 0) > 0),
-            weakening_count=sum(1 for g in ["식신", "상관", "편재", "정재", "편관", "정관"]
-                               if ten_gods_dist_dict.get(g, 0) > 0),
-            analysis=f"일간 {day_stem['korean']}({day_stem['element'].value}) 강도: {strength_score}점"
+            supporting_count=sum(
+                1 for g in ["비견", "겁재", "편인", "정인"] if ten_gods_dist_dict.get(g, 0) > 0
+            ),
+            weakening_count=sum(
+                1
+                for g in ["식신", "상관", "편재", "정재", "편관", "정관"]
+                if ten_gods_dist_dict.get(g, 0) > 0
+            ),
+            analysis=f"일간 {day_stem['korean']}({day_stem['element'].value}) 강도: {strength_score}점",
         )
 
         # 용신 분석 (간단 버전)
@@ -326,19 +331,14 @@ class JsonExporter:
 
         # 신살
         shensha_calc = ShenshaCalculator(
-            pillars_raw["year"],
-            pillars_raw["month"],
-            pillars_raw["day"],
-            pillars_raw.get("hour")
+            pillars_raw["year"], pillars_raw["month"], pillars_raw["day"], pillars_raw.get("hour")
         )
         shensha_list = shensha_calc.calculate_all_shensha()
         shensha = [
             ShenshaData(
-                name=s["name"],
-                type=s["type"],
-                position=s["position"],
-                description=s["description"]
-            ) for s in shensha_list
+                name=s["name"], type=s["type"], position=s["position"], description=s["description"]
+            )
+            for s in shensha_list
         ]
 
         return SajuAnalysis(
@@ -347,14 +347,18 @@ class JsonExporter:
             ten_gods_dist=ten_gods_dist,
             strength=strength,
             useful_god=useful_god,
-            shensha=shensha
+            shensha=shensha,
         )
 
-    def _calculate_five_elements(self, pillars_raw: Dict) -> FiveElementsAnalysis:
+    def _calculate_five_elements(self, pillars_raw: dict) -> FiveElementsAnalysis:
         """오행 분포 계산"""
         # 영어 -> 한글 변환
         element_to_korean = {
-            "wood": "목", "fire": "화", "earth": "토", "metal": "금", "water": "수"
+            "wood": "목",
+            "fire": "화",
+            "earth": "토",
+            "metal": "금",
+            "water": "수",
         }
         counts = {"목": 0, "화": 0, "토": 0, "금": 0, "수": 0}
 
@@ -365,17 +369,20 @@ class JsonExporter:
 
             # 천간 오행
             stem = STEMS[stem_idx]
-            stem_element_korean = element_to_korean.get(stem["element"].value, stem["element"].value)
+            stem_element_korean = element_to_korean.get(
+                stem["element"].value, stem["element"].value
+            )
             counts[stem_element_korean] += 1
 
             # 지지 오행
             branch = BRANCHES[branch_idx]
-            branch_element_korean = element_to_korean.get(branch["element"].value, branch["element"].value)
+            branch_element_korean = element_to_korean.get(
+                branch["element"].value, branch["element"].value
+            )
             counts[branch_element_korean] += 1
 
         total = sum(counts.values())
-        distribution = {k: round(v / total * 100, 1) if total > 0 else 0
-                       for k, v in counts.items()}
+        distribution = {k: round(v / total * 100, 1) if total > 0 else 0 for k, v in counts.items()}
 
         # 과다/부족 판단 (평균 20% 기준)
         # 가장 높은 비율의 오행을 dominant로 설정
@@ -391,20 +398,21 @@ class JsonExporter:
             water=counts["수"],
             dominant=dominant,
             lacking=lacking,
-            distribution=distribution
+            distribution=distribution,
         )
 
     def _calculate_useful_god(
-        self,
-        day_element: str,
-        strength_level: str,
-        five_elements: FiveElementsAnalysis
+        self, day_element: str, strength_level: str, five_elements: FiveElementsAnalysis
     ) -> UsefulGodAnalysis:
         """용신 계산 (억부용신 방식)"""
 
         # 영어 -> 한글 변환
         element_to_korean = {
-            "wood": "목", "fire": "화", "earth": "토", "metal": "금", "water": "수"
+            "wood": "목",
+            "fire": "화",
+            "earth": "토",
+            "metal": "금",
+            "water": "수",
         }
         day_element_korean = element_to_korean.get(day_element, day_element)
 
@@ -419,7 +427,9 @@ class JsonExporter:
             primary = generates[day_element_korean]  # 식상
             secondary = controls[day_element_korean]  # 재성
             avoid = generated_by[day_element_korean]  # 인성
-            reasoning = f"일간이 신강하므로 {primary}(식상)으로 설기하거나 {secondary}(재성)으로 소모시킴"
+            reasoning = (
+                f"일간이 신강하므로 {primary}(식상)으로 설기하거나 {secondary}(재성)으로 소모시킴"
+            )
         elif strength_level == "신약":
             # 신약: 생조(인성, 비겁) 필요
             primary = generated_by[day_element_korean]  # 인성
@@ -437,25 +447,17 @@ class JsonExporter:
             reasoning = "일간이 중화하므로 균형 유지"
 
         return UsefulGodAnalysis(
-            type="억부",
-            primary=primary,
-            secondary=secondary,
-            avoid=avoid,
-            reasoning=reasoning
+            type="억부", primary=primary, secondary=secondary, avoid=avoid, reasoning=reasoning
         )
 
-    def _build_fortune_cycles(
-        self,
-        calc_datetime: datetime,
-        pillars_raw: Dict
-    ) -> FortuneCycleData:
+    def _build_fortune_cycles(self, calc_datetime: datetime, pillars_raw: dict) -> FortuneCycleData:
         """대운 정보 구성"""
         fortune_calc = FortuneCycleCalculator(
             birth_datetime=calc_datetime,
             gender=self.input.gender.value,
             year_stem=pillars_raw["year"][0],
             month_stem=pillars_raw["month"][0],
-            month_branch=pillars_raw["month"][1]
+            month_branch=pillars_raw["month"][1],
         )
 
         summary = fortune_calc.get_fortune_summary()
@@ -470,22 +472,24 @@ class JsonExporter:
             ten_god = ten_gods_calc.get_ten_god_for_stem(cycle["stem_index"])
             twelve_phase = twelve_phases_calc.get_twelve_phase(cycle["branch_index"])
 
-            cycles.append(FortuneCycle(
-                start_age=cycle["start_age"],
-                end_age=cycle["end_age"],
-                stem_index=cycle["stem_index"],
-                branch_index=cycle["branch_index"],
-                ganji_korean=cycle["ganji_korean"],
-                ganji_chinese=cycle["ganji_chinese"],
-                ten_god=ten_god,
-                twelve_phase=twelve_phase
-            ))
+            cycles.append(
+                FortuneCycle(
+                    start_age=cycle["start_age"],
+                    end_age=cycle["end_age"],
+                    stem_index=cycle["stem_index"],
+                    branch_index=cycle["branch_index"],
+                    ganji_korean=cycle["ganji_korean"],
+                    ganji_chinese=cycle["ganji_chinese"],
+                    ten_god=ten_god,
+                    twelve_phase=twelve_phase,
+                )
+            )
 
         return FortuneCycleData(
             start_age=summary["start_age"],
             direction=summary["direction"],
             cycles=cycles,
-            current_cycle_index=summary.get("current_cycle_index")
+            current_cycle_index=summary.get("current_cycle_index"),
         )
 
     def export_to_json(self, filepath: str = None, indent: int = 2) -> str:

@@ -5,17 +5,17 @@ ForceTeller의 에이전트 그래프를 구성하고 컴파일합니다.
 Supervisor 패턴을 사용하여 동적 라우팅을 구현합니다.
 """
 
-from langgraph.graph import StateGraph, START, END
 from langgraph.checkpoint.memory import MemorySaver
+from langgraph.graph import END, START, StateGraph
 
-from agents.state import AgentState
+from agents.agent_configs import AGENT_CONFIGS
 from agents.nodes import (
-    supervisor_node,
-    synthesis_node,
     create_interpreter_node,
     route_to_next,
+    supervisor_node,
+    synthesis_node,
 )
-from agents.agent_configs import AGENT_CONFIGS
+from agents.state import AgentState
 
 
 def build_forceteller_graph() -> StateGraph:
@@ -41,10 +41,7 @@ def build_forceteller_graph() -> StateGraph:
     graph.add_node("synthesis", synthesis_node)
 
     # 해석 에이전트 노드들 (synthesis 제외)
-    interpreter_agents = [
-        name for name in AGENT_CONFIGS.keys()
-        if name != "synthesis"
-    ]
+    interpreter_agents = [name for name in AGENT_CONFIGS.keys() if name != "synthesis"]
 
     for agent_name in interpreter_agents:
         graph.add_node(agent_name, create_interpreter_node(agent_name))
@@ -60,11 +57,7 @@ def build_forceteller_graph() -> StateGraph:
     routing_map["synthesis"] = "synthesis"
     routing_map["FINISH"] = END
 
-    graph.add_conditional_edges(
-        "supervisor",
-        route_to_next,
-        routing_map
-    )
+    graph.add_conditional_edges("supervisor", route_to_next, routing_map)
 
     # 각 해석 에이전트 -> supervisor (다음 결정을 위해)
     for agent_name in interpreter_agents:
@@ -141,10 +134,7 @@ def visualize_graph() -> str:
     Returns:
         그래프 구조를 나타내는 ASCII 문자열
     """
-    interpreter_agents = [
-        name for name in AGENT_CONFIGS.keys()
-        if name != "synthesis"
-    ]
+    interpreter_agents = [name for name in AGENT_CONFIGS.keys() if name != "synthesis"]
 
     agents_str = ", ".join(interpreter_agents)
 

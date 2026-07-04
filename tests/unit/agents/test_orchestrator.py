@@ -5,8 +5,9 @@ Orchestrator는 LangGraph StateGraph를 감싸는 얇은 래퍼다.
 모델 ID를 그래프 실행 config로 주입하고, 그래프 결과를 API 형식으로 변환한다.
 """
 
-import pytest
 from unittest.mock import AsyncMock, patch
+
+import pytest
 
 from agents.orchestrator import Orchestrator
 from config.settings import settings
@@ -36,11 +37,15 @@ class TestOrchestratorConfigInjection:
         orch = Orchestrator(model="google/gemma-4-31b-it:free")
 
         fake_state = {
-            "interpretations": {"personality": {"interpretation": "테스트", "suggested_questions": []}},
+            "interpretations": {
+                "personality": {"interpretation": "테스트", "suggested_questions": []}
+            },
             "final_output": "종합 해석",
         }
 
-        with patch.object(orch.graph, "ainvoke", new=AsyncMock(return_value=fake_state)) as mock_ainvoke:
+        with patch.object(
+            orch.graph, "ainvoke", new=AsyncMock(return_value=fake_state)
+        ) as mock_ainvoke:
             result = await orch.route_and_interpret(
                 saju_data=sample_saju_data,
                 question="성격이 궁금해요",

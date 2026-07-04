@@ -4,13 +4,13 @@
 """
 
 from .analyzer import (
-    FortuneType,
-    FortuneDetails,
-    LuckyElements,
     FortuneAnalysis,
     FortuneAnalyzer,
-    analyze_fortune,
+    FortuneDetails,
+    FortuneType,
+    LuckyElements,
     analyze_all_fortunes,
+    analyze_fortune,
 )
 
 __all__ = [

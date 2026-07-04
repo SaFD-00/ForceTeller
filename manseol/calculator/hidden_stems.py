@@ -3,8 +3,9 @@
 지지에 숨겨진 천간(여기, 중기, 본기) 분석
 """
 
-from typing import Dict, List, Any
-from config.constants import STEMS, BRANCHES, HIDDEN_STEMS_DETAILED
+from typing import Any
+
+from config.constants import HIDDEN_STEMS_DETAILED, STEMS
 
 
 class HiddenStemsCalculator:
@@ -17,7 +18,7 @@ class HiddenStemsCalculator:
         """
         self.day_stem_index = day_stem_index
 
-    def get_hidden_stems(self, branch_index: int) -> List[Dict[str, Any]]:
+    def get_hidden_stems(self, branch_index: int) -> list[dict[str, Any]]:
         """
         지지의 지장간 반환
 
@@ -49,18 +50,20 @@ class HiddenStemsCalculator:
             stem_idx = stem_data["stem"]
             stem = STEMS[stem_idx]
 
-            result.append({
-                "stem_index": stem_idx,
-                "korean": stem["korean"],
-                "chinese": stem["chinese"],
-                "element": stem["element"].value,
-                "type": type_map.get(i, "본기"),
-                "ratio": stem_data.get("ratio", 0),
-            })
+            result.append(
+                {
+                    "stem_index": stem_idx,
+                    "korean": stem["korean"],
+                    "chinese": stem["chinese"],
+                    "element": stem["element"].value,
+                    "type": type_map.get(i, "본기"),
+                    "ratio": stem_data.get("ratio", 0),
+                }
+            )
 
         return result
 
-    def get_hidden_stems_ten_gods(self, branch_index: int) -> List[Dict[str, Any]]:
+    def get_hidden_stems_ten_gods(self, branch_index: int) -> list[dict[str, Any]]:
         """
         지장간의 십성 포함 정보 반환
 
@@ -81,10 +84,7 @@ class HiddenStemsCalculator:
 
         return hidden_stems
 
-    def calculate_all_hidden_stems(
-        self,
-        pillars: Dict[str, tuple]
-    ) -> Dict[str, List[Dict]]:
+    def calculate_all_hidden_stems(self, pillars: dict[str, tuple]) -> dict[str, list[dict]]:
         """
         사주 전체의 지장간 계산
 
@@ -105,7 +105,7 @@ class HiddenStemsCalculator:
 
         return result
 
-    def get_main_qi(self, branch_index: int) -> Dict[str, Any]:
+    def get_main_qi(self, branch_index: int) -> dict[str, Any]:
         """
         지지의 본기(本氣) 반환
 
@@ -123,10 +123,7 @@ class HiddenStemsCalculator:
             return hidden[-1]
         return {}
 
-    def analyze_hidden_stems_strength(
-        self,
-        pillars: Dict[str, tuple]
-    ) -> Dict[str, float]:
+    def analyze_hidden_stems_strength(self, pillars: dict[str, tuple]) -> dict[str, float]:
         """
         지장간 기반 오행 비율 분석
 
@@ -138,9 +135,7 @@ class HiddenStemsCalculator:
         Returns:
             {오행: 비율, ...}
         """
-        element_scores = {
-            "목": 0.0, "화": 0.0, "토": 0.0, "금": 0.0, "수": 0.0
-        }
+        element_scores = {"목": 0.0, "화": 0.0, "토": 0.0, "금": 0.0, "수": 0.0}
 
         all_hidden = self.calculate_all_hidden_stems(pillars)
 
@@ -159,7 +154,7 @@ class HiddenStemsCalculator:
         return element_scores
 
 
-def get_hidden_stems(branch_index: int) -> List[Dict]:
+def get_hidden_stems(branch_index: int) -> list[dict]:
     """편의 함수: 지장간 반환"""
     calc = HiddenStemsCalculator(0)  # day_stem 미사용
     return calc.get_hidden_stems(branch_index)

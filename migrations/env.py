@@ -7,15 +7,14 @@ sqlite+aiosqlite / postgresql+asyncpg 모두 동일하게 비동기 엔진으로
 import asyncio
 from logging.config import fileConfig
 
+from alembic import context
 from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import create_async_engine
 
-from alembic import context
-
 from config.settings import settings
-from db.base import Base
 from db import models  # noqa: F401  (Base.metadata에 모델 등록)
+from db.base import Base
 
 config = context.config
 

@@ -2,9 +2,6 @@
 데이터 변환 유틸리티 테스트
 """
 
-import pytest
-from typing import Dict, Any
-
 
 class TestSajuDataConverter:
     """사주 데이터 변환기 테스트"""
@@ -14,18 +11,9 @@ class TestSajuDataConverter:
         from api.converters import SajuDataConverter
 
         display_data = {
-            "four_pillars": {
-                "day": {
-                    "heavenly_stem": {"element": "목"}
-                }
-            },
-            "five_elements": {
-                "distribution": {"목": 3, "화": 2, "토": 1, "금": 1, "수": 1}
-            },
-            "strength": {
-                "is_strong": True,
-                "type": "신강"
-            }
+            "four_pillars": {"day": {"heavenly_stem": {"element": "목"}}},
+            "five_elements": {"distribution": {"목": 3, "화": 2, "토": 1, "금": 1, "수": 1}},
+            "strength": {"is_strong": True, "type": "신강"},
         }
 
         result = SajuDataConverter.to_analysis_format(display_data)
@@ -40,15 +28,11 @@ class TestSajuDataConverter:
         from api.converters import SajuDataConverter
 
         original_data = {
-            "pillars": {
-                "day": {
-                    "stem": {"element": "화"}
-                }
-            },
+            "pillars": {"day": {"stem": {"element": "화"}}},
             "analysis": {
                 "five_elements": {"wood": 2, "fire": 3, "earth": 2, "metal": 1, "water": 0},
-                "strength": {"level": "medium"}
-            }
+                "strength": {"level": "medium"},
+            },
         }
 
         result = SajuDataConverter.to_analysis_format(original_data)
@@ -65,7 +49,7 @@ class TestSajuDataConverter:
         analysis_data = {
             "day_pillar": {"stem_element": "금"},
             "wuxing_count": {"목": 2, "화": 2, "토": 2, "금": 1, "수": 1},
-            "day_master_strength": {"level": "strong"}
+            "day_master_strength": {"level": "strong"},
         }
 
         result = SajuDataConverter.to_analysis_format(analysis_data)
@@ -87,13 +71,9 @@ class TestSajuDataConverter:
         from api.converters import SajuDataConverter
 
         display_data = {
-            "four_pillars": {
-                "day": {"heavenly_stem": {"element": "토"}}
-            },
-            "five_elements": {
-                "distribution": {"목": 1, "화": 2, "토": 3, "금": 1, "수": 1}
-            },
-            "strength": {"is_strong": False}
+            "four_pillars": {"day": {"heavenly_stem": {"element": "토"}}},
+            "five_elements": {"distribution": {"목": 1, "화": 2, "토": 3, "금": 1, "수": 1}},
+            "strength": {"is_strong": False},
         }
 
         result = SajuDataConverter.to_analysis_format(display_data)
@@ -107,7 +87,7 @@ class TestSajuDataConverter:
         display_data = {
             "four_pillars": {"day": {"heavenly_stem": {"element": "수"}}},
             "five_elements": {"distribution": {"목": 2, "화": 2, "토": 2, "금": 1, "수": 1}},
-            "strength": {"is_strong": True, "type": "신강"}
+            "strength": {"is_strong": True, "type": "신강"},
         }
 
         result = SajuDataConverter.to_analysis_format(display_data)

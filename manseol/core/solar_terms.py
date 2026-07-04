@@ -3,11 +3,11 @@
 태양 황경 기반 절기 계산
 """
 
-from datetime import datetime, timedelta
-from typing import Tuple, List, Optional, Dict
+from datetime import datetime
+
+from config.constants import SOLAR_TERMS
 
 from .astronomical import AstronomicalCalculator
-from config.constants import SOLAR_TERMS
 
 
 class SolarTermsCalculator:
@@ -20,7 +20,7 @@ class SolarTermsCalculator:
         # 월 구분에 사용되는 절기 (0=입춘, 2=경칩, ...)
         self.jeolgi_indices = [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22]
 
-    def get_solar_term_for_date(self, dt: datetime) -> Tuple[str, int]:
+    def get_solar_term_for_date(self, dt: datetime) -> tuple[str, int]:
         """
         특정 날짜의 절기 정보 반환
 
@@ -60,15 +60,15 @@ class SolarTermsCalculator:
         # 2월(인월) = 입춘 315도 기준
         # month 1 = 소한(285), month 2 = 입춘(315), ...
         jeolgi_longitudes = {
-            1: 285,   # 소한
-            2: 315,   # 입춘
-            3: 345,   # 경칩
-            4: 15,    # 청명
-            5: 45,    # 입하
-            6: 75,    # 망종
-            7: 105,   # 소서
-            8: 135,   # 입추
-            9: 165,   # 백로
+            1: 285,  # 소한
+            2: 315,  # 입춘
+            3: 345,  # 경칩
+            4: 15,  # 청명
+            5: 45,  # 입하
+            6: 75,  # 망종
+            7: 105,  # 소서
+            8: 135,  # 입추
+            9: 165,  # 백로
             10: 195,  # 한로
             11: 225,  # 입동
             12: 255,  # 대설
@@ -85,7 +85,7 @@ class SolarTermsCalculator:
 
         return self.astro.find_sun_longitude_time(target_lon, start)
 
-    def get_all_jeolgi_for_year(self, year: int) -> List[Dict]:
+    def get_all_jeolgi_for_year(self, year: int) -> list[dict]:
         """
         해당 연도의 모든 절기 시각 계산
 
@@ -98,23 +98,30 @@ class SolarTermsCalculator:
         result = []
         for month in range(1, 13):
             jeolgi_dt = self.get_jeolgi_for_month(year, month)
-            result.append({
-                "month": month,
-                "name": self._get_jeolgi_name(month),
-                "datetime": jeolgi_dt
-            })
+            result.append(
+                {"month": month, "name": self._get_jeolgi_name(month), "datetime": jeolgi_dt}
+            )
         return result
 
     def _get_jeolgi_name(self, month: int) -> str:
         """월에 해당하는 절기명 반환"""
         jeolgi_names = {
-            1: "소한", 2: "입춘", 3: "경칩", 4: "청명",
-            5: "입하", 6: "망종", 7: "소서", 8: "입추",
-            9: "백로", 10: "한로", 11: "입동", 12: "대설"
+            1: "소한",
+            2: "입춘",
+            3: "경칩",
+            4: "청명",
+            5: "입하",
+            6: "망종",
+            7: "소서",
+            8: "입추",
+            9: "백로",
+            10: "한로",
+            11: "입동",
+            12: "대설",
         }
         return jeolgi_names.get(month, "")
 
-    def get_month_by_jeolgi(self, dt: datetime) -> Tuple[int, int]:
+    def get_month_by_jeolgi(self, dt: datetime) -> tuple[int, int]:
         """
         절기 기준 월 계산 (사주 월주 산출용)
 
@@ -170,7 +177,7 @@ class SolarTermsCalculator:
         return year
 
 
-def get_month_by_jeolgi(dt: datetime) -> Tuple[int, int]:
+def get_month_by_jeolgi(dt: datetime) -> tuple[int, int]:
     """편의 함수: 절기 기준 월 계산"""
     calc = SolarTermsCalculator()
     return calc.get_month_by_jeolgi(dt)

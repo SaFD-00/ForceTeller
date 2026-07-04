@@ -4,20 +4,20 @@
 Reference: fortuneteller/src/lib/yongsin/selector.ts
 """
 
-from typing import Dict, Any, Optional, List
+from typing import Any
+
 from .base import (
     YongSinAlgorithm,
-    YongSinResult,
     YongSinMethod,
+    YongSinResult,
 )
-from .strength import StrengthYongSinAlgorithm
-from .seasonal import SeasonalYongSinAlgorithm
-from .mediation import MediationYongSinAlgorithm
 from .disease import DiseaseYongSinAlgorithm
-
+from .mediation import MediationYongSinAlgorithm
+from .seasonal import SeasonalYongSinAlgorithm
+from .strength import StrengthYongSinAlgorithm
 
 # 용신 알고리즘 레지스트리
-ALGORITHMS: Dict[YongSinMethod, YongSinAlgorithm] = {
+ALGORITHMS: dict[YongSinMethod, YongSinAlgorithm] = {
     YongSinMethod.STRENGTH: StrengthYongSinAlgorithm(),
     YongSinMethod.SEASONAL: SeasonalYongSinAlgorithm(),
     YongSinMethod.MEDIATION: MediationYongSinAlgorithm(),
@@ -29,7 +29,7 @@ class YongSinSelector:
     """용신 선택기"""
 
     @staticmethod
-    def select(saju_data: Dict[str, Any], method: YongSinMethod) -> YongSinResult:
+    def select(saju_data: dict[str, Any], method: YongSinMethod) -> YongSinResult:
         """
         지정된 방법으로 용신 선택
 
@@ -47,7 +47,7 @@ class YongSinSelector:
         return algorithm.select(saju_data)
 
     @staticmethod
-    def select_all(saju_data: Dict[str, Any]) -> Dict[YongSinMethod, YongSinResult]:
+    def select_all(saju_data: dict[str, Any]) -> dict[YongSinMethod, YongSinResult]:
         """
         모든 알고리즘으로 용신 선택 (비교 분석용)
 
@@ -68,7 +68,7 @@ class YongSinSelector:
         return results
 
     @staticmethod
-    def select_auto(saju_data: Dict[str, Any]) -> YongSinResult:
+    def select_auto(saju_data: dict[str, Any]) -> YongSinResult:
         """
         자동으로 가장 적합한 알고리즘 선택
 
@@ -86,7 +86,9 @@ class YongSinSelector:
 
         # 가장 높은 적합도의 알고리즘 선택
         applicabilities.sort(key=lambda x: x[1], reverse=True)
-        best_method, best_score = applicabilities[0] if applicabilities else (YongSinMethod.STRENGTH, 0.5)
+        best_method, best_score = (
+            applicabilities[0] if applicabilities else (YongSinMethod.STRENGTH, 0.5)
+        )
 
         result = YongSinSelector.select(saju_data, best_method)
 
@@ -95,7 +97,7 @@ class YongSinSelector:
         return result
 
     @staticmethod
-    def evaluate_applicability(saju_data: Dict[str, Any]) -> Dict[YongSinMethod, float]:
+    def evaluate_applicability(saju_data: dict[str, Any]) -> dict[YongSinMethod, float]:
         """
         각 알고리즘의 적용 적합도 평가
 
@@ -113,7 +115,7 @@ class YongSinSelector:
         return scores
 
     @staticmethod
-    def get_algorithm_info(method: YongSinMethod) -> Dict[str, str]:
+    def get_algorithm_info(method: YongSinMethod) -> dict[str, str]:
         """
         알고리즘 정보 가져오기
 
@@ -133,7 +135,7 @@ class YongSinSelector:
         }
 
     @staticmethod
-    def get_all_algorithms() -> List[Dict[str, Any]]:
+    def get_all_algorithms() -> list[dict[str, Any]]:
         """
         모든 알고리즘 정보
 
@@ -154,10 +156,8 @@ class YongSinSelector:
 # 편의 함수
 # ============================================================================
 
-def select_yongsin(
-    saju_data: Dict[str, Any],
-    method: Optional[str] = None
-) -> YongSinResult:
+
+def select_yongsin(saju_data: dict[str, Any], method: str | None = None) -> YongSinResult:
     """
     용신 선택 편의 함수
 
@@ -187,7 +187,7 @@ def select_yongsin(
     return YongSinSelector.select(saju_data, yongsin_method)
 
 
-def select_yongsin_auto(saju_data: Dict[str, Any]) -> YongSinResult:
+def select_yongsin_auto(saju_data: dict[str, Any]) -> YongSinResult:
     """
     자동 용신 선택 편의 함수
 
@@ -200,7 +200,7 @@ def select_yongsin_auto(saju_data: Dict[str, Any]) -> YongSinResult:
     return YongSinSelector.select_auto(saju_data)
 
 
-def compare_yongsin_methods(saju_data: Dict[str, Any]) -> Dict[str, Any]:
+def compare_yongsin_methods(saju_data: dict[str, Any]) -> dict[str, Any]:
     """
     모든 용신 방법 비교
 
@@ -217,14 +217,8 @@ def compare_yongsin_methods(saju_data: Dict[str, Any]) -> Dict[str, Any]:
     best_method = max(applicabilities, key=applicabilities.get)
 
     return {
-        "results": {
-            method.value: result.to_dict()
-            for method, result in results.items()
-        },
-        "applicabilities": {
-            method.value: score
-            for method, score in applicabilities.items()
-        },
+        "results": {method.value: result.to_dict() for method, result in results.items()},
+        "applicabilities": {method.value: score for method, score in applicabilities.items()},
         "recommendation": {
             "method": best_method.value,
             "algorithm_name": ALGORITHMS[best_method].name,

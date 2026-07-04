@@ -2,9 +2,6 @@
 메시지 포맷터 테스트
 """
 
-import pytest
-from dataclasses import dataclass, field
-from typing import List, Optional
 from unittest.mock import MagicMock
 
 
@@ -15,12 +12,12 @@ class TestFortuneFormatter:
         self,
         score: int = 75,
         summary: str = "좋은 운세입니다",
-        positive: List[str] = None,
-        negative: List[str] = None,
-        advice: List[str] = None,
-        colors: List[str] = None,
-        numbers: List[int] = None,
-        directions: List[str] = None,
+        positive: list[str] = None,
+        negative: list[str] = None,
+        advice: list[str] = None,
+        colors: list[str] = None,
+        numbers: list[int] = None,
+        directions: list[str] = None,
     ):
         """테스트용 운세 결과 생성"""
         result = MagicMock()
@@ -62,12 +59,7 @@ class TestFortuneFormatter:
         from api.formatters import FortuneFormatter
 
         result = self.create_mock_fortune_result(
-            positive=[],
-            negative=[],
-            advice=[],
-            colors=[],
-            numbers=[],
-            directions=[]
+            positive=[], negative=[], advice=[], colors=[], numbers=[], directions=[]
         )
         message = FortuneFormatter.format(result, "직업운")
 
@@ -89,8 +81,8 @@ class TestYongsinFormatter:
         day_master_strength_value: str = "신약",
         confidence: float = 0.85,
         reasoning: str = "일간이 약하여 목으로 보강",
-        xi_sin: List[str] = None,
-        ji_sin: List[str] = None,
+        xi_sin: list[str] = None,
+        ji_sin: list[str] = None,
     ):
         """테스트용 용신 결과 생성"""
         result = MagicMock()
@@ -226,8 +218,7 @@ class TestSuggestedQuestionsGenerator:
         from api.formatters import SuggestedQuestionsGenerator
 
         questions = SuggestedQuestionsGenerator.from_context(
-            user_question="제 성격이 어떤가요?",
-            ai_response="당신은 목 성향이 강합니다..."
+            user_question="제 성격이 어떤가요?", ai_response="당신은 목 성향이 강합니다..."
         )
 
         assert len(questions) == 3
@@ -238,8 +229,7 @@ class TestSuggestedQuestionsGenerator:
         from api.formatters import SuggestedQuestionsGenerator
 
         questions = SuggestedQuestionsGenerator.from_context(
-            user_question="직업운이 어떤가요?",
-            ai_response="재물운이 좋습니다..."
+            user_question="직업운이 어떤가요?", ai_response="재물운이 좋습니다..."
         )
 
         assert len(questions) == 3
@@ -250,8 +240,7 @@ class TestSuggestedQuestionsGenerator:
         from api.formatters import SuggestedQuestionsGenerator
 
         questions = SuggestedQuestionsGenerator.from_context(
-            user_question="안녕하세요",
-            ai_response="안녕하세요."
+            user_question="안녕하세요", ai_response="안녕하세요."
         )
 
         assert len(questions) == 3

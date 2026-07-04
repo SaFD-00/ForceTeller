@@ -3,11 +3,10 @@ ForceTeller 설정 모듈
 환경 변수 및 전역 설정 관리
 """
 
-import os
 from pathlib import Path
-from typing import Optional
-from pydantic_settings import BaseSettings
+
 from pydantic import Field
+from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
@@ -20,7 +19,7 @@ class Settings(BaseSettings):
     # LLM (OpenRouter 단일 게이트웨이)
     # ===================
     # OpenRouter는 OpenAI 호환 API이므로 모든 모델을 하나의 클라이언트로 호출한다.
-    OPENROUTER_API_KEY: Optional[str] = Field(default=None, alias="OPENROUTER_API_KEY")
+    OPENROUTER_API_KEY: str | None = Field(default=None, alias="OPENROUTER_API_KEY")
     OPENROUTER_BASE_URL: str = "https://openrouter.ai/api/v1"
 
     # 기본 해석 모델 / 라우팅(경량) 모델 / 폴백 모델
@@ -51,7 +50,9 @@ class Settings(BaseSettings):
     API_HOST: str = "0.0.0.0"
     API_PORT: int = 8000
     DEBUG: bool = False
-    CORS_ORIGINS: str = "*"  # 콤마로 구분된 도메인 목록 (예: "https://example.com,https://app.example.com")
+    CORS_ORIGINS: str = (
+        "*"  # 콤마로 구분된 도메인 목록 (예: "https://example.com,https://app.example.com")
+    )
 
     # ===================
     # DB 영속화 (Postgres 배포 + SQLite 로컬, SQLAlchemy 추상화)

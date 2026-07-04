@@ -12,20 +12,16 @@ T_saju = T_clock - T_DST + ΔT_long + E
 
 import math
 from datetime import datetime, timedelta
-from typing import Tuple, Optional
 
-from manseol.data.kst_history import KSTHistory
 from manseol.data.city_coordinates import CityCoordinates
+from manseol.data.kst_history import KSTHistory
 
 
 class TimeCorrector:
     """시간 보정 클래스"""
 
     def __init__(
-        self,
-        birth_datetime: datetime,
-        longitude: Optional[float] = None,
-        city: str = "Seoul"
+        self, birth_datetime: datetime, longitude: float | None = None, city: str = "Seoul"
     ):
         """
         Args:
@@ -44,7 +40,7 @@ class TimeCorrector:
         # 해당 시점의 표준 자오선
         self.standard_meridian = KSTHistory.get_standard_meridian(birth_datetime)
 
-    def calculate_true_solar_time(self) -> Tuple[datetime, dict]:
+    def calculate_true_solar_time(self) -> tuple[datetime, dict]:
         """
         진태양시 계산
 
@@ -72,9 +68,9 @@ class TimeCorrector:
 
         # 총 보정량
         corrections["total_minutes"] = (
-            corrections["dst_minutes"] +
-            corrections["longitude_minutes"] +
-            corrections["eot_minutes"]
+            corrections["dst_minutes"]
+            + corrections["longitude_minutes"]
+            + corrections["eot_minutes"]
         )
         corrections["standard_meridian"] = self.standard_meridian
         corrections["birth_longitude"] = self.longitude
@@ -122,10 +118,8 @@ class TimeCorrector:
 
 
 def calculate_true_solar_time(
-    birth_datetime: datetime,
-    longitude: Optional[float] = None,
-    city: str = "Seoul"
-) -> Tuple[datetime, dict]:
+    birth_datetime: datetime, longitude: float | None = None, city: str = "Seoul"
+) -> tuple[datetime, dict]:
     """
     편의 함수: 진태양시 계산
 

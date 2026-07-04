@@ -4,62 +4,90 @@
 Reference: fortuneteller/src/lib/yongsin/seasonal_algorithm.ts
 """
 
-from typing import Dict, Any, Optional
+from typing import Any
+
 from .base import (
-    YongSinAlgorithm,
-    YongSinResult,
-    YongSinRecommendations,
-    YongSinMethod,
-    WuXing,
     DayMasterStrength,
+    WuXing,
+    YongSinAlgorithm,
+    YongSinMethod,
+    YongSinRecommendations,
+    YongSinResult,
+    get_day_master_strength_from_score,
     get_wuxing_attributes,
     str_to_wuxing,
-    get_day_master_strength_from_score,
 )
 
-
 # 절기별 계절 매핑
-SOLAR_TERM_SEASON: Dict[str, str] = {
+SOLAR_TERM_SEASON: dict[str, str] = {
     # 봄 (목)
-    "입춘": "봄", "우수": "봄", "경칩": "봄", "춘분": "봄", "청명": "봄", "곡우": "봄",
+    "입춘": "봄",
+    "우수": "봄",
+    "경칩": "봄",
+    "춘분": "봄",
+    "청명": "봄",
+    "곡우": "봄",
     # 여름 (화)
-    "입하": "여름", "소만": "여름", "망종": "여름", "하지": "여름", "소서": "여름", "대서": "여름",
+    "입하": "여름",
+    "소만": "여름",
+    "망종": "여름",
+    "하지": "여름",
+    "소서": "여름",
+    "대서": "여름",
     # 가을 (금)
-    "입추": "가을", "처서": "가을", "백로": "가을", "추분": "가을", "한로": "가을", "상강": "가을",
+    "입추": "가을",
+    "처서": "가을",
+    "백로": "가을",
+    "추분": "가을",
+    "한로": "가을",
+    "상강": "가을",
     # 겨울 (수)
-    "입동": "겨울", "소설": "겨울", "대설": "겨울", "동지": "겨울", "소한": "겨울", "대한": "겨울",
+    "입동": "겨울",
+    "소설": "겨울",
+    "대설": "겨울",
+    "동지": "겨울",
+    "소한": "겨울",
+    "대한": "겨울",
 }
 
 # 계절별 조후 필요 오행
-SEASONAL_ADJUSTMENT: Dict[str, Dict[str, WuXing]] = {
+SEASONAL_ADJUSTMENT: dict[str, dict[str, WuXing]] = {
     "봄": {
-        "needs": WuXing.FIRE,   # 봄은 아직 찬 기운이 있어 火로 따뜻하게
+        "needs": WuXing.FIRE,  # 봄은 아직 찬 기운이 있어 火로 따뜻하게
         "avoid": WuXing.WATER,  # 水는 더 춥게 만듦
         "season_element": WuXing.WOOD,
     },
     "여름": {
         "needs": WuXing.WATER,  # 여름은 더워서 水로 시원하게
-        "avoid": WuXing.FIRE,   # 火는 더 뜨겁게 만듦
+        "avoid": WuXing.FIRE,  # 火는 더 뜨겁게 만듦
         "season_element": WuXing.FIRE,
     },
     "가을": {
         "needs": WuXing.WATER,  # 가을은 건조해서 水로 습윤하게
-        "avoid": WuXing.FIRE,   # 火는 더 건조하게 만듦
+        "avoid": WuXing.FIRE,  # 火는 더 건조하게 만듦
         "season_element": WuXing.METAL,
     },
     "겨울": {
-        "needs": WuXing.FIRE,   # 겨울은 추워서 火로 따뜻하게
+        "needs": WuXing.FIRE,  # 겨울은 추워서 火로 따뜻하게
         "avoid": WuXing.WATER,  # 水는 더 춥게 만듦
         "season_element": WuXing.WATER,
     },
 }
 
 # 월지별 계절
-MONTH_BRANCH_SEASON: Dict[str, str] = {
-    "인": "봄", "묘": "봄", "진": "봄",      # 1-3월
-    "사": "여름", "오": "여름", "미": "여름",  # 4-6월
-    "신": "가을", "유": "가을", "술": "가을",  # 7-9월
-    "해": "겨울", "자": "겨울", "축": "겨울",  # 10-12월
+MONTH_BRANCH_SEASON: dict[str, str] = {
+    "인": "봄",
+    "묘": "봄",
+    "진": "봄",  # 1-3월
+    "사": "여름",
+    "오": "여름",
+    "미": "여름",  # 4-6월
+    "신": "가을",
+    "유": "가을",
+    "술": "가을",  # 7-9월
+    "해": "겨울",
+    "자": "겨울",
+    "축": "겨울",  # 10-12월
 }
 
 
@@ -81,14 +109,14 @@ class SeasonalYongSinAlgorithm(YongSinAlgorithm):
     def description(self) -> str:
         return "계절의 한난조습(寒暖燥濕)을 조절하여 사주의 균형을 맞추는 오행을 선정합니다. 궁통보감 방식입니다."
 
-    def select(self, saju_data: Dict[str, Any]) -> YongSinResult:
+    def select(self, saju_data: dict[str, Any]) -> YongSinResult:
         """용신 선정"""
         # 계절 파악
         season = self._get_season(saju_data)
         season_adj = SEASONAL_ADJUSTMENT.get(season, SEASONAL_ADJUSTMENT["봄"])
 
         # 일간 오행
-        day_stem_element = self._get_day_stem_element(saju_data)
+        self._get_day_stem_element(saju_data)
 
         # 일간 강약
         strength = self._get_day_master_strength(saju_data)
@@ -96,7 +124,7 @@ class SeasonalYongSinAlgorithm(YongSinAlgorithm):
         # 조후용신 선정
         primary_yongsin = season_adj["needs"]
         avoid_element = season_adj["avoid"]
-        season_element = season_adj["season_element"]
+        season_adj["season_element"]
 
         # 희신: 용신을 생하는 오행
         xi_sin = [primary_yongsin]
@@ -156,7 +184,7 @@ class SeasonalYongSinAlgorithm(YongSinAlgorithm):
             recommendations=recommendations,
         )
 
-    def calculate_applicability(self, saju_data: Dict[str, Any]) -> float:
+    def calculate_applicability(self, saju_data: dict[str, Any]) -> float:
         """
         조후용신의 적용 적합도 계산
         계절 특성이 강할수록 적합도 높음
@@ -179,7 +207,7 @@ class SeasonalYongSinAlgorithm(YongSinAlgorithm):
 
         return min(1.0, applicability)
 
-    def _get_season(self, saju_data: Dict[str, Any]) -> str:
+    def _get_season(self, saju_data: dict[str, Any]) -> str:
         """계절 파악"""
         # 절기로 판단
         solar_term = saju_data.get("solar_term", "")
@@ -212,7 +240,7 @@ class SeasonalYongSinAlgorithm(YongSinAlgorithm):
 
         return "봄"  # 기본값
 
-    def _get_day_stem_element(self, saju_data: Dict[str, Any]) -> WuXing:
+    def _get_day_stem_element(self, saju_data: dict[str, Any]) -> WuXing:
         """일간 오행 추출"""
         day_master = saju_data.get("day_master_analysis", {})
         if day_master:
@@ -224,13 +252,13 @@ class SeasonalYongSinAlgorithm(YongSinAlgorithm):
         element_str = day_pillar.get("stem_element", "목")
         return str_to_wuxing(element_str) or WuXing.WOOD
 
-    def _get_day_master_strength(self, saju_data: Dict[str, Any]) -> DayMasterStrength:
+    def _get_day_master_strength(self, saju_data: dict[str, Any]) -> DayMasterStrength:
         """일간 강약 추출"""
         strength_info = saju_data.get("strength_analysis", {})
         score = strength_info.get("score", 50)
         return get_day_master_strength_from_score(score)
 
-    def _get_wuxing_count(self, saju_data: Dict[str, Any]) -> Dict[str, int]:
+    def _get_wuxing_count(self, saju_data: dict[str, Any]) -> dict[str, int]:
         """오행 개수 추출"""
         five_elements = saju_data.get("five_elements_analysis", {})
         distribution = five_elements.get("distribution", {})
@@ -243,10 +271,7 @@ class SeasonalYongSinAlgorithm(YongSinAlgorithm):
         return result
 
     def _generate_recommendations(
-        self,
-        primary: WuXing,
-        secondary: Optional[WuXing],
-        ji_sin: list
+        self, primary: WuXing, secondary: WuXing | None, ji_sin: list
     ) -> YongSinRecommendations:
         """용신 기반 추천 정보 생성"""
         primary_attrs = get_wuxing_attributes(primary)

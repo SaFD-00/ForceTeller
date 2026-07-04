@@ -3,11 +3,7 @@
 일간 기준 각 천간/지지의 십성 관계 산출
 """
 
-from typing import Dict, List, Optional
-from config.constants import (
-    Element, Polarity, STEMS, BRANCHES,
-    TEN_GODS_BY_RELATION, HIDDEN_STEMS_DETAILED
-)
+from config.constants import BRANCHES, HIDDEN_STEMS_DETAILED, STEMS, TEN_GODS_BY_RELATION, Element
 
 
 class TenGodsCalculator:
@@ -60,7 +56,7 @@ class TenGodsCalculator:
         target_polarity = target_stem["polarity"]
 
         relation = self._get_relation(target_element)
-        same_polarity = (target_polarity == self.day_polarity)
+        same_polarity = target_polarity == self.day_polarity
 
         return TEN_GODS_BY_RELATION[(relation, same_polarity)]
 
@@ -90,7 +86,7 @@ class TenGodsCalculator:
             branch_polarity = main_stem["polarity"]
 
         relation = self._get_relation(branch_element)
-        same_polarity = (branch_polarity == self.day_polarity)
+        same_polarity = branch_polarity == self.day_polarity
 
         return TEN_GODS_BY_RELATION[(relation, same_polarity)]
 
@@ -124,10 +120,7 @@ class TenGodsCalculator:
 
         return "same"  # fallback
 
-    def calculate_all_ten_gods(
-        self,
-        pillars: Dict[str, tuple]
-    ) -> Dict[str, Dict[str, str]]:
+    def calculate_all_ten_gods(self, pillars: dict[str, tuple]) -> dict[str, dict[str, str]]:
         """
         사주 전체의 십성 계산
 
@@ -152,20 +145,17 @@ class TenGodsCalculator:
                 # 일간은 십성 계산 안 함 (기준점)
                 result[pillar_name] = {
                     "stem": "일간",
-                    "branch": self.get_ten_god_for_branch(branch_idx)
+                    "branch": self.get_ten_god_for_branch(branch_idx),
                 }
             elif stem_idx is not None and branch_idx is not None:
                 result[pillar_name] = {
                     "stem": self.get_ten_god_for_stem(stem_idx),
-                    "branch": self.get_ten_god_for_branch(branch_idx)
+                    "branch": self.get_ten_god_for_branch(branch_idx),
                 }
 
         return result
 
-    def get_ten_gods_distribution(
-        self,
-        pillars: Dict[str, tuple]
-    ) -> Dict[str, int]:
+    def get_ten_gods_distribution(self, pillars: dict[str, tuple]) -> dict[str, int]:
         """
         십성 분포 계산
 
@@ -176,11 +166,16 @@ class TenGodsCalculator:
             {십성명: 개수, ...}
         """
         distribution = {
-            "비견": 0, "겁재": 0,
-            "식신": 0, "상관": 0,
-            "편재": 0, "정재": 0,
-            "편관": 0, "정관": 0,
-            "편인": 0, "정인": 0,
+            "비견": 0,
+            "겁재": 0,
+            "식신": 0,
+            "상관": 0,
+            "편재": 0,
+            "정재": 0,
+            "편관": 0,
+            "정관": 0,
+            "편인": 0,
+            "정인": 0,
         }
 
         ten_gods = self.calculate_all_ten_gods(pillars)
@@ -197,10 +192,7 @@ class TenGodsCalculator:
         return distribution
 
 
-def calculate_ten_god(
-    day_stem_index: int,
-    target_stem_index: int
-) -> str:
+def calculate_ten_god(day_stem_index: int, target_stem_index: int) -> str:
     """편의 함수: 특정 천간의 십성 계산"""
     calc = TenGodsCalculator(day_stem_index)
     return calc.get_ten_god_for_stem(target_stem_index)

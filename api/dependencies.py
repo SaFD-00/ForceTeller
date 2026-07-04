@@ -3,16 +3,13 @@ API 의존성 모듈
 FastAPI Depends 패턴을 위한 의존성 팩토리
 """
 
-from typing import Optional
-
-from conversation.db_session_manager import DBSessionManager
 from agents.orchestrator import Orchestrator
+from conversation.db_session_manager import DBSessionManager
 from utils.llm_client import OpenRouterClient
-from utils.protocols import SessionManagerProtocol, LLMClientProtocol
-
+from utils.protocols import LLMClientProtocol, SessionManagerProtocol
 
 # 싱글톤 인스턴스 (내부 사용)
-_session_manager_instance: Optional[SessionManagerProtocol] = None
+_session_manager_instance: SessionManagerProtocol | None = None
 
 
 def get_session_manager() -> SessionManagerProtocol:
@@ -29,7 +26,7 @@ def get_session_manager() -> SessionManagerProtocol:
     return _session_manager_instance
 
 
-def set_session_manager(manager: Optional[SessionManagerProtocol]) -> None:
+def set_session_manager(manager: SessionManagerProtocol | None) -> None:
     """
     세션 매니저 인스턴스 설정 (테스트용)
 
@@ -46,7 +43,7 @@ def reset_session_manager() -> None:
     _session_manager_instance = None
 
 
-def get_orchestrator(model: Optional[str] = None) -> Orchestrator:
+def get_orchestrator(model: str | None = None) -> Orchestrator:
     """
     오케스트레이터 의존성
 
@@ -59,10 +56,7 @@ def get_orchestrator(model: Optional[str] = None) -> Orchestrator:
     return Orchestrator(model=model)
 
 
-def get_llm_client(
-    model: Optional[str] = None,
-    **kwargs
-) -> LLMClientProtocol:
+def get_llm_client(model: str | None = None, **kwargs) -> LLMClientProtocol:
     """
     LLM 클라이언트 의존성
 

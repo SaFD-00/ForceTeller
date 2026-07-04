@@ -8,7 +8,7 @@
 import uuid
 from typing import Any
 
-from langchain_core.messages import HumanMessage, AIMessage
+from langchain_core.messages import AIMessage, HumanMessage
 
 from agents.graph import get_graph
 from agents.state import AgentState, create_initial_state
@@ -65,7 +65,7 @@ class Orchestrator:
 
         # 대화 히스토리 변환 (최근 N개)
         if conversation_history:
-            for msg in conversation_history[-settings.CONVERSATION_HISTORY_LIMIT:]:
+            for msg in conversation_history[-settings.CONVERSATION_HISTORY_LIMIT :]:
                 role = msg.get("role", "user")
                 content = msg.get("content", "")
                 if role == "user":

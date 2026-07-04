@@ -8,8 +8,6 @@ DB 엔진·세션 팩토리
 
 from __future__ import annotations
 
-from typing import Optional
-
 from sqlalchemy import event
 from sqlalchemy.ext.asyncio import (
     AsyncEngine,
@@ -26,8 +24,8 @@ class Base(DeclarativeBase):
     """SQLAlchemy 선언적 베이스"""
 
 
-_engine: Optional[AsyncEngine] = None
-_sessionmaker: Optional[async_sessionmaker[AsyncSession]] = None
+_engine: AsyncEngine | None = None
+_sessionmaker: async_sessionmaker[AsyncSession] | None = None
 
 
 def _enable_sqlite_fk(engine: AsyncEngine) -> None:
@@ -46,9 +44,7 @@ def _build(database_url: str) -> AsyncEngine:
     global _engine, _sessionmaker
     _engine = create_async_engine(database_url, future=True)
     _enable_sqlite_fk(_engine)
-    _sessionmaker = async_sessionmaker(
-        _engine, expire_on_commit=False, class_=AsyncSession
-    )
+    _sessionmaker = async_sessionmaker(_engine, expire_on_commit=False, class_=AsyncSession)
     return _engine
 
 

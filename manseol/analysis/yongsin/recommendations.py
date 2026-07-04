@@ -3,17 +3,14 @@
 색상, 방향, 직업, 활동 추천
 """
 
-from typing import Dict, List, Optional
 from .base import (
     WuXing,
     YongSinResult,
-    YongSinRecommendations,
-    WUXING_ATTRIBUTES,
     get_wuxing_attributes,
 )
 
 
-def generate_detailed_recommendations(yongsin_result: YongSinResult) -> Dict[str, any]:
+def generate_detailed_recommendations(yongsin_result: YongSinResult) -> dict[str, any]:
     """
     용신 결과를 바탕으로 상세 추천 정보 생성
 
@@ -72,7 +69,7 @@ def _generate_summary(yongsin_result: YongSinResult) -> str:
     )
 
 
-def _generate_lucky_items(element: WuXing) -> Dict[str, List[str]]:
+def _generate_lucky_items(element: WuXing) -> dict[str, list[str]]:
     """행운 아이템 생성"""
     lucky_items = {
         WuXing.WOOD: {
@@ -105,10 +102,7 @@ def _generate_lucky_items(element: WuXing) -> Dict[str, List[str]]:
     return lucky_items.get(element, {})
 
 
-def _generate_lifestyle_tips(
-    primary: WuXing,
-    secondary: Optional[WuXing]
-) -> List[str]:
+def _generate_lifestyle_tips(primary: WuXing, secondary: WuXing | None) -> list[str]:
     """생활 습관 팁 생성"""
     tips = {
         WuXing.WOOD: [
@@ -151,7 +145,7 @@ def _generate_lifestyle_tips(
     return result[:6]
 
 
-def _generate_seasonal_advice(element: WuXing) -> Dict[str, str]:
+def _generate_seasonal_advice(element: WuXing) -> dict[str, str]:
     """계절별 조언 생성"""
     advice = {
         WuXing.WOOD: {
@@ -222,9 +216,11 @@ def format_recommendations_text(yongsin_result: YongSinResult) -> str:
     ]
 
     if recs.cautions:
-        lines.extend([
-            "⚠️ 주의사항:",
-            *[f"  • {c}" for c in recs.cautions[:3]],
-        ])
+        lines.extend(
+            [
+                "⚠️ 주의사항:",
+                *[f"  • {c}" for c in recs.cautions[:3]],
+            ]
+        )
 
     return "\n".join(lines)

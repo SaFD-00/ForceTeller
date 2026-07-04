@@ -3,13 +3,13 @@
 년주, 월주, 일주, 시주 산출
 """
 
-from datetime import datetime, date, timedelta
-from typing import Tuple, Optional, Dict, Any
+from datetime import date, datetime, timedelta
+from typing import Any
 
-from manseol.core.solar_terms import SolarTermsCalculator
+from config.constants import BRANCHES, STEMS
 from manseol.core.calendar_converter import CalendarConverter
+from manseol.core.solar_terms import SolarTermsCalculator
 from manseol.data.stems_branches import StemBranchData
-from config.constants import STEMS, BRANCHES
 
 
 class PillarEngine:
@@ -19,7 +19,7 @@ class PillarEngine:
         self.solar_terms = SolarTermsCalculator()
         self.calendar = CalendarConverter()
 
-    def calculate_year_pillar(self, dt: datetime) -> Tuple[int, int]:
+    def calculate_year_pillar(self, dt: datetime) -> tuple[int, int]:
         """
         년주(年柱) 계산
 
@@ -45,7 +45,7 @@ class PillarEngine:
 
         return stem_index, branch_index
 
-    def calculate_month_pillar(self, dt: datetime) -> Tuple[int, int]:
+    def calculate_month_pillar(self, dt: datetime) -> tuple[int, int]:
         """
         월주(月柱) 계산
 
@@ -87,7 +87,7 @@ class PillarEngine:
 
         return stem_index, branch_index
 
-    def calculate_day_pillar(self, dt: datetime) -> Tuple[int, int]:
+    def calculate_day_pillar(self, dt: datetime) -> tuple[int, int]:
         """
         일주(日柱) 계산
 
@@ -114,11 +114,7 @@ class PillarEngine:
 
         return stem_index, branch_index
 
-    def calculate_hour_pillar(
-        self,
-        dt: datetime,
-        jajasi: bool = False
-    ) -> Tuple[int, int]:
+    def calculate_hour_pillar(self, dt: datetime, jajasi: bool = False) -> tuple[int, int]:
         """
         시주(時柱) 계산
 
@@ -161,11 +157,8 @@ class PillarEngine:
         return stem_index, branch_index
 
     def calculate_all_pillars(
-        self,
-        dt: datetime,
-        jajasi: bool = False,
-        include_hour: bool = True
-    ) -> Dict[str, Tuple[int, int]]:
+        self, dt: datetime, jajasi: bool = False, include_hour: bool = True
+    ) -> dict[str, tuple[int, int]]:
         """
         사주 4주 전체 계산
 
@@ -195,11 +188,7 @@ class PillarEngine:
 
         return result
 
-    def get_pillar_details(
-        self,
-        stem_index: int,
-        branch_index: int
-    ) -> Dict[str, Any]:
+    def get_pillar_details(self, stem_index: int, branch_index: int) -> dict[str, Any]:
         """
         주(柱) 상세 정보 반환
 

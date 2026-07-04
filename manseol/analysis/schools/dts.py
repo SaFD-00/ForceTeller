@@ -4,14 +4,14 @@
 오행의 생극제화와 통변성정을 깊이 다룸
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from ..yongsin.base import (
     WuXing,
-    get_sheng_element,
-    get_sheng_me_element,
     get_ke_element,
     get_ke_me_element,
+    get_sheng_element,
+    get_sheng_me_element,
 )
 from .base_interpreter import BaseSchoolInterpreter, SchoolCode
 
@@ -23,7 +23,7 @@ class DTSInterpreter(BaseSchoolInterpreter):
     def school_code(self) -> SchoolCode:
         return SchoolCode.DTS
 
-    def determine_yong_sin(self, saju_data: Dict[str, Any]) -> WuXing:
+    def determine_yong_sin(self, saju_data: dict[str, Any]) -> WuXing:
         """
         적천수 방식의 용신 결정
         오행의 순환과 조화를 중시
@@ -57,7 +57,7 @@ class DTSInterpreter(BaseSchoolInterpreter):
             weakest = min(balance, key=balance.get)
             return weakest
 
-    def determine_geok_guk(self, saju_data: Dict[str, Any]) -> Optional[str]:
+    def determine_geok_guk(self, saju_data: dict[str, Any]) -> str | None:
         """적천수는 격국보다 오행 흐름을 중시"""
         balance = self._get_wuxing_balance(saju_data)
 
@@ -74,9 +74,9 @@ class DTSInterpreter(BaseSchoolInterpreter):
         else:
             return "보통격"
 
-    def interpret_health(self, saju_data: Dict[str, Any], yong_sin: WuXing) -> str:
+    def interpret_health(self, saju_data: dict[str, Any], yong_sin: WuXing) -> str:
         """건강 해석 - 적천수 관점"""
-        day_element = self._get_day_stem_element(saju_data)
+        self._get_day_stem_element(saju_data)
         balance = self._get_wuxing_balance(saju_data)
 
         health_text = "적천수에서는 오행의 순환이 막히면 병이 생긴다고 봅니다. "
@@ -98,7 +98,7 @@ class DTSInterpreter(BaseSchoolInterpreter):
 
         return health_text
 
-    def interpret_wealth(self, saju_data: Dict[str, Any], yong_sin: WuXing) -> str:
+    def interpret_wealth(self, saju_data: dict[str, Any], yong_sin: WuXing) -> str:
         """재물 해석 - 적천수 관점"""
         day_element = self._get_day_stem_element(saju_data)
         balance = self._get_wuxing_balance(saju_data)
@@ -124,10 +124,10 @@ class DTSInterpreter(BaseSchoolInterpreter):
 
         return wealth_text
 
-    def interpret_career(self, saju_data: Dict[str, Any], yong_sin: WuXing) -> str:
+    def interpret_career(self, saju_data: dict[str, Any], yong_sin: WuXing) -> str:
         """직업 해석 - 적천수 관점"""
         day_element = self._get_day_stem_element(saju_data)
-        balance = self._get_wuxing_balance(saju_data)
+        self._get_wuxing_balance(saju_data)
 
         career_text = "적천수에서는 오행의 성정(性情)으로 적성을 파악합니다. "
 
@@ -144,7 +144,7 @@ class DTSInterpreter(BaseSchoolInterpreter):
 
         return career_text
 
-    def interpret_relationship(self, saju_data: Dict[str, Any], yong_sin: WuXing) -> str:
+    def interpret_relationship(self, saju_data: dict[str, Any], yong_sin: WuXing) -> str:
         """인간관계 해석 - 적천수 관점"""
         day_element = self._get_day_stem_element(saju_data)
         balance = self._get_wuxing_balance(saju_data)
@@ -167,7 +167,7 @@ class DTSInterpreter(BaseSchoolInterpreter):
 
         return rel_text
 
-    def interpret_fame(self, saju_data: Dict[str, Any], yong_sin: WuXing) -> str:
+    def interpret_fame(self, saju_data: dict[str, Any], yong_sin: WuXing) -> str:
         """명예 해석 - 적천수 관점"""
         day_element = self._get_day_stem_element(saju_data)
         balance = self._get_wuxing_balance(saju_data)
@@ -192,7 +192,7 @@ class DTSInterpreter(BaseSchoolInterpreter):
 
         return fame_text
 
-    def calculate_confidence(self, saju_data: Dict[str, Any]) -> float:
+    def calculate_confidence(self, saju_data: dict[str, Any]) -> float:
         """신뢰도 계산 - 적천수"""
         base = 0.72
 
@@ -208,11 +208,7 @@ class DTSInterpreter(BaseSchoolInterpreter):
 
         return min(0.9, base)
 
-    def extract_key_features(
-        self,
-        saju_data: Dict[str, Any],
-        yong_sin: WuXing
-    ) -> List[str]:
+    def extract_key_features(self, saju_data: dict[str, Any], yong_sin: WuXing) -> list[str]:
         """핵심 특징 추출"""
         day_element = self._get_day_stem_element(saju_data)
         geok_guk = self.determine_geok_guk(saju_data)

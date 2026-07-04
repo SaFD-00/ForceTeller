@@ -4,17 +4,18 @@ API 의존성 모듈 테스트
 API 호출 없이 의존성 주입 패턴을 테스트합니다.
 """
 
+from unittest.mock import MagicMock
+
 import pytest
-from unittest.mock import MagicMock, AsyncMock
 
 from api.dependencies import (
-    get_session_manager,
-    set_session_manager,
-    reset_session_manager,
-    get_orchestrator,
     get_llm_client,
+    get_orchestrator,
+    get_session_manager,
+    reset_session_manager,
+    set_session_manager,
 )
-from utils.protocols import SessionManagerProtocol, LLMClientProtocol
+from utils.protocols import LLMClientProtocol, SessionManagerProtocol
 
 
 class TestSessionManagerDependency:
@@ -173,11 +174,11 @@ class TestProtocolCompliance:
         sm = get_session_manager()
 
         # 프로토콜 메서드 존재 확인
-        assert hasattr(sm, 'create_session')
-        assert hasattr(sm, 'get_session')
-        assert hasattr(sm, 'delete_session')
-        assert hasattr(sm, 'list_sessions')
-        assert hasattr(sm, 'get_session_count')
+        assert hasattr(sm, "create_session")
+        assert hasattr(sm, "get_session")
+        assert hasattr(sm, "delete_session")
+        assert hasattr(sm, "list_sessions")
+        assert hasattr(sm, "get_session_count")
 
     def test_mock_with_spec_enforces_protocol(self):
         """spec을 사용한 mock이 프로토콜을 강제하는지 확인"""

@@ -4,20 +4,19 @@
 Reference: fortuneteller/src/lib/yongsin/disease_algorithm.ts
 """
 
-from typing import Dict, Any, Optional, List
+from typing import Any
+
 from .base import (
-    YongSinAlgorithm,
-    YongSinResult,
-    YongSinRecommendations,
-    YongSinMethod,
-    WuXing,
     DayMasterStrength,
-    get_wuxing_attributes,
-    str_to_wuxing,
+    WuXing,
+    YongSinAlgorithm,
+    YongSinMethod,
+    YongSinRecommendations,
+    YongSinResult,
     get_day_master_strength_from_score,
-    get_ke_element,
     get_ke_me_element,
     get_sheng_me_element,
+    get_wuxing_attributes,
 )
 
 
@@ -39,7 +38,7 @@ class DiseaseYongSinAlgorithm(YongSinAlgorithm):
     def description(self) -> str:
         return "사주의 불균형(病)을 진단하고 그것을 치료하는 오행(藥)을 선정합니다."
 
-    def select(self, saju_data: Dict[str, Any]) -> YongSinResult:
+    def select(self, saju_data: dict[str, Any]) -> YongSinResult:
         """용신 선정"""
         # 오행 분포 확인
         wuxing_count = self._get_wuxing_count(saju_data)
@@ -54,14 +53,10 @@ class DiseaseYongSinAlgorithm(YongSinAlgorithm):
         medicine_element = self._find_medicine(disease_element, disease_type, wuxing_count)
 
         return self._create_result(
-            medicine_element,
-            disease_element,
-            disease_type,
-            wuxing_count,
-            strength
+            medicine_element, disease_element, disease_type, wuxing_count, strength
         )
 
-    def calculate_applicability(self, saju_data: Dict[str, Any]) -> float:
+    def calculate_applicability(self, saju_data: dict[str, Any]) -> float:
         """
         병약용신의 적용 적합도 계산
         오행 불균형이 심할수록 적합도 높음
@@ -85,7 +80,7 @@ class DiseaseYongSinAlgorithm(YongSinAlgorithm):
 
         return min(1.0, applicability)
 
-    def _get_wuxing_count(self, saju_data: Dict[str, Any]) -> Dict[str, int]:
+    def _get_wuxing_count(self, saju_data: dict[str, Any]) -> dict[str, int]:
         """오행 개수 추출"""
         five_elements = saju_data.get("five_elements_analysis", {})
         distribution = five_elements.get("distribution", {})
@@ -97,16 +92,13 @@ class DiseaseYongSinAlgorithm(YongSinAlgorithm):
 
         return result
 
-    def _get_day_master_strength(self, saju_data: Dict[str, Any]) -> DayMasterStrength:
+    def _get_day_master_strength(self, saju_data: dict[str, Any]) -> DayMasterStrength:
         """일간 강약 추출"""
         strength_info = saju_data.get("strength_analysis", {})
         score = strength_info.get("score", 50)
         return get_day_master_strength_from_score(score)
 
-    def _diagnose_disease(
-        self,
-        wuxing_count: Dict[str, int]
-    ) -> tuple:
+    def _diagnose_disease(self, wuxing_count: dict[str, int]) -> tuple:
         """
         병(病) 진단
 
@@ -119,7 +111,7 @@ class DiseaseYongSinAlgorithm(YongSinAlgorithm):
         max_element = None
         max_count = 0
         min_element = None
-        min_count = float('inf')
+        min_count = float("inf")
 
         for element in WuXing:
             count = wuxing_count.get(element.value, 0)
@@ -143,10 +135,7 @@ class DiseaseYongSinAlgorithm(YongSinAlgorithm):
             return (min_element, "deficiency")
 
     def _find_medicine(
-        self,
-        disease_element: WuXing,
-        disease_type: str,
-        wuxing_count: Dict[str, int]
+        self, disease_element: WuXing, disease_type: str, wuxing_count: dict[str, int]
     ) -> WuXing:
         """
         약(藥) 선정
@@ -166,8 +155,8 @@ class DiseaseYongSinAlgorithm(YongSinAlgorithm):
         medicine: WuXing,
         disease: WuXing,
         disease_type: str,
-        wuxing_count: Dict[str, int],
-        strength: DayMasterStrength
+        wuxing_count: dict[str, int],
+        strength: DayMasterStrength,
     ) -> YongSinResult:
         """결과 생성"""
         primary_yongsin = medicine
@@ -223,10 +212,7 @@ class DiseaseYongSinAlgorithm(YongSinAlgorithm):
         )
 
     def _generate_recommendations(
-        self,
-        primary: WuXing,
-        secondary: Optional[WuXing],
-        ji_sin: List[WuXing]
+        self, primary: WuXing, secondary: WuXing | None, ji_sin: list[WuXing]
     ) -> YongSinRecommendations:
         """용신 기반 추천 정보 생성"""
         primary_attrs = get_wuxing_attributes(primary)

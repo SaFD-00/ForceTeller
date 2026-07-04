@@ -4,17 +4,14 @@
 심리학적 관점과 실용적 조언을 결합
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from ..yongsin.base import (
     WuXing,
     get_sheng_element,
     get_sheng_me_element,
-    get_ke_element,
-    get_ke_me_element,
 )
 from .base_interpreter import BaseSchoolInterpreter, SchoolCode
-
 
 # 오행별 심리 특성
 WUXING_PSYCHOLOGY = {
@@ -58,7 +55,7 @@ class ModernInterpreter(BaseSchoolInterpreter):
     def school_code(self) -> SchoolCode:
         return SchoolCode.MODERN
 
-    def determine_yong_sin(self, saju_data: Dict[str, Any]) -> WuXing:
+    def determine_yong_sin(self, saju_data: dict[str, Any]) -> WuXing:
         """
         현대명리 방식의 용신 결정
         심리적 균형과 현실적 조화를 중시
@@ -71,10 +68,7 @@ class ModernInterpreter(BaseSchoolInterpreter):
         # 너무 약한 오행은 활용하기 어려움
 
         # 1. 적당히 있지만 부족한 오행 찾기 (0.1 ~ 0.2 사이)
-        moderate_weak = [
-            e for e, v in balance.items()
-            if 0.08 < v < 0.18
-        ]
+        moderate_weak = [e for e, v in balance.items() if 0.08 < v < 0.18]
 
         if moderate_weak:
             # 그 중 일간과 상생 관계인 것 우선
@@ -94,10 +88,10 @@ class ModernInterpreter(BaseSchoolInterpreter):
             # 중화: 일간을 돕는 오행
             return get_sheng_me_element(day_element)
 
-    def interpret_health(self, saju_data: Dict[str, Any], yong_sin: WuXing) -> str:
+    def interpret_health(self, saju_data: dict[str, Any], yong_sin: WuXing) -> str:
         """건강 해석 - 현대명리 관점"""
         day_element = self._get_day_stem_element(saju_data)
-        balance = self._get_wuxing_balance(saju_data)
+        self._get_wuxing_balance(saju_data)
         psychology = WUXING_PSYCHOLOGY.get(day_element, {})
 
         health_text = "현대명리에서는 심신의 균형을 중시합니다. "
@@ -107,7 +101,9 @@ class ModernInterpreter(BaseSchoolInterpreter):
         weaknesses = psychology.get("weaknesses", [])
 
         if traits:
-            health_text += f"{day_element.value} 성향으로 {', '.join(traits[:2])}의 특성이 있습니다. "
+            health_text += (
+                f"{day_element.value} 성향으로 {', '.join(traits[:2])}의 특성이 있습니다. "
+            )
 
         if weaknesses:
             health_text += f"스트레스 시 {', '.join(weaknesses[:2])}에 주의하세요. "
@@ -125,7 +121,7 @@ class ModernInterpreter(BaseSchoolInterpreter):
 
         return health_text
 
-    def interpret_wealth(self, saju_data: Dict[str, Any], yong_sin: WuXing) -> str:
+    def interpret_wealth(self, saju_data: dict[str, Any], yong_sin: WuXing) -> str:
         """재물 해석 - 현대명리 관점"""
         day_element = self._get_day_stem_element(saju_data)
         strength = self._get_strength_level(saju_data)
@@ -152,7 +148,7 @@ class ModernInterpreter(BaseSchoolInterpreter):
 
         return wealth_text
 
-    def interpret_career(self, saju_data: Dict[str, Any], yong_sin: WuXing) -> str:
+    def interpret_career(self, saju_data: dict[str, Any], yong_sin: WuXing) -> str:
         """직업 해석 - 현대명리 관점"""
         day_element = self._get_day_stem_element(saju_data)
         psychology = WUXING_PSYCHOLOGY.get(day_element, {})
@@ -177,7 +173,7 @@ class ModernInterpreter(BaseSchoolInterpreter):
 
         return career_text
 
-    def interpret_relationship(self, saju_data: Dict[str, Any], yong_sin: WuXing) -> str:
+    def interpret_relationship(self, saju_data: dict[str, Any], yong_sin: WuXing) -> str:
         """인간관계 해석 - 현대명리 관점"""
         day_element = self._get_day_stem_element(saju_data)
         psychology = WUXING_PSYCHOLOGY.get(day_element, {})
@@ -203,10 +199,10 @@ class ModernInterpreter(BaseSchoolInterpreter):
 
         return rel_text
 
-    def interpret_fame(self, saju_data: Dict[str, Any], yong_sin: WuXing) -> str:
+    def interpret_fame(self, saju_data: dict[str, Any], yong_sin: WuXing) -> str:
         """명예 해석 - 현대명리 관점"""
         day_element = self._get_day_stem_element(saju_data)
-        strength = self._get_strength_level(saju_data)
+        self._get_strength_level(saju_data)
         psychology = WUXING_PSYCHOLOGY.get(day_element, {})
 
         fame_text = "현대 사회에서 명예는 전문성과 영향력입니다. "
@@ -229,7 +225,7 @@ class ModernInterpreter(BaseSchoolInterpreter):
 
         return fame_text
 
-    def calculate_confidence(self, saju_data: Dict[str, Any]) -> float:
+    def calculate_confidence(self, saju_data: dict[str, Any]) -> float:
         """신뢰도 계산 - 현대명리"""
         base = 0.75
 
@@ -244,11 +240,7 @@ class ModernInterpreter(BaseSchoolInterpreter):
 
         return min(0.93, base)
 
-    def extract_key_features(
-        self,
-        saju_data: Dict[str, Any],
-        yong_sin: WuXing
-    ) -> List[str]:
+    def extract_key_features(self, saju_data: dict[str, Any], yong_sin: WuXing) -> list[str]:
         """핵심 특징 추출"""
         day_element = self._get_day_stem_element(saju_data)
         psychology = WUXING_PSYCHOLOGY.get(day_element, {})

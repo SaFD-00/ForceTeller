@@ -6,15 +6,11 @@
 
 import logging
 import sys
-from typing import Optional
 
 from config.settings import settings
 
 
-def setup_logging(
-    level: Optional[str] = None,
-    format_string: Optional[str] = None
-) -> None:
+def setup_logging(level: str | None = None, format_string: str | None = None) -> None:
     """
     로깅 설정 초기화
 

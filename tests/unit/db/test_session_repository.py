@@ -25,9 +25,7 @@ class TestDBSessionManagerCRUD:
     async def test_get_nonexistent_returns_none(self, db_session_manager):
         assert await db_session_manager.get_session("does-not-exist") is None
 
-    async def test_save_persists_messages_and_cache(
-        self, db_session_manager, sample_saju_data
-    ):
+    async def test_save_persists_messages_and_cache(self, db_session_manager, sample_saju_data):
         """변형된 세션을 save하면 메시지·해석캐시가 영속된다."""
         session = await db_session_manager.create_session(sample_saju_data)
         session.add_user_message("내 성격은?")
@@ -41,9 +39,7 @@ class TestDBSessionManagerCRUD:
         assert loaded.messages[0].content == "내 성격은?"
         assert loaded.messages[1].role == "assistant"
         assert loaded.messages[1].metadata.get("agent") == "personality"
-        assert loaded.get_cached_interpretation("personality") == {
-            "interpretation": "신중함"
-        }
+        assert loaded.get_cached_interpretation("personality") == {"interpretation": "신중함"}
 
     async def test_messages_replaced_and_ordered_on_save(
         self, db_session_manager, sample_saju_data

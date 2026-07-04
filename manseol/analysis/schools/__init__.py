@@ -4,19 +4,19 @@
 """
 
 from .base_interpreter import (
-    SchoolCode,
-    SchoolInterpretation,
+    BaseSchoolInterpreter,
     ConsensusItem,
     DifferenceItem,
+    SchoolCode,
     SchoolComparisonResult,
-    BaseSchoolInterpreter,
+    SchoolInterpretation,
 )
-from .ziping import ZipingInterpreter
-from .dts import DTSInterpreter
-from .qtbj import QTBJInterpreter
-from .modern import ModernInterpreter
-from .shensha import ShenshaInterpreter
 from .comparator import SchoolComparator, compare_schools, get_school_interpreter
+from .dts import DTSInterpreter
+from .modern import ModernInterpreter
+from .qtbj import QTBJInterpreter
+from .shensha import ShenshaInterpreter
+from .ziping import ZipingInterpreter
 
 __all__ = [
     # 기본 타입

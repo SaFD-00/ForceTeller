@@ -4,17 +4,15 @@
 특정 조합과 패턴으로 운명을 해석
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from ..yongsin.base import (
     WuXing,
-    get_sheng_element,
-    get_sheng_me_element,
     get_ke_element,
     get_ke_me_element,
+    get_sheng_me_element,
 )
 from .base_interpreter import BaseSchoolInterpreter, SchoolCode
-
 
 # 주요 신살 정의
 SHENSHA_DEFINITIONS = {
@@ -108,15 +106,15 @@ class ShenshaInterpreter(BaseSchoolInterpreter):
     def school_code(self) -> SchoolCode:
         return SchoolCode.SHENSHA
 
-    def _analyze_shensha(self, saju_data: Dict[str, Any]) -> Dict[str, List[str]]:
+    def _analyze_shensha(self, saju_data: dict[str, Any]) -> dict[str, list[str]]:
         """신살 분석 (간략화된 버전)"""
-        day_stem = saju_data.get("day_pillar", {}).get("stem", "갑")
-        day_branch = saju_data.get("day_pillar", {}).get("branch", "자")
+        saju_data.get("day_pillar", {}).get("stem", "갑")
+        saju_data.get("day_pillar", {}).get("branch", "자")
         balance = self._get_wuxing_balance(saju_data)
         strength = self._get_strength_level(saju_data)
 
-        gilsin = []   # 길신
-        hyungsin = [] # 흉신
+        gilsin = []  # 길신
+        hyungsin = []  # 흉신
 
         # 간단한 신살 판단 로직
         # 실제로는 더 복잡한 천간지지 조합으로 판단
@@ -157,8 +155,7 @@ class ShenshaInterpreter(BaseSchoolInterpreter):
                 hyungsin.append("겁살")
 
         # 백호 판단 (예시: 금/화 충돌)
-        if (balance.get(WuXing.METAL, 0) > 0.2 and
-            balance.get(WuXing.FIRE, 0) > 0.2):
+        if balance.get(WuXing.METAL, 0) > 0.2 and balance.get(WuXing.FIRE, 0) > 0.2:
             hyungsin.append("백호")
 
         # 공망 판단 (예시: 어떤 오행이 0이면)
@@ -172,7 +169,7 @@ class ShenshaInterpreter(BaseSchoolInterpreter):
             "hyungsin": hyungsin[:3],
         }
 
-    def determine_yong_sin(self, saju_data: Dict[str, Any]) -> WuXing:
+    def determine_yong_sin(self, saju_data: dict[str, Any]) -> WuXing:
         """
         신살중심 방식의 용신 결정
         흉신을 제어하고 길신을 강화하는 오행
@@ -197,7 +194,7 @@ class ShenshaInterpreter(BaseSchoolInterpreter):
         # 기본: 일간을 돕는 오행
         return get_sheng_me_element(day_element)
 
-    def interpret_health(self, saju_data: Dict[str, Any], yong_sin: WuXing) -> str:
+    def interpret_health(self, saju_data: dict[str, Any], yong_sin: WuXing) -> str:
         """건강 해석 - 신살중심 관점"""
         shensha = self._analyze_shensha(saju_data)
         hyungsin = shensha.get("hyungsin", [])
@@ -224,7 +221,7 @@ class ShenshaInterpreter(BaseSchoolInterpreter):
 
         return health_text
 
-    def interpret_wealth(self, saju_data: Dict[str, Any], yong_sin: WuXing) -> str:
+    def interpret_wealth(self, saju_data: dict[str, Any], yong_sin: WuXing) -> str:
         """재물 해석 - 신살중심 관점"""
         shensha = self._analyze_shensha(saju_data)
         hyungsin = shensha.get("hyungsin", [])
@@ -249,7 +246,7 @@ class ShenshaInterpreter(BaseSchoolInterpreter):
 
         return wealth_text
 
-    def interpret_career(self, saju_data: Dict[str, Any], yong_sin: WuXing) -> str:
+    def interpret_career(self, saju_data: dict[str, Any], yong_sin: WuXing) -> str:
         """직업 해석 - 신살중심 관점"""
         shensha = self._analyze_shensha(saju_data)
         gilsin = shensha.get("gilsin", [])
@@ -273,7 +270,7 @@ class ShenshaInterpreter(BaseSchoolInterpreter):
 
         return career_text
 
-    def interpret_relationship(self, saju_data: Dict[str, Any], yong_sin: WuXing) -> str:
+    def interpret_relationship(self, saju_data: dict[str, Any], yong_sin: WuXing) -> str:
         """인간관계 해석 - 신살중심 관점"""
         shensha = self._analyze_shensha(saju_data)
         gilsin = shensha.get("gilsin", [])
@@ -297,7 +294,7 @@ class ShenshaInterpreter(BaseSchoolInterpreter):
 
         return rel_text
 
-    def interpret_fame(self, saju_data: Dict[str, Any], yong_sin: WuXing) -> str:
+    def interpret_fame(self, saju_data: dict[str, Any], yong_sin: WuXing) -> str:
         """명예 해석 - 신살중심 관점"""
         shensha = self._analyze_shensha(saju_data)
         gilsin = shensha.get("gilsin", [])
@@ -316,7 +313,7 @@ class ShenshaInterpreter(BaseSchoolInterpreter):
 
         return fame_text
 
-    def calculate_confidence(self, saju_data: Dict[str, Any]) -> float:
+    def calculate_confidence(self, saju_data: dict[str, Any]) -> float:
         """신뢰도 계산 - 신살중심"""
         base = 0.65  # 신살은 해석이 다양하여 기본 신뢰도가 낮음
 
@@ -327,11 +324,7 @@ class ShenshaInterpreter(BaseSchoolInterpreter):
 
         return min(0.85, base)
 
-    def extract_key_features(
-        self,
-        saju_data: Dict[str, Any],
-        yong_sin: WuXing
-    ) -> List[str]:
+    def extract_key_features(self, saju_data: dict[str, Any], yong_sin: WuXing) -> list[str]:
         """핵심 특징 추출"""
         shensha = self._analyze_shensha(saju_data)
         gilsin = shensha.get("gilsin", [])

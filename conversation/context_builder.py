@@ -3,10 +3,8 @@
 LLM 호출을 위한 컨텍스트 구성
 """
 
-from typing import Dict, List, Optional, Any
-
-from conversation.session_manager import Session
 from agents.prompts.system_prompts import format_saju_context
+from conversation.session_manager import Session
 
 
 class ContextBuilder:
@@ -16,7 +14,7 @@ class ContextBuilder:
         self,
         max_history_messages: int = 10,
         include_saju_summary: bool = True,
-        include_cached_interpretations: bool = True
+        include_cached_interpretations: bool = True,
     ):
         """
         Args:
@@ -33,8 +31,8 @@ class ContextBuilder:
         session: Session,
         current_question: str,
         system_prompt: str,
-        additional_context: Optional[str] = None
-    ) -> List[Dict[str, str]]:
+        additional_context: str | None = None,
+    ) -> list[dict[str, str]]:
         """
         LLM 호출용 전체 컨텍스트 구성
 
@@ -50,35 +48,24 @@ class ContextBuilder:
         messages = []
 
         # 1. 시스템 프롬프트
-        messages.append({
-            "role": "system",
-            "content": system_prompt
-        })
+        messages.append({"role": "system", "content": system_prompt})
 
         # 2. 사주 데이터 요약 (첫 번째 사용자 메시지로)
         if self.include_saju_summary:
             saju_context = self._build_saju_context(session)
-            messages.append({
-                "role": "user",
-                "content": f"다음은 분석할 사주 정보입니다:\n\n{saju_context}"
-            })
-            messages.append({
-                "role": "assistant",
-                "content": "네, 사주 정보를 확인했습니다. 질문해 주세요."
-            })
+            messages.append(
+                {"role": "user", "content": f"다음은 분석할 사주 정보입니다:\n\n{saju_context}"}
+            )
+            messages.append(
+                {"role": "assistant", "content": "네, 사주 정보를 확인했습니다. 질문해 주세요."}
+            )
 
         # 3. 캐시된 해석 정보 (있다면)
         if self.include_cached_interpretations and session.interpretation_cache:
             cached_summary = self._build_cached_summary(session)
             if cached_summary:
-                messages.append({
-                    "role": "user",
-                    "content": "이전에 받은 해석을 참고해 주세요."
-                })
-                messages.append({
-                    "role": "assistant",
-                    "content": cached_summary
-                })
+                messages.append({"role": "user", "content": "이전에 받은 해석을 참고해 주세요."})
+                messages.append({"role": "assistant", "content": cached_summary})
 
         # 4. 대화 이력
         history = session.get_messages_for_llm(self.max_history_messages)
@@ -86,16 +73,10 @@ class ContextBuilder:
 
         # 5. 추가 컨텍스트 (있다면)
         if additional_context:
-            messages.append({
-                "role": "system",
-                "content": f"추가 참고 정보:\n{additional_context}"
-            })
+            messages.append({"role": "system", "content": f"추가 참고 정보:\n{additional_context}"})
 
         # 6. 현재 질문
-        messages.append({
-            "role": "user",
-            "content": current_question
-        })
+        messages.append({"role": "user", "content": current_question})
 
         return messages
 
@@ -103,7 +84,7 @@ class ContextBuilder:
         """사주 컨텍스트 문자열 생성"""
         return format_saju_context(session.saju_data)
 
-    def _build_cached_summary(self, session: Session) -> Optional[str]:
+    def _build_cached_summary(self, session: Session) -> str | None:
         """캐시된 해석 요약"""
         if not session.interpretation_cache:
             return None
@@ -122,11 +103,8 @@ class ContextBuilder:
         return None
 
     def build_quick_context(
-        self,
-        saju_data: Dict,
-        question: str,
-        system_prompt: str
-    ) -> List[Dict[str, str]]:
+        self, saju_data: dict, question: str, system_prompt: str
+    ) -> list[dict[str, str]]:
         """
         세션 없이 빠른 컨텍스트 구성
 
@@ -142,14 +120,10 @@ class ContextBuilder:
 
         return [
             {"role": "system", "content": system_prompt},
-            {"role": "user", "content": f"{saju_context}\n\n## 질문\n{question}"}
+            {"role": "user", "content": f"{saju_context}\n\n## 질문\n{question}"},
         ]
 
-    def summarize_conversation(
-        self,
-        session: Session,
-        max_messages: int = 20
-    ) -> str:
+    def summarize_conversation(self, session: Session, max_messages: int = 20) -> str:
         """
         대화 요약 생성 (긴 대화용)
 
@@ -172,7 +146,7 @@ class ContextBuilder:
 
         return "\n".join(summary_parts)
 
-    def extract_key_topics(self, session: Session) -> List[str]:
+    def extract_key_topics(self, session: Session) -> list[str]:
         """
         대화에서 주요 토픽 추출
 

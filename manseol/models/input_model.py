@@ -2,21 +2,23 @@
 사주 계산 입력 데이터 모델
 """
 
-from datetime import date, time, datetime
+from datetime import date, datetime, time
 from enum import Enum
-from typing import Optional
+
 from pydantic import BaseModel, Field, field_validator
 
 
 class CalendarType(str, Enum):
     """달력 유형"""
-    SOLAR = "solar"          # 양력
-    LUNAR = "lunar"          # 음력 (평달)
+
+    SOLAR = "solar"  # 양력
+    LUNAR = "lunar"  # 음력 (평달)
     LEAP_LUNAR = "leap_lunar"  # 음력 (윤달)
 
 
 class Gender(str, Enum):
     """성별"""
+
     MALE = "male"
     FEMALE = "female"
 
@@ -24,56 +26,29 @@ class Gender(str, Enum):
 class SajuInput(BaseModel):
     """사주 계산 입력 데이터"""
 
-    name: str = Field(
-        ...,
-        min_length=1,
-        max_length=50,
-        description="이름"
-    )
+    name: str = Field(..., min_length=1, max_length=50, description="이름")
 
-    birth_date: date = Field(
-        ...,
-        description="생년월일 (YYYY-MM-DD)"
-    )
+    birth_date: date = Field(..., description="생년월일 (YYYY-MM-DD)")
 
-    birth_time: Optional[time] = Field(
-        default=None,
-        description="출생 시간 (HH:MM). 미상시 None"
-    )
+    birth_time: time | None = Field(default=None, description="출생 시간 (HH:MM). 미상시 None")
 
     calendar: CalendarType = Field(
-        default=CalendarType.SOLAR,
-        description="달력 유형 (solar/lunar/leap_lunar)"
+        default=CalendarType.SOLAR, description="달력 유형 (solar/lunar/leap_lunar)"
     )
 
-    city: str = Field(
-        default="Seoul",
-        description="출생 도시 (경도 보정용)"
+    city: str = Field(default="Seoul", description="출생 도시 (경도 보정용)")
+
+    gender: Gender = Field(..., description="성별 (male/female)")
+
+    jajasi: bool = Field(default=False, description="야자시/조자시 적용 여부")
+
+    longitude: float | None = Field(
+        default=None, ge=-180.0, le=180.0, description="직접 입력 경도 (city 대신 사용)"
     )
 
-    gender: Gender = Field(
-        ...,
-        description="성별 (male/female)"
-    )
+    apply_time_correction: bool = Field(default=True, description="시간 보정 적용 여부")
 
-    jajasi: bool = Field(
-        default=False,
-        description="야자시/조자시 적용 여부"
-    )
-
-    longitude: Optional[float] = Field(
-        default=None,
-        ge=-180.0,
-        le=180.0,
-        description="직접 입력 경도 (city 대신 사용)"
-    )
-
-    apply_time_correction: bool = Field(
-        default=True,
-        description="시간 보정 적용 여부"
-    )
-
-    @field_validator('birth_date')
+    @field_validator("birth_date")
     @classmethod
     def validate_birth_date(cls, v: date) -> date:
         """생년월일 유효성 검증"""
@@ -86,7 +61,7 @@ class SajuInput(BaseModel):
         return v
 
     @property
-    def birth_datetime(self) -> Optional[datetime]:
+    def birth_datetime(self) -> datetime | None:
         """출생 일시 반환"""
         if self.birth_time:
             return datetime.combine(self.birth_date, self.birth_time)
@@ -120,6 +95,6 @@ class SajuInput(BaseModel):
                 "calendar": "solar",
                 "city": "Seoul",
                 "gender": "male",
-                "jajasi": False
+                "jajasi": False,
             }
         }

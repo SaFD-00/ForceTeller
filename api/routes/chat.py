@@ -4,23 +4,25 @@
 """
 
 import json
-from fastapi import APIRouter, HTTPException, Depends
-from fastapi.responses import StreamingResponse
-from typing import List, AsyncGenerator
+from collections.abc import AsyncGenerator
 
-from api.schemas import (
-    ChatRequest, ChatResponse,
-    SessionListResponse, SessionDetailResponse,
-    ErrorResponse,
-)
-from api.dependencies import get_session_manager, get_orchestrator
-from api.formatters import SuggestedQuestionsGenerator
-from config.settings import get_allowed_models, settings
-from utils.protocols import SessionManagerProtocol
-from utils.llm_client import get_llm_client
+from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import StreamingResponse
+
 from agents.agent_configs import AGENT_CONFIGS, get_agent_config
 from agents.nodes import route_question
-
+from api.dependencies import get_orchestrator, get_session_manager
+from api.formatters import SuggestedQuestionsGenerator
+from api.schemas import (
+    ChatRequest,
+    ChatResponse,
+    ErrorResponse,
+    SessionDetailResponse,
+    SessionListResponse,
+)
+from config.settings import get_allowed_models, settings
+from utils.llm_client import get_llm_client
+from utils.protocols import SessionManagerProtocol
 
 router = APIRouter(prefix="/api/chat", tags=["chat"])
 
@@ -40,14 +42,13 @@ def _resolve_model(model_value: str | None) -> str | None:
     responses={
         400: {"model": ErrorResponse},
         404: {"model": ErrorResponse},
-        500: {"model": ErrorResponse}
+        500: {"model": ErrorResponse},
     },
     summary="대화 요청",
-    description="사주 해석 대화를 수행합니다."
+    description="사주 해석 대화를 수행합니다.",
 )
 async def chat(
-    request: ChatRequest,
-    sm: SessionManagerProtocol = Depends(get_session_manager)
+    request: ChatRequest, sm: SessionManagerProtocol = Depends(get_session_manager)
 ) -> ChatResponse:
     """
     대화 엔드포인트
@@ -63,15 +64,13 @@ async def chat(
             session = await sm.get_session(request.session_id)
             if not session:
                 raise HTTPException(
-                    status_code=404,
-                    detail=f"세션 '{request.session_id}'을 찾을 수 없습니다."
+                    status_code=404, detail=f"세션 '{request.session_id}'을 찾을 수 없습니다."
                 )
         else:
             # 새 세션 생성
             if not request.saju_data:
                 raise HTTPException(
-                    status_code=400,
-                    detail="새 세션 생성시 saju_data가 필요합니다."
+                    status_code=400, detail="새 세션 생성시 saju_data가 필요합니다."
                 )
             session = await sm.create_session(request.saju_data)
 
@@ -86,7 +85,7 @@ async def chat(
         history = session.get_messages_for_llm(limit=10)
 
         # 전체 해석 (Supervisor 패턴 동적 라우팅)
-        suggested_questions: List[str] = []
+        suggested_questions: list[str] = []
         result = await orchestrator.route_and_interpret(
             saju_data=session.saju_data,
             question=request.message,
@@ -124,7 +123,7 @@ async def chat(
             message=result_message,
             suggested_questions=suggested_questions,
             interpretations=interpretations,
-            agents_used=agents_used
+            agents_used=agents_used,
         )
 
     except HTTPException:
@@ -137,63 +136,44 @@ async def chat(
     "/sessions",
     response_model=SessionListResponse,
     summary="세션 목록",
-    description="활성 세션 목록을 반환합니다."
+    description="활성 세션 목록을 반환합니다.",
 )
 async def list_sessions(
-    sm: SessionManagerProtocol = Depends(get_session_manager)
+    sm: SessionManagerProtocol = Depends(get_session_manager),
 ) -> SessionListResponse:
     """세션 목록 조회"""
     sessions = await sm.list_sessions()
 
-    return SessionListResponse(
-        success=True,
-        sessions=sessions,
-        total=len(sessions)
-    )
+    return SessionListResponse(success=True, sessions=sessions, total=len(sessions))
 
 
 @router.get(
     "/sessions/{session_id}",
     response_model=SessionDetailResponse,
     summary="세션 상세",
-    description="특정 세션의 상세 정보를 반환합니다."
+    description="특정 세션의 상세 정보를 반환합니다.",
 )
 async def get_session(
-    session_id: str,
-    sm: SessionManagerProtocol = Depends(get_session_manager)
+    session_id: str, sm: SessionManagerProtocol = Depends(get_session_manager)
 ) -> SessionDetailResponse:
     """세션 상세 조회"""
     session_data = await sm.export_session(session_id)
 
     if not session_data:
-        raise HTTPException(
-            status_code=404,
-            detail=f"세션 '{session_id}'을 찾을 수 없습니다."
-        )
+        raise HTTPException(status_code=404, detail=f"세션 '{session_id}'을 찾을 수 없습니다.")
 
-    return SessionDetailResponse(
-        success=True,
-        session=session_data
-    )
+    return SessionDetailResponse(success=True, session=session_data)
 
 
-@router.delete(
-    "/sessions/{session_id}",
-    summary="세션 삭제",
-    description="특정 세션을 삭제합니다."
-)
+@router.delete("/sessions/{session_id}", summary="세션 삭제", description="특정 세션을 삭제합니다.")
 async def delete_session(
-    session_id: str,
-    sm: SessionManagerProtocol = Depends(get_session_manager)
+    session_id: str, sm: SessionManagerProtocol = Depends(get_session_manager)
 ):
     """세션 삭제"""
     success = await sm.delete_session(session_id)
 
     if not success:
-        raise HTTPException(
-            status_code=404,
-            detail=f"세션 '{session_id}'을 찾을 수 없습니다."
-        )
+        raise HTTPException(status_code=404, detail=f"세션 '{session_id}'을 찾을 수 없습니다.")
 
     return {"success": True, "message": "세션이 삭제되었습니다."}
 
@@ -201,20 +181,16 @@ async def delete_session(
 @router.post(
     "/sessions/{session_id}/clear",
     summary="대화 기록 초기화",
-    description="세션의 대화 기록을 초기화합니다."
+    description="세션의 대화 기록을 초기화합니다.",
 )
 async def clear_session_history(
-    session_id: str,
-    sm: SessionManagerProtocol = Depends(get_session_manager)
+    session_id: str, sm: SessionManagerProtocol = Depends(get_session_manager)
 ):
     """세션 대화 기록 초기화"""
     session = await sm.get_session(session_id)
 
     if not session:
-        raise HTTPException(
-            status_code=404,
-            detail=f"세션 '{session_id}'을 찾을 수 없습니다."
-        )
+        raise HTTPException(status_code=404, detail=f"세션 '{session_id}'을 찾을 수 없습니다.")
 
     session.messages.clear()
     session.interpretation_cache.clear()
@@ -228,11 +204,10 @@ async def clear_session_history(
 @router.post(
     "/stream",
     summary="스트리밍 대화 (Reasoning 포함)",
-    description="AI 사고 과정(reasoning)과 응답을 실시간 스트리밍합니다."
+    description="AI 사고 과정(reasoning)과 응답을 실시간 스트리밍합니다.",
 )
 async def chat_stream(
-    request: ChatRequest,
-    sm: SessionManagerProtocol = Depends(get_session_manager)
+    request: ChatRequest, sm: SessionManagerProtocol = Depends(get_session_manager)
 ):
     """
     스트리밍 대화 엔드포인트 (Server-Sent Events)
@@ -264,30 +239,30 @@ async def chat_stream(
             saju = session.saju_data
 
             # 생년월일 정보
-            birth_info = saju.get('birth_info', {})
-            birth_date = birth_info.get('birth_date', '')
-            birth_time = birth_info.get('birth_time', '')
-            gender = birth_info.get('gender', '')
-            name = birth_info.get('name', '미상')
+            birth_info = saju.get("birth_info", {})
+            birth_date = birth_info.get("birth_date", "")
+            birth_time = birth_info.get("birth_time", "")
+            gender = birth_info.get("gender", "")
+            name = birth_info.get("name", "미상")
 
             # 사주팔자
-            four_pillars = saju.get('four_pillars', {})
+            four_pillars = saju.get("four_pillars", {})
 
             # 오행 분석
-            five_elements = saju.get('five_elements', {})
+            five_elements = saju.get("five_elements", {})
 
             # 십성
-            ten_gods = saju.get('ten_gods', {})
+            ten_gods = saju.get("ten_gods", {})
 
             # 신강/신약
-            strength = saju.get('strength', {})
+            strength = saju.get("strength", {})
 
             # 운세 흐름
-            fortune_cycles = saju.get('fortune_cycles', {})
-            current_daewun = fortune_cycles.get('current_daewun', {})
-            yearly = fortune_cycles.get('yearly', {})
-            monthly = fortune_cycles.get('monthly', {})
-            daily = fortune_cycles.get('daily', {})
+            fortune_cycles = saju.get("fortune_cycles", {})
+            current_daewun = fortune_cycles.get("current_daewun", {})
+            yearly = fortune_cycles.get("yearly", {})
+            monthly = fortune_cycles.get("monthly", {})
+            daily = fortune_cycles.get("daily", {})
 
             saju_context = f"""
 ## 사주 정보
@@ -296,22 +271,22 @@ async def chat_stream(
 - 성별: {gender}
 
 ## 사주팔자 (四柱八字)
-{json.dumps(four_pillars, ensure_ascii=False, indent=2) if four_pillars else '정보 없음'}
+{json.dumps(four_pillars, ensure_ascii=False, indent=2) if four_pillars else "정보 없음"}
 
 ## 오행 분석 (五行)
-{json.dumps(five_elements, ensure_ascii=False, indent=2) if five_elements else '정보 없음'}
+{json.dumps(five_elements, ensure_ascii=False, indent=2) if five_elements else "정보 없음"}
 
 ## 십성 (十星)
-{json.dumps(ten_gods, ensure_ascii=False, indent=2) if ten_gods else '정보 없음'}
+{json.dumps(ten_gods, ensure_ascii=False, indent=2) if ten_gods else "정보 없음"}
 
 ## 신강/신약 분석
-{json.dumps(strength, ensure_ascii=False, indent=2) if strength else '정보 없음'}
+{json.dumps(strength, ensure_ascii=False, indent=2) if strength else "정보 없음"}
 
 ## 현재 운세 흐름
-- 현재 대운: {json.dumps(current_daewun, ensure_ascii=False) if current_daewun else '정보 없음'}
-- 연운 ({yearly.get('year', '')}년): {yearly.get('stem', '')}{yearly.get('branch', '')} - {yearly.get('ten_god', '')}
-- 월운 ({monthly.get('month', '')}월): {monthly.get('stem', '')}{monthly.get('branch', '')} - {monthly.get('ten_god', '')}
-- 일운: {daily.get('stem', '')}{daily.get('branch', '')} - {daily.get('ten_god', '')}
+- 현재 대운: {json.dumps(current_daewun, ensure_ascii=False) if current_daewun else "정보 없음"}
+- 연운 ({yearly.get("year", "")}년): {yearly.get("stem", "")}{yearly.get("branch", "")} - {yearly.get("ten_god", "")}
+- 월운 ({monthly.get("month", "")}월): {monthly.get("stem", "")}{monthly.get("branch", "")} - {monthly.get("ten_god", "")}
+- 일운: {daily.get("stem", "")}{daily.get("branch", "")} - {daily.get("ten_god", "")}
 """
 
             # 에이전트 선택: focus 명시 시 해당 전문 에이전트, 아니면 경량 라우팅
@@ -392,7 +367,9 @@ async def chat_stream(
                 await sm.save_session(session)
 
                 # 추천 질문 생성 및 전송
-                suggested_questions = SuggestedQuestionsGenerator.from_context(request.message, full_output)
+                suggested_questions = SuggestedQuestionsGenerator.from_context(
+                    request.message, full_output
+                )
                 yield f"data: {json.dumps({'type': 'suggested_questions', 'content': suggested_questions}, ensure_ascii=False)}\n\n"
 
         except Exception as e:
@@ -405,5 +382,5 @@ async def chat_stream(
             "Cache-Control": "no-cache",
             "Connection": "keep-alive",
             "X-Accel-Buffering": "no",
-        }
+        },
     )

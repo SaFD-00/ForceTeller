@@ -4,17 +4,16 @@
 일간 중심의 강약 분석과 격국론을 중시
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from ..yongsin.base import (
     WuXing,
-    get_sheng_element,
-    get_sheng_me_element,
     get_ke_element,
     get_ke_me_element,
+    get_sheng_element,
+    get_sheng_me_element,
 )
 from .base_interpreter import BaseSchoolInterpreter, SchoolCode
-
 
 # 격국 정의
 GEOK_GUK_TYPES = {
@@ -40,7 +39,7 @@ class ZipingInterpreter(BaseSchoolInterpreter):
     def school_code(self) -> SchoolCode:
         return SchoolCode.ZIPING
 
-    def determine_yong_sin(self, saju_data: Dict[str, Any]) -> WuXing:
+    def determine_yong_sin(self, saju_data: dict[str, Any]) -> WuXing:
         """
         자평명리 방식의 용신 결정
         일간의 강약을 기준으로 결정
@@ -60,7 +59,7 @@ class ZipingInterpreter(BaseSchoolInterpreter):
             weakest = min(balance, key=balance.get)
             return weakest
 
-    def determine_geok_guk(self, saju_data: Dict[str, Any]) -> Optional[str]:
+    def determine_geok_guk(self, saju_data: dict[str, Any]) -> str | None:
         """격국 판단 (자평명리의 핵심)"""
         day_element = self._get_day_stem_element(saju_data)
         balance = self._get_wuxing_balance(saju_data)
@@ -96,7 +95,7 @@ class ZipingInterpreter(BaseSchoolInterpreter):
 
         return "보통격"
 
-    def interpret_health(self, saju_data: Dict[str, Any], yong_sin: WuXing) -> str:
+    def interpret_health(self, saju_data: dict[str, Any], yong_sin: WuXing) -> str:
         """건강 해석 - 자평명리 관점"""
         day_element = self._get_day_stem_element(saju_data)
         balance = self._get_wuxing_balance(saju_data)
@@ -108,7 +107,9 @@ class ZipingInterpreter(BaseSchoolInterpreter):
 
         if weak_elements:
             weak_names = [e.value for e in weak_elements]
-            health_text += f"{', '.join(weak_names)} 오행이 부족하여 관련 장기에 주의가 필요합니다. "
+            health_text += (
+                f"{', '.join(weak_names)} 오행이 부족하여 관련 장기에 주의가 필요합니다. "
+            )
 
         if strong_elements:
             strong_names = [e.value for e in strong_elements]
@@ -118,7 +119,7 @@ class ZipingInterpreter(BaseSchoolInterpreter):
 
         return health_text
 
-    def interpret_wealth(self, saju_data: Dict[str, Any], yong_sin: WuXing) -> str:
+    def interpret_wealth(self, saju_data: dict[str, Any], yong_sin: WuXing) -> str:
         """재물 해석 - 자평명리 관점"""
         day_element = self._get_day_stem_element(saju_data)
         strength = self._get_strength_level(saju_data)
@@ -141,10 +142,10 @@ class ZipingInterpreter(BaseSchoolInterpreter):
 
         return wealth_text
 
-    def interpret_career(self, saju_data: Dict[str, Any], yong_sin: WuXing) -> str:
+    def interpret_career(self, saju_data: dict[str, Any], yong_sin: WuXing) -> str:
         """직업 해석 - 자평명리 관점"""
         geok_guk = self.determine_geok_guk(saju_data)
-        day_element = self._get_day_stem_element(saju_data)
+        self._get_day_stem_element(saju_data)
 
         career_text = f"격국이 {geok_guk}로, "
 
@@ -164,7 +165,7 @@ class ZipingInterpreter(BaseSchoolInterpreter):
 
         return career_text
 
-    def interpret_relationship(self, saju_data: Dict[str, Any], yong_sin: WuXing) -> str:
+    def interpret_relationship(self, saju_data: dict[str, Any], yong_sin: WuXing) -> str:
         """인간관계 해석 - 자평명리 관점"""
         day_element = self._get_day_stem_element(saju_data)
         strength = self._get_strength_level(saju_data)
@@ -184,7 +185,7 @@ class ZipingInterpreter(BaseSchoolInterpreter):
 
         return rel_text
 
-    def interpret_fame(self, saju_data: Dict[str, Any], yong_sin: WuXing) -> str:
+    def interpret_fame(self, saju_data: dict[str, Any], yong_sin: WuXing) -> str:
         """명예 해석 - 자평명리 관점"""
         day_element = self._get_day_stem_element(saju_data)
         official_element = get_ke_me_element(day_element)  # 관성
@@ -202,7 +203,7 @@ class ZipingInterpreter(BaseSchoolInterpreter):
 
         return fame_text
 
-    def calculate_confidence(self, saju_data: Dict[str, Any]) -> float:
+    def calculate_confidence(self, saju_data: dict[str, Any]) -> float:
         """신뢰도 계산 - 자평명리"""
         # 자평명리는 전통적 방법으로 기본 신뢰도 높음
         base = 0.75
@@ -218,11 +219,7 @@ class ZipingInterpreter(BaseSchoolInterpreter):
 
         return min(0.95, base)
 
-    def extract_key_features(
-        self,
-        saju_data: Dict[str, Any],
-        yong_sin: WuXing
-    ) -> List[str]:
+    def extract_key_features(self, saju_data: dict[str, Any], yong_sin: WuXing) -> list[str]:
         """핵심 특징 추출"""
         geok_guk = self.determine_geok_guk(saju_data)
         strength = self._get_strength_level(saju_data)

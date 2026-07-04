@@ -6,50 +6,54 @@ Reference: fortuneteller/src/lib/fortune.ts
 
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any
 
-from ..yongsin.base import WuXing, get_sheng_element, get_ke_element
+from ..yongsin.base import WuXing, get_ke_element, get_sheng_element
 
 
 class FortuneType(str, Enum):
     """운세 분석 유형"""
-    GENERAL = "general"    # 종합운
-    CAREER = "career"      # 직업운
-    WEALTH = "wealth"      # 재물운
-    HEALTH = "health"      # 건강운
-    LOVE = "love"          # 애정운
+
+    GENERAL = "general"  # 종합운
+    CAREER = "career"  # 직업운
+    WEALTH = "wealth"  # 재물운
+    HEALTH = "health"  # 건강운
+    LOVE = "love"  # 애정운
 
 
 @dataclass
 class FortuneDetails:
     """운세 상세 정보"""
-    positive: List[str] = field(default_factory=list)   # 긍정적 요소
-    negative: List[str] = field(default_factory=list)   # 부정적 요소
-    advice: List[str] = field(default_factory=list)     # 조언
+
+    positive: list[str] = field(default_factory=list)  # 긍정적 요소
+    negative: list[str] = field(default_factory=list)  # 부정적 요소
+    advice: list[str] = field(default_factory=list)  # 조언
 
 
 @dataclass
 class LuckyElements:
     """행운 요소"""
-    colors: List[str] = field(default_factory=list)
-    numbers: List[int] = field(default_factory=list)
-    directions: List[str] = field(default_factory=list)
-    times: List[str] = field(default_factory=list)
+
+    colors: list[str] = field(default_factory=list)
+    numbers: list[int] = field(default_factory=list)
+    directions: list[str] = field(default_factory=list)
+    times: list[str] = field(default_factory=list)
 
 
 @dataclass
 class FortuneAnalysis:
     """운세 분석 결과"""
+
     fortune_type: FortuneType
-    score: int                    # 0-100
+    score: int  # 0-100
     summary: str
     details: FortuneDetails
     lucky_elements: LuckyElements
-    period_analysis: Optional[Dict[str, Any]] = None
+    period_analysis: dict[str, Any] | None = None
 
 
 # 오행별 건강 관련 장기
-WUXING_ORGANS: Dict[WuXing, Dict[str, List[str]]] = {
+WUXING_ORGANS: dict[WuXing, dict[str, list[str]]] = {
     WuXing.WOOD: {
         "organs": ["간", "담"],
         "weak_symptoms": ["눈 피로", "근육 경련", "화병"],
@@ -78,7 +82,7 @@ WUXING_ORGANS: Dict[WuXing, Dict[str, List[str]]] = {
 }
 
 # 오행별 직업 적성
-WUXING_CAREERS: Dict[WuXing, Dict[str, Any]] = {
+WUXING_CAREERS: dict[WuXing, dict[str, Any]] = {
     WuXing.WOOD: {
         "fields": ["교육", "출판", "의류", "목재", "환경", "의료"],
         "traits": ["창의성", "성장 지향", "인내심"],
@@ -107,7 +111,7 @@ WUXING_CAREERS: Dict[WuXing, Dict[str, Any]] = {
 }
 
 # 오행별 애정운 특성
-WUXING_LOVE: Dict[WuXing, Dict[str, Any]] = {
+WUXING_LOVE: dict[WuXing, dict[str, Any]] = {
     WuXing.WOOD: {
         "style": "성장하는 사랑",
         "traits": ["함께 발전", "지적 교감", "자유로운 관계"],
@@ -141,7 +145,7 @@ WUXING_LOVE: Dict[WuXing, Dict[str, Any]] = {
 }
 
 # 오행별 재물운 특성
-WUXING_WEALTH: Dict[WuXing, Dict[str, Any]] = {
+WUXING_WEALTH: dict[WuXing, dict[str, Any]] = {
     WuXing.WOOD: {
         "style": "성장형 재물",
         "traits": ["장기 투자", "교육 투자", "점진적 축적"],
@@ -175,7 +179,7 @@ WUXING_WEALTH: Dict[WuXing, Dict[str, Any]] = {
 }
 
 # 오행별 색상
-WUXING_COLORS: Dict[WuXing, List[str]] = {
+WUXING_COLORS: dict[WuXing, list[str]] = {
     WuXing.WOOD: ["초록", "청록", "연두"],
     WuXing.FIRE: ["빨강", "주황", "보라"],
     WuXing.EARTH: ["노랑", "갈색", "베이지"],
@@ -184,7 +188,7 @@ WUXING_COLORS: Dict[WuXing, List[str]] = {
 }
 
 # 오행별 방향
-WUXING_DIRECTIONS: Dict[WuXing, List[str]] = {
+WUXING_DIRECTIONS: dict[WuXing, list[str]] = {
     WuXing.WOOD: ["동쪽"],
     WuXing.FIRE: ["남쪽"],
     WuXing.EARTH: ["중앙", "남서", "북동"],
@@ -193,7 +197,7 @@ WUXING_DIRECTIONS: Dict[WuXing, List[str]] = {
 }
 
 # 오행별 숫자
-WUXING_NUMBERS: Dict[WuXing, List[int]] = {
+WUXING_NUMBERS: dict[WuXing, list[int]] = {
     WuXing.WOOD: [3, 8],
     WuXing.FIRE: [2, 7],
     WuXing.EARTH: [5, 10],
@@ -202,7 +206,7 @@ WUXING_NUMBERS: Dict[WuXing, List[int]] = {
 }
 
 # 오행별 시간
-WUXING_TIMES: Dict[WuXing, List[str]] = {
+WUXING_TIMES: dict[WuXing, list[str]] = {
     WuXing.WOOD: ["05:00-09:00", "인시", "묘시"],
     WuXing.FIRE: ["09:00-13:00", "사시", "오시"],
     WuXing.EARTH: ["07:00-09:00", "13:00-15:00", "19:00-21:00", "01:00-03:00"],
@@ -214,7 +218,7 @@ WUXING_TIMES: Dict[WuXing, List[str]] = {
 class FortuneAnalyzer:
     """운세 분석기"""
 
-    def __init__(self, saju_data: Dict[str, Any]):
+    def __init__(self, saju_data: dict[str, Any]):
         """
         Args:
             saju_data: 사주 데이터 (만세력 계산 결과)
@@ -229,7 +233,7 @@ class FortuneAnalyzer:
         stem_element = day_pillar.get("stem_element", "목")
         return WuXing(stem_element)
 
-    def _analyze_wuxing_balance(self) -> Dict[WuXing, float]:
+    def _analyze_wuxing_balance(self) -> dict[WuXing, float]:
         """오행 균형 분석"""
         wuxing_count = self.saju_data.get("wuxing_count", {})
         total = sum(wuxing_count.values()) or 1
@@ -312,7 +316,9 @@ class FortuneAnalyzer:
         weak_elements = [e for e, v in self.wuxing_balance.items() if v < 0.15]
 
         for elem in strong_elements:
-            positive.append(f"{elem.value} 기운이 강하여 {WUXING_CAREERS[elem]['traits'][0]}이 돋보입니다")
+            positive.append(
+                f"{elem.value} 기운이 강하여 {WUXING_CAREERS[elem]['traits'][0]}이 돋보입니다"
+            )
 
         for elem in weak_elements:
             negative.append(f"{elem.value} 기운이 약하여 보완이 필요합니다")
@@ -395,9 +401,7 @@ class FortuneAnalyzer:
         supporting_element = get_sheng_element(self.day_stem_element)
         supporting_careers = WUXING_CAREERS.get(supporting_element, {})
         if supporting_careers:
-            positive.append(
-                f"보조 적성: {', '.join(supporting_careers.get('fields', [])[:2])}"
-            )
+            positive.append(f"보조 적성: {', '.join(supporting_careers.get('fields', [])[:2])}")
 
         negative = []
         advice = []
@@ -406,15 +410,15 @@ class FortuneAnalyzer:
         conflicting_element = get_ke_element(self.day_stem_element)
         conflicting_careers = WUXING_CAREERS.get(conflicting_element, {})
         if conflicting_careers:
-            negative.append(
-                f"주의 분야: {', '.join(conflicting_careers.get('fields', [])[:2])}"
-            )
+            negative.append(f"주의 분야: {', '.join(conflicting_careers.get('fields', [])[:2])}")
             advice.append("해당 분야 진출 시 충분한 준비가 필요합니다")
 
-        advice.extend([
-            "자신의 강점을 살리는 분야에서 성공 가능성이 높습니다",
-            "협력자의 오행도 고려하면 시너지를 낼 수 있습니다",
-        ])
+        advice.extend(
+            [
+                "자신의 강점을 살리는 분야에서 성공 가능성이 높습니다",
+                "협력자의 오행도 고려하면 시너지를 낼 수 있습니다",
+            ]
+        )
 
         summary = (
             f"일간 {self.day_stem_element.value}의 특성상 "
@@ -501,15 +505,11 @@ class FortuneAnalyzer:
 
             if balance > 0.3:
                 # 과다 - 주의 필요
-                negative.append(
-                    f"{element.value} 과다: {', '.join(organs)} 관련 주의"
-                )
+                negative.append(f"{element.value} 과다: {', '.join(organs)} 관련 주의")
             elif balance < 0.1:
                 # 부족 - 보강 필요
                 symptoms = organ_info.get("weak_symptoms", [])
-                negative.append(
-                    f"{element.value} 부족: {', '.join(symptoms[:2])} 주의"
-                )
+                negative.append(f"{element.value} 부족: {', '.join(symptoms[:2])} 주의")
                 organ_advice = organ_info.get("advice", [])
                 advice.extend(organ_advice[:1])
             else:
@@ -574,9 +574,7 @@ class FortuneAnalyzer:
         ]
 
         if compatible:
-            advice.append(
-                f"{compatible_names[0]} 오행의 상대와 좋은 케미를 기대할 수 있습니다"
-            )
+            advice.append(f"{compatible_names[0]} 오행의 상대와 좋은 케미를 기대할 수 있습니다")
 
         summary = (
             f"당신은 {style}을 추구합니다. "
@@ -596,18 +594,12 @@ class FortuneAnalyzer:
             lucky_elements=self._get_lucky_elements(self.day_stem_element),
         )
 
-    def analyze_all(self) -> Dict[FortuneType, FortuneAnalysis]:
+    def analyze_all(self) -> dict[FortuneType, FortuneAnalysis]:
         """모든 유형의 운세 분석"""
-        return {
-            fortune_type: self.analyze(fortune_type)
-            for fortune_type in FortuneType
-        }
+        return {fortune_type: self.analyze(fortune_type) for fortune_type in FortuneType}
 
 
-def analyze_fortune(
-    saju_data: Dict[str, Any],
-    fortune_type: str = "general"
-) -> FortuneAnalysis:
+def analyze_fortune(saju_data: dict[str, Any], fortune_type: str = "general") -> FortuneAnalysis:
     """
     운세 분석 편의 함수
 
@@ -623,7 +615,7 @@ def analyze_fortune(
     return analyzer.analyze(ft)
 
 
-def analyze_all_fortunes(saju_data: Dict[str, Any]) -> Dict[str, FortuneAnalysis]:
+def analyze_all_fortunes(saju_data: dict[str, Any]) -> dict[str, FortuneAnalysis]:
     """
     모든 운세 분석 편의 함수
 

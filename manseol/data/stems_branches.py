@@ -2,23 +2,19 @@
 천간(天干)과 지지(地支) 데이터 클래스
 """
 
-from typing import Dict, List, Tuple, Optional
-from config.constants import (
-    STEMS, BRANCHES, HIDDEN_STEMS_DETAILED,
-    Element, Polarity, Stem, Branch
-)
+from config.constants import BRANCHES, HIDDEN_STEMS_DETAILED, STEMS, Element, Polarity
 
 
 class StemBranchData:
     """천간/지지 데이터 접근 클래스"""
 
     @staticmethod
-    def get_stem(index: int) -> Dict:
+    def get_stem(index: int) -> dict:
         """천간 정보 반환"""
         return STEMS[index % 10]
 
     @staticmethod
-    def get_branch(index: int) -> Dict:
+    def get_branch(index: int) -> dict:
         """지지 정보 반환"""
         return BRANCHES[index % 12]
 
@@ -43,7 +39,7 @@ class StemBranchData:
         return BRANCHES[index % 12]["polarity"]
 
     @staticmethod
-    def get_hidden_stems(branch_index: int) -> List[int]:
+    def get_hidden_stems(branch_index: int) -> list[int]:
         """지지의 지장간 반환"""
         return HIDDEN_STEMS_DETAILED.get(branch_index % 12, [])
 
@@ -87,7 +83,7 @@ class StemBranchData:
         return f"{stem}{branch}"
 
     @staticmethod
-    def stem_index_by_korean(korean: str) -> Optional[int]:
+    def stem_index_by_korean(korean: str) -> int | None:
         """한글 천간명으로 인덱스 반환"""
         for idx, data in STEMS.items():
             if data["korean"] == korean:
@@ -95,7 +91,7 @@ class StemBranchData:
         return None
 
     @staticmethod
-    def branch_index_by_korean(korean: str) -> Optional[int]:
+    def branch_index_by_korean(korean: str) -> int | None:
         """한글 지지명으로 인덱스 반환"""
         for idx, data in BRANCHES.items():
             if data["korean"] == korean:
@@ -134,6 +130,6 @@ class StemBranchData:
         return shichen
 
     @staticmethod
-    def get_time_range_for_branch(branch_index: int) -> Tuple[int, int]:
+    def get_time_range_for_branch(branch_index: int) -> tuple[int, int]:
         """지지에 해당하는 시간 범위 반환"""
         return BRANCHES[branch_index % 12]["time_range"]

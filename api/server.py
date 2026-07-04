@@ -4,13 +4,14 @@ HTTP API 서버 설정 및 실행
 """
 
 from contextlib import asynccontextmanager
+
+import uvicorn
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-import uvicorn
 
-from api.schemas import HealthResponse, ErrorResponse
-from api.routes import manseol_router, chat_router, analysis_router
+from api.routes import analysis_router, chat_router, manseol_router
+from api.schemas import HealthResponse
 from config.settings import settings
 from db.base import dispose_engine, init_models
 
@@ -19,7 +20,7 @@ from db.base import dispose_engine, init_models
 async def lifespan(app: FastAPI):
     """애플리케이션 생명주기 관리"""
     # 시작시 실행
-    print(f"🔮 ForceTeller API 서버 시작")
+    print("🔮 ForceTeller API 서버 시작")
     # DB 스키마 부트스트랩 (없는 테이블만 생성). 운영 마이그레이션은 Alembic 사용.
     await init_models()
     print(f"🗄️  DB 준비 완료: {settings.DATABASE_URL.split('://', 1)[0]}")
@@ -80,7 +81,8 @@ print(chat_response.json()["message"])
 
     # CORS 설정
     cors_origins = (
-        ["*"] if settings.CORS_ORIGINS == "*"
+        ["*"]
+        if settings.CORS_ORIGINS == "*"
         else [origin.strip() for origin in settings.CORS_ORIGINS.split(",")]
     )
     app.add_middleware(
@@ -96,11 +98,7 @@ print(chat_response.json()["message"])
     async def global_exception_handler(request: Request, exc: Exception):
         return JSONResponse(
             status_code=500,
-            content={
-                "success": False,
-                "error": "Internal Server Error",
-                "detail": str(exc)
-            }
+            content={"success": False, "error": "Internal Server Error", "detail": str(exc)},
         )
 
     # 라우터 등록
@@ -109,12 +107,7 @@ print(chat_response.json()["message"])
     app.include_router(analysis_router)
 
     # 헬스체크 엔드포인트
-    @app.get(
-        "/health",
-        response_model=HealthResponse,
-        tags=["system"],
-        summary="헬스체크"
-    )
+    @app.get("/health", response_model=HealthResponse, tags=["system"], summary="헬스체크")
     async def health_check():
         """서버 상태 확인"""
         return HealthResponse()
@@ -132,8 +125,8 @@ print(chat_response.json()["message"])
                 "manseol": "/api/manseol",
                 "chat": "/api/chat",
                 "analysis": "/api/analysis",
-                "health": "/health"
-            }
+                "health": "/health",
+            },
         }
 
     return app
@@ -143,20 +136,13 @@ print(chat_response.json()["message"])
 app = create_app()
 
 
-from typing import Optional
-
-
-def run_server(
-    host: Optional[str] = None,
-    port: Optional[int] = None,
-    reload: bool = False
-):
+def run_server(host: str | None = None, port: int | None = None, reload: bool = False):
     """서버 실행"""
     uvicorn.run(
         "api.server:app",
         host=host or settings.API_HOST,
         port=port or settings.API_PORT,
-        reload=reload
+        reload=reload,
     )
 
 

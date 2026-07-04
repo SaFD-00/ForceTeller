@@ -7,10 +7,11 @@ AsyncOpenAI 클라이언트를 base_url만 바꿔 사용한다.
 """
 
 import asyncio
-from typing import Any, AsyncIterator, Dict, List, Optional
+from collections.abc import AsyncIterator
+from typing import Any
 
-from config.settings import settings
 from config.logging_config import get_logger
+from config.settings import settings
 
 logger = get_logger(__name__)
 
@@ -20,9 +21,9 @@ class OpenRouterClient:
 
     def __init__(
         self,
-        model: Optional[str] = None,
-        max_tokens: Optional[int] = None,
-        reasoning_effort: Optional[str] = None,
+        model: str | None = None,
+        max_tokens: int | None = None,
+        reasoning_effort: str | None = None,
     ):
         from openai import AsyncOpenAI
 
@@ -49,7 +50,7 @@ class OpenRouterClient:
 
     async def chat(
         self,
-        messages: List[Dict[str, str]],
+        messages: list[dict[str, str]],
         **kwargs,
     ) -> str:
         """채팅 완료 (비스트리밍)"""
@@ -68,7 +69,7 @@ class OpenRouterClient:
 
     async def chat_stream(
         self,
-        messages: List[Dict[str, str]],
+        messages: list[dict[str, str]],
         **kwargs,
     ) -> AsyncIterator[str]:
         """스트리밍 채팅 (텍스트만)"""
@@ -89,9 +90,9 @@ class OpenRouterClient:
 
     async def chat_stream_with_reasoning(
         self,
-        messages: List[Dict[str, str]],
+        messages: list[dict[str, str]],
         **kwargs,
-    ) -> AsyncIterator[Dict[str, Any]]:
+    ) -> AsyncIterator[dict[str, Any]]:
         """reasoning과 output을 분리하여 스트리밍
 
         이벤트 계약 (프론트엔드 SSE 소비자와 동일):
@@ -143,11 +144,11 @@ class OpenRouterClient:
             yield {"type": "error", "content": str(e)}
             yield {"type": "done", "content": ""}
 
-    def chat_sync(self, messages: List[Dict[str, str]], **kwargs) -> str:
+    def chat_sync(self, messages: list[dict[str, str]], **kwargs) -> str:
         """동기 채팅 (CLI용)"""
         return asyncio.run(self.chat(messages, **kwargs))
 
 
-def get_llm_client(model: Optional[str] = None, **kwargs) -> OpenRouterClient:
+def get_llm_client(model: str | None = None, **kwargs) -> OpenRouterClient:
     """LLM 클라이언트 팩토리 함수"""
     return OpenRouterClient(model=model, **kwargs)

@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from datetime import datetime
 
-from sqlalchemy import DateTime, ForeignKey, Integer, JSON, String, Text
+from sqlalchemy import JSON, DateTime, ForeignKey, Integer, String, Text
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -27,21 +27,15 @@ class SessionORM(Base):
 
     session_id: Mapped[str] = mapped_column(String(64), primary_key=True)
     saju_data: Mapped[dict] = mapped_column(JSONType, nullable=False)
-    interpretation_cache: Mapped[dict] = mapped_column(
-        JSONType, nullable=False, default=dict
-    )
+    interpretation_cache: Mapped[dict] = mapped_column(JSONType, nullable=False, default=dict)
     # 'metadata'는 Declarative에서 예약어이므로 속성명은 extra_metadata, 컬럼명은 metadata
-    extra_metadata: Mapped[dict] = mapped_column(
-        "metadata", JSONType, nullable=False, default=dict
-    )
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime, nullable=False, default=datetime.now
-    )
+    extra_metadata: Mapped[dict] = mapped_column("metadata", JSONType, nullable=False, default=dict)
+    created_at: Mapped[datetime] = mapped_column(DateTime, nullable=False, default=datetime.now)
     last_activity: Mapped[datetime] = mapped_column(
         DateTime, nullable=False, default=datetime.now, index=True
     )
 
-    messages: Mapped[list["MessageORM"]] = relationship(
+    messages: Mapped[list[MessageORM]] = relationship(
         back_populates="session",
         cascade="all, delete-orphan",
         order_by="MessageORM.seq",
@@ -64,11 +58,7 @@ class MessageORM(Base):
     seq: Mapped[int] = mapped_column(Integer, nullable=False)
     role: Mapped[str] = mapped_column(String(16), nullable=False)
     content: Mapped[str] = mapped_column(Text, nullable=False)
-    extra_metadata: Mapped[dict] = mapped_column(
-        "metadata", JSONType, nullable=False, default=dict
-    )
-    timestamp: Mapped[datetime] = mapped_column(
-        DateTime, nullable=False, default=datetime.now
-    )
+    extra_metadata: Mapped[dict] = mapped_column("metadata", JSONType, nullable=False, default=dict)
+    timestamp: Mapped[datetime] = mapped_column(DateTime, nullable=False, default=datetime.now)
 
-    session: Mapped["SessionORM"] = relationship(back_populates="messages")
+    session: Mapped[SessionORM] = relationship(back_populates="messages")

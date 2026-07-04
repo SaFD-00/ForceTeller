@@ -3,46 +3,39 @@
 용신, 운세, 유파 비교 분석 엔드포인트
 """
 
-from fastapi import APIRouter, HTTPException, Depends
-from typing import Any, Dict, List, Optional
+from fastapi import APIRouter, Depends, HTTPException
 
+from api.converters import EnumConverter, SajuDataConverter
+from api.dependencies import get_session_manager
+from api.formatters import (
+    FortuneFormatter,
+    SchoolComparisonFormatter,
+    SuggestedQuestionsGenerator,
+    YongsinFormatter,
+)
 from api.schemas import (
     AnalysisRequest,
     AnalysisResponse,
-    AnalysisTypesResponse,
     AnalysisType,
-    YongSinMethodType,
-    SchoolCodeType,
-    FortuneResult,
-    YongSinResultSchema,
-    SchoolInterpretationSchema,
-    SchoolComparisonSchema,
+    AnalysisTypesResponse,
     ErrorResponse,
+    FortuneResult,
+    SchoolCodeType,
+    SchoolComparisonSchema,
+    SchoolInterpretationSchema,
+    YongSinMethodType,
+    YongSinResultSchema,
 )
-from api.dependencies import get_session_manager
-from api.converters import SajuDataConverter, EnumConverter
-from api.formatters import (
-    FortuneFormatter,
-    YongsinFormatter,
-    SchoolComparisonFormatter,
-    SuggestedQuestionsGenerator,
-)
-from utils.protocols import SessionManagerProtocol
 from manseol.analysis import (
     # 운세 분석
-    FortuneAnalyzer,
-    FortuneType,
     analyze_fortune,
+    # 유파 비교
+    compare_schools,
     # 용신 분석
     select_yongsin,
     select_yongsin_auto,
-    YongSinMethod,
-    # 유파 비교
-    compare_schools,
-    SchoolCode,
-    SchoolComparator,
 )
-
+from utils.protocols import SessionManagerProtocol
 
 router = APIRouter(prefix="/api/analysis", tags=["analysis"])
 
@@ -57,10 +50,22 @@ FORTUNE_TYPE_INFO = {
 }
 
 YONGSIN_METHOD_INFO = {
-    YongSinMethodType.STRENGTH: {"name": "강약용신", "description": "일간의 강약을 기준으로 용신 선정"},
-    YongSinMethodType.SEASONAL: {"name": "조후용신", "description": "계절(월령)을 기준으로 용신 선정"},
-    YongSinMethodType.MEDIATION: {"name": "통관용신", "description": "오행 충돌을 중재하는 용신 선정"},
-    YongSinMethodType.DISEASE: {"name": "병약용신", "description": "사주의 병(病)을 치료하는 용신 선정"},
+    YongSinMethodType.STRENGTH: {
+        "name": "강약용신",
+        "description": "일간의 강약을 기준으로 용신 선정",
+    },
+    YongSinMethodType.SEASONAL: {
+        "name": "조후용신",
+        "description": "계절(월령)을 기준으로 용신 선정",
+    },
+    YongSinMethodType.MEDIATION: {
+        "name": "통관용신",
+        "description": "오행 충돌을 중재하는 용신 선정",
+    },
+    YongSinMethodType.DISEASE: {
+        "name": "병약용신",
+        "description": "사주의 병(病)을 치료하는 용신 선정",
+    },
 }
 
 SCHOOL_CODE_INFO = {
@@ -76,7 +81,7 @@ SCHOOL_CODE_INFO = {
     "/types",
     response_model=AnalysisTypesResponse,
     summary="분석 유형 목록",
-    description="사용 가능한 분석 유형들을 반환합니다."
+    description="사용 가능한 분석 유형들을 반환합니다.",
 )
 async def get_analysis_types() -> AnalysisTypesResponse:
     """분석 유형 목록 조회"""
@@ -91,15 +96,9 @@ async def get_analysis_types() -> AnalysisTypesResponse:
         ]
     ]
 
-    yongsin_methods = [
-        {"code": ym.value, **YONGSIN_METHOD_INFO[ym]}
-        for ym in YongSinMethodType
-    ]
+    yongsin_methods = [{"code": ym.value, **YONGSIN_METHOD_INFO[ym]} for ym in YongSinMethodType]
 
-    school_codes = [
-        {"code": sc.value, **SCHOOL_CODE_INFO[sc]}
-        for sc in SchoolCodeType
-    ]
+    school_codes = [{"code": sc.value, **SCHOOL_CODE_INFO[sc]} for sc in SchoolCodeType]
 
     return AnalysisTypesResponse(
         success=True,
@@ -115,14 +114,13 @@ async def get_analysis_types() -> AnalysisTypesResponse:
     responses={
         400: {"model": ErrorResponse},
         404: {"model": ErrorResponse},
-        500: {"model": ErrorResponse}
+        500: {"model": ErrorResponse},
     },
     summary="분석 요청",
-    description="사주 분석을 수행합니다."
+    description="사주 분석을 수행합니다.",
 )
 async def analyze(
-    request: AnalysisRequest,
-    sm: SessionManagerProtocol = Depends(get_session_manager)
+    request: AnalysisRequest, sm: SessionManagerProtocol = Depends(get_session_manager)
 ) -> AnalysisResponse:
     """
     분석 엔드포인트
@@ -138,15 +136,13 @@ async def analyze(
             session = await sm.get_session(request.session_id)
             if not session:
                 raise HTTPException(
-                    status_code=404,
-                    detail=f"세션 '{request.session_id}'을 찾을 수 없습니다."
+                    status_code=404, detail=f"세션 '{request.session_id}'을 찾을 수 없습니다."
                 )
         else:
             # 새 세션 생성
             if not request.saju_data:
                 raise HTTPException(
-                    status_code=400,
-                    detail="새 세션 생성시 saju_data가 필요합니다."
+                    status_code=400, detail="새 세션 생성시 saju_data가 필요합니다."
                 )
             session = await sm.create_session(request.saju_data)
 
@@ -170,8 +166,7 @@ async def analyze(
             fortune_type = EnumConverter.to_fortune_type(analysis_type)
             if fortune_type is None:
                 raise HTTPException(
-                    status_code=400,
-                    detail=f"지원하지 않는 운세 유형: {analysis_type}"
+                    status_code=400, detail=f"지원하지 않는 운세 유형: {analysis_type}"
                 )
             fortune_type_name = FORTUNE_TYPE_INFO[analysis_type]["name"]
 
@@ -197,7 +192,9 @@ async def analyze(
 
             yongsin_result_schema = YongSinResultSchema(
                 primary_yongsin=yongsin_analysis.primary_yongsin.value,
-                secondary_yongsin=yongsin_analysis.secondary_yongsin.value if yongsin_analysis.secondary_yongsin else None,
+                secondary_yongsin=yongsin_analysis.secondary_yongsin.value
+                if yongsin_analysis.secondary_yongsin
+                else None,
                 xi_sin=[e.value for e in yongsin_analysis.xi_sin],
                 ji_sin=[e.value for e in yongsin_analysis.ji_sin],
                 chou_sin=[e.value for e in yongsin_analysis.chou_sin],
@@ -220,8 +217,7 @@ async def analyze(
         elif analysis_type == AnalysisType.YONGSIN_METHOD:
             if not request.yongsin_method:
                 raise HTTPException(
-                    status_code=400,
-                    detail="용신 방법론(yongsin_method)을 지정해주세요."
+                    status_code=400, detail="용신 방법론(yongsin_method)을 지정해주세요."
                 )
 
             method = EnumConverter.yongsin_method_to_string(request.yongsin_method)
@@ -229,7 +225,9 @@ async def analyze(
 
             yongsin_result_schema = YongSinResultSchema(
                 primary_yongsin=yongsin_method_analysis.primary_yongsin.value,
-                secondary_yongsin=yongsin_method_analysis.secondary_yongsin.value if yongsin_method_analysis.secondary_yongsin else None,
+                secondary_yongsin=yongsin_method_analysis.secondary_yongsin.value
+                if yongsin_method_analysis.secondary_yongsin
+                else None,
                 xi_sin=[e.value for e in yongsin_method_analysis.xi_sin],
                 ji_sin=[e.value for e in yongsin_method_analysis.ji_sin],
                 chou_sin=[e.value for e in yongsin_method_analysis.chou_sin],
@@ -247,7 +245,9 @@ async def analyze(
             )
 
             method_name = YONGSIN_METHOD_INFO[request.yongsin_method]["name"]
-            message = f"## {method_name} 분석 결과\n\n" + YongsinFormatter.format(yongsin_method_analysis)
+            message = f"## {method_name} 분석 결과\n\n" + YongsinFormatter.format(
+                yongsin_method_analysis
+            )
 
         # 유파 비교
         elif analysis_type == AnalysisType.SCHOOL_COMPARE:
@@ -299,10 +299,7 @@ async def analyze(
             message = SchoolComparisonFormatter.format(school_analysis)
 
         else:
-            raise HTTPException(
-                status_code=400,
-                detail=f"지원하지 않는 분석 유형: {analysis_type}"
-            )
+            raise HTTPException(status_code=400, detail=f"지원하지 않는 분석 유형: {analysis_type}")
 
         # 추천 질문
         suggested_questions = SuggestedQuestionsGenerator.for_analysis_type(analysis_type)
@@ -329,5 +326,6 @@ async def analyze(
         raise
     except Exception as e:
         import traceback
+
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"분석 처리 중 오류: {str(e)}")

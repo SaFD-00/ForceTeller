@@ -5,17 +5,18 @@ Revises:
 Create Date: 2026-06-15
 
 """
-from typing import Sequence, Union
 
-from alembic import op
+from collections.abc import Sequence
+
 import sqlalchemy as sa
+from alembic import op
 from sqlalchemy.dialects.postgresql import JSONB
 
 # revision identifiers, used by Alembic.
 revision: str = "0001"
-down_revision: Union[str, None] = None
-branch_labels: Union[str, Sequence[str], None] = None
-depends_on: Union[str, Sequence[str], None] = None
+down_revision: str | None = None
+branch_labels: str | Sequence[str] | None = None
+depends_on: str | Sequence[str] | None = None
 
 # PostgreSQL은 JSONB, 그 외(SQLite)는 JSON
 JSONType = sa.JSON().with_variant(JSONB(), "postgresql")
@@ -32,9 +33,7 @@ def upgrade() -> None:
         sa.Column("last_activity", sa.DateTime(), nullable=False),
         sa.PrimaryKeyConstraint("session_id"),
     )
-    op.create_index(
-        "ix_sessions_last_activity", "sessions", ["last_activity"], unique=False
-    )
+    op.create_index("ix_sessions_last_activity", "sessions", ["last_activity"], unique=False)
 
     op.create_table(
         "messages",
@@ -45,14 +44,10 @@ def upgrade() -> None:
         sa.Column("content", sa.Text(), nullable=False),
         sa.Column("metadata", JSONType, nullable=False),
         sa.Column("timestamp", sa.DateTime(), nullable=False),
-        sa.ForeignKeyConstraint(
-            ["session_id"], ["sessions.session_id"], ondelete="CASCADE"
-        ),
+        sa.ForeignKeyConstraint(["session_id"], ["sessions.session_id"], ondelete="CASCADE"),
         sa.PrimaryKeyConstraint("id"),
     )
-    op.create_index(
-        "ix_messages_session_id", "messages", ["session_id"], unique=False
-    )
+    op.create_index("ix_messages_session_id", "messages", ["session_id"], unique=False)
 
 
 def downgrade() -> None:

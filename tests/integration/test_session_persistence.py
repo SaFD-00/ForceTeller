@@ -7,8 +7,8 @@ AC5: TTL 초과 세션은 조회 시 None을 반환하고 정리된다.
 
 import pytest
 
-from db.base import configure_engine, dispose_engine, init_models
 from conversation.db_session_manager import DBSessionManager
+from db.base import configure_engine, dispose_engine, init_models
 
 
 @pytest.mark.integration

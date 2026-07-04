@@ -10,9 +10,9 @@ from datetime import date, time
 
 import pytest
 
-from manseol.models.input_model import SajuInput, CalendarType, Gender
-from manseol.output.json_exporter import JsonExporter
 from api.converters import enrich_with_analysis
+from manseol.models.input_model import CalendarType, Gender, SajuInput
+from manseol.output.json_exporter import JsonExporter
 
 
 def _result(**kwargs):
@@ -50,8 +50,17 @@ class TestInteractionsWiring:
     """합·충·형·파·해·공망 상호작용 노출 검증"""
 
     EXPECTED_KEYS = {
-        "천간합", "천간충극", "지지육합", "지지삼합", "지지방합",
-        "지지반합", "지지충", "지지형", "지지파", "지지해", "공망",
+        "천간합",
+        "천간충극",
+        "지지육합",
+        "지지삼합",
+        "지지방합",
+        "지지반합",
+        "지지충",
+        "지지형",
+        "지지파",
+        "지지해",
+        "공망",
     }
 
     def test_interactions_present_with_all_categories(self):

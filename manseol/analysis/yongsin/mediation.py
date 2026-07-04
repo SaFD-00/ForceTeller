@@ -4,24 +4,23 @@
 Reference: fortuneteller/src/lib/yongsin/mediation_algorithm.ts
 """
 
-from typing import Dict, Any, Optional, List, Tuple
-from .base import (
-    YongSinAlgorithm,
-    YongSinResult,
-    YongSinRecommendations,
-    YongSinMethod,
-    WuXing,
-    DayMasterStrength,
-    get_wuxing_attributes,
-    str_to_wuxing,
-    get_day_master_strength_from_score,
-    KE_MAP,
-)
+from typing import Any
 
+from .base import (
+    KE_MAP,
+    DayMasterStrength,
+    WuXing,
+    YongSinAlgorithm,
+    YongSinMethod,
+    YongSinRecommendations,
+    YongSinResult,
+    get_day_master_strength_from_score,
+    get_wuxing_attributes,
+)
 
 # 상극 관계에서 통관 역할을 하는 오행
 # A극B 관계에서 통관용신은 A가 생하고 B를 생하는 오행
-MEDIATION_MAP: Dict[Tuple[WuXing, WuXing], WuXing] = {
+MEDIATION_MAP: dict[tuple[WuXing, WuXing], WuXing] = {
     # 목극토 -> 화가 통관 (목생화, 화생토)
     (WuXing.WOOD, WuXing.EARTH): WuXing.FIRE,
     # 화극금 -> 토가 통관 (화생토, 토생금)
@@ -53,7 +52,7 @@ class MediationYongSinAlgorithm(YongSinAlgorithm):
     def description(self) -> str:
         return "사주 내 충돌하는 오행 사이를 중재하여 조화를 이루는 오행을 선정합니다."
 
-    def select(self, saju_data: Dict[str, Any]) -> YongSinResult:
+    def select(self, saju_data: dict[str, Any]) -> YongSinResult:
         """용신 선정"""
         # 오행 분포 확인
         wuxing_count = self._get_wuxing_count(saju_data)
@@ -74,16 +73,13 @@ class MediationYongSinAlgorithm(YongSinAlgorithm):
 
             if primary_yongsin:
                 return self._create_mediation_result(
-                    primary_yongsin,
-                    conflict,
-                    wuxing_count,
-                    strength
+                    primary_yongsin, conflict, wuxing_count, strength
                 )
 
         # 충돌이 없으면 가장 약한 오행 보강 (강약용신 방식)
         return self._fallback_to_weakest(wuxing_count, strength)
 
-    def calculate_applicability(self, saju_data: Dict[str, Any]) -> float:
+    def calculate_applicability(self, saju_data: dict[str, Any]) -> float:
         """
         통관용신의 적용 적합도 계산
         상극 관계가 있을수록 적합도 높음
@@ -107,7 +103,7 @@ class MediationYongSinAlgorithm(YongSinAlgorithm):
 
         return min(1.0, applicability)
 
-    def _get_wuxing_count(self, saju_data: Dict[str, Any]) -> Dict[str, int]:
+    def _get_wuxing_count(self, saju_data: dict[str, Any]) -> dict[str, int]:
         """오행 개수 추출"""
         five_elements = saju_data.get("five_elements_analysis", {})
         distribution = five_elements.get("distribution", {})
@@ -119,7 +115,7 @@ class MediationYongSinAlgorithm(YongSinAlgorithm):
 
         return result
 
-    def _find_strong_elements(self, wuxing_count: Dict[str, int]) -> List[WuXing]:
+    def _find_strong_elements(self, wuxing_count: dict[str, int]) -> list[WuXing]:
         """강한 오행 찾기 (평균 이상)"""
         total = sum(wuxing_count.values())
         avg = total / 5 if total > 0 else 1.6
@@ -132,7 +128,7 @@ class MediationYongSinAlgorithm(YongSinAlgorithm):
 
         return strong
 
-    def _find_conflicts(self, strong_elements: List[WuXing]) -> List[Tuple[WuXing, WuXing]]:
+    def _find_conflicts(self, strong_elements: list[WuXing]) -> list[tuple[WuXing, WuXing]]:
         """상극 관계 찾기"""
         conflicts = []
 
@@ -143,7 +139,7 @@ class MediationYongSinAlgorithm(YongSinAlgorithm):
 
         return conflicts
 
-    def _get_day_master_strength(self, saju_data: Dict[str, Any]) -> DayMasterStrength:
+    def _get_day_master_strength(self, saju_data: dict[str, Any]) -> DayMasterStrength:
         """일간 강약 추출"""
         strength_info = saju_data.get("strength_analysis", {})
         score = strength_info.get("score", 50)
@@ -152,9 +148,9 @@ class MediationYongSinAlgorithm(YongSinAlgorithm):
     def _create_mediation_result(
         self,
         primary_yongsin: WuXing,
-        conflict: Tuple[WuXing, WuXing],
-        wuxing_count: Dict[str, int],
-        strength: DayMasterStrength
+        conflict: tuple[WuXing, WuXing],
+        wuxing_count: dict[str, int],
+        strength: DayMasterStrength,
     ) -> YongSinResult:
         """통관용신 결과 생성"""
         attacker, victim = conflict
@@ -194,13 +190,11 @@ class MediationYongSinAlgorithm(YongSinAlgorithm):
         )
 
     def _fallback_to_weakest(
-        self,
-        wuxing_count: Dict[str, int],
-        strength: DayMasterStrength
+        self, wuxing_count: dict[str, int], strength: DayMasterStrength
     ) -> YongSinResult:
         """충돌이 없을 때 가장 약한 오행 보강"""
         min_element = WuXing.WOOD
-        min_count = float('inf')
+        min_count = float("inf")
 
         for element in WuXing:
             count = wuxing_count.get(element.value, 0)
@@ -231,10 +225,7 @@ class MediationYongSinAlgorithm(YongSinAlgorithm):
         )
 
     def _generate_recommendations(
-        self,
-        primary: WuXing,
-        secondary: Optional[WuXing],
-        ji_sin: List[WuXing]
+        self, primary: WuXing, secondary: WuXing | None, ji_sin: list[WuXing]
     ) -> YongSinRecommendations:
         """용신 기반 추천 정보 생성"""
         primary_attrs = get_wuxing_attributes(primary)

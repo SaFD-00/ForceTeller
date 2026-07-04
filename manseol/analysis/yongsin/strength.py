@@ -4,21 +4,22 @@
 Reference: fortuneteller/src/lib/yongsin/strength_algorithm.ts
 """
 
-from typing import Dict, Any, List
+from typing import Any
+
 from .base import (
-    YongSinAlgorithm,
-    YongSinResult,
-    YongSinRecommendations,
-    YongSinMethod,
-    WuXing,
     DayMasterStrength,
-    get_sheng_element,
-    get_sheng_me_element,
+    WuXing,
+    YongSinAlgorithm,
+    YongSinMethod,
+    YongSinRecommendations,
+    YongSinResult,
+    get_day_master_strength_from_score,
     get_ke_element,
     get_ke_me_element,
+    get_sheng_element,
+    get_sheng_me_element,
     get_wuxing_attributes,
     str_to_wuxing,
-    get_day_master_strength_from_score,
 )
 
 
@@ -43,7 +44,7 @@ class StrengthYongSinAlgorithm(YongSinAlgorithm):
     def description(self) -> str:
         return "일간의 강약을 기준으로 부족한 기운을 보충하거나 과한 기운을 억제하는 오행을 선정합니다."
 
-    def select(self, saju_data: Dict[str, Any]) -> YongSinResult:
+    def select(self, saju_data: dict[str, Any]) -> YongSinResult:
         """용신 선정"""
         # 일간 오행 추출
         day_stem_element_str = self._get_day_stem_element(saju_data)
@@ -69,7 +70,7 @@ class StrengthYongSinAlgorithm(YongSinAlgorithm):
 
         return result
 
-    def calculate_applicability(self, saju_data: Dict[str, Any]) -> float:
+    def calculate_applicability(self, saju_data: dict[str, Any]) -> float:
         """
         강약용신의 적용 적합도 계산
         일간 강약이 명확할수록 적합도 높음
@@ -84,7 +85,7 @@ class StrengthYongSinAlgorithm(YongSinAlgorithm):
         applicability = 0.5 + (distance_from_medium / 100)
         return min(1.0, applicability)
 
-    def _get_day_stem_element(self, saju_data: Dict[str, Any]) -> str:
+    def _get_day_stem_element(self, saju_data: dict[str, Any]) -> str:
         """일간 오행 추출"""
         # saju_data 구조에 따라 접근 방식 조정
         day_master = saju_data.get("day_master_analysis", {})
@@ -113,9 +114,7 @@ class StrengthYongSinAlgorithm(YongSinAlgorithm):
         return get_day_master_strength_from_score(score)
 
     def _select_for_strong_day_master(
-        self,
-        day_stem_element: WuXing,
-        strength: DayMasterStrength
+        self, day_stem_element: WuXing, strength: DayMasterStrength
     ) -> YongSinResult:
         """강한 일간을 위한 용신 선정"""
         # 식상으로 설기 (일간이 생하는 오행)
@@ -155,9 +154,7 @@ class StrengthYongSinAlgorithm(YongSinAlgorithm):
         )
 
     def _select_for_weak_day_master(
-        self,
-        day_stem_element: WuXing,
-        strength: DayMasterStrength
+        self, day_stem_element: WuXing, strength: DayMasterStrength
     ) -> YongSinResult:
         """약한 일간을 위한 용신 선정"""
         # 인성으로 생기 (나를 생하는 오행)
@@ -197,9 +194,7 @@ class StrengthYongSinAlgorithm(YongSinAlgorithm):
         )
 
     def _select_for_medium_day_master(
-        self,
-        saju_data: Dict[str, Any],
-        day_stem_element: WuXing
+        self, saju_data: dict[str, Any], day_stem_element: WuXing
     ) -> YongSinResult:
         """중화 일간을 위한 용신 선정 (가장 약한 오행 보강)"""
         wuxing_count = self._get_wuxing_count(saju_data)
@@ -232,7 +227,7 @@ class StrengthYongSinAlgorithm(YongSinAlgorithm):
             recommendations=recommendations,
         )
 
-    def _get_wuxing_count(self, saju_data: Dict[str, Any]) -> Dict[str, int]:
+    def _get_wuxing_count(self, saju_data: dict[str, Any]) -> dict[str, int]:
         """오행 개수 추출"""
         five_elements = saju_data.get("five_elements_analysis", {})
         distribution = five_elements.get("distribution", {})
@@ -244,10 +239,10 @@ class StrengthYongSinAlgorithm(YongSinAlgorithm):
 
         return result
 
-    def _find_weakest(self, wuxing_count: Dict[str, int]) -> WuXing:
+    def _find_weakest(self, wuxing_count: dict[str, int]) -> WuXing:
         """가장 약한 오행 찾기"""
         min_element = WuXing.WOOD
-        min_count = float('inf')
+        min_count = float("inf")
 
         for element in WuXing:
             count = wuxing_count.get(element.value, 0)
@@ -258,10 +253,7 @@ class StrengthYongSinAlgorithm(YongSinAlgorithm):
         return min_element
 
     def _generate_recommendations(
-        self,
-        primary: WuXing,
-        secondary: WuXing,
-        ji_sin: List[WuXing]
+        self, primary: WuXing, secondary: WuXing, ji_sin: list[WuXing]
     ) -> YongSinRecommendations:
         """용신 기반 추천 정보 생성"""
         primary_attrs = get_wuxing_attributes(primary)

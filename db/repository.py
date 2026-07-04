@@ -11,10 +11,9 @@ from __future__ import annotations
 
 import uuid
 from datetime import datetime, timedelta
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from sqlalchemy import delete, func, select, update
-
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from conversation.session_manager import Message, Session
@@ -67,7 +66,7 @@ class SessionRepository:
     # CRUD
     # ------------------------------------------------------------------ #
     async def create(
-        self, saju_data: Dict[str, Any], metadata: Optional[Dict[str, Any]] = None
+        self, saju_data: dict[str, Any], metadata: dict[str, Any] | None = None
     ) -> Session:
         """새 세션 생성 (즉시 INSERT)."""
         session = Session(
@@ -88,9 +87,7 @@ class SessionRepository:
         await self.db.commit()
         return session
 
-    async def get(
-        self, session_id: str, ttl_hours: float, touch: bool = True
-    ) -> Optional[Session]:
+    async def get(self, session_id: str, ttl_hours: float, touch: bool = True) -> Session | None:
         """세션 조회. 만료 시 삭제 후 None. touch=True면 last_activity 갱신."""
         row = await self.db.get(SessionORM, session_id)
         if row is None:
@@ -112,9 +109,7 @@ class SessionRepository:
     async def save(self, session: Session) -> None:
         """세션 전체 상태를 영속 (메시지는 전량 교체)."""
         exists = await self.db.scalar(
-            select(SessionORM.session_id).where(
-                SessionORM.session_id == session.session_id
-            )
+            select(SessionORM.session_id).where(SessionORM.session_id == session.session_id)
         )
         if exists is None:
             self.db.add(
@@ -140,9 +135,7 @@ class SessionRepository:
             )
 
         # 메시지 전량 교체 (세션당 소량이라 단순·정확; 최적화는 후속)
-        await self.db.execute(
-            delete(MessageORM).where(MessageORM.session_id == session.session_id)
-        )
+        await self.db.execute(delete(MessageORM).where(MessageORM.session_id == session.session_id))
         self.db.add_all(
             [
                 MessageORM(
@@ -160,16 +153,14 @@ class SessionRepository:
 
     async def delete(self, session_id: str) -> bool:
         """세션 삭제 (메시지 동반 삭제)."""
-        await self.db.execute(
-            delete(MessageORM).where(MessageORM.session_id == session_id)
-        )
+        await self.db.execute(delete(MessageORM).where(MessageORM.session_id == session_id))
         result = await self.db.execute(
             delete(SessionORM).where(SessionORM.session_id == session_id)
         )
         await self.db.commit()
         return (result.rowcount or 0) > 0
 
-    async def list_active(self, ttl_hours: float) -> List[Dict[str, Any]]:
+    async def list_active(self, ttl_hours: float) -> list[dict[str, Any]]:
         """만료되지 않은 세션 목록 (메시지 수·이름 포함)."""
         cutoff = datetime.now() - timedelta(hours=ttl_hours)
         rows = (
@@ -186,9 +177,7 @@ class SessionRepository:
         counts = dict(
             (
                 await self.db.execute(
-                    select(MessageORM.session_id, func.count()).group_by(
-                        MessageORM.session_id
-                    )
+                    select(MessageORM.session_id, func.count()).group_by(MessageORM.session_id)
                 )
             ).all()
         )
@@ -219,14 +208,10 @@ class SessionRepository:
         """만료 세션 삭제 + 최대 세션 수 초과 시 오래된 것부터 정리."""
         cutoff = datetime.now() - timedelta(hours=ttl_hours)
         # 만료 세션 (메시지는 FK CASCADE로 동반 삭제)
-        await self.db.execute(
-            delete(SessionORM).where(SessionORM.last_activity < cutoff)
-        )
+        await self.db.execute(delete(SessionORM).where(SessionORM.last_activity < cutoff))
         await self.db.commit()
 
-        total = int(
-            await self.db.scalar(select(func.count()).select_from(SessionORM)) or 0
-        )
+        total = int(await self.db.scalar(select(func.count()).select_from(SessionORM)) or 0)
         if total >= max_sessions:
             keep = int(max_sessions * 0.8)
             to_remove = total - keep
@@ -244,8 +229,6 @@ class SessionRepository:
                 )
                 if old_ids:
                     await self.db.execute(
-                        delete(SessionORM).where(
-                            SessionORM.session_id.in_(old_ids)
-                        )
+                        delete(SessionORM).where(SessionORM.session_id.in_(old_ids))
                     )
                     await self.db.commit()

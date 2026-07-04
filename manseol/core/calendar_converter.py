@@ -3,15 +3,18 @@
 내장 음력 데이터 우선 사용, korean_lunar_calendar 라이브러리를 fallback으로 활용
 """
 
-from datetime import date, datetime
-from typing import Tuple, Optional
+from datetime import date
 
 from korean_lunar_calendar import KoreanLunarCalendar
 
 from manseol.data.lunar_data import (
-    lunar_to_solar as builtin_lunar_to_solar,
-    solar_to_lunar as builtin_solar_to_lunar,
     is_supported_date,
+)
+from manseol.data.lunar_data import (
+    lunar_to_solar as builtin_lunar_to_solar,
+)
+from manseol.data.lunar_data import (
+    solar_to_lunar as builtin_solar_to_lunar,
 )
 
 
@@ -21,13 +24,7 @@ class CalendarConverter:
     def __init__(self):
         self.calendar = KoreanLunarCalendar()
 
-    def lunar_to_solar(
-        self,
-        year: int,
-        month: int,
-        day: int,
-        is_leap_month: bool = False
-    ) -> date:
+    def lunar_to_solar(self, year: int, month: int, day: int, is_leap_month: bool = False) -> date:
         """
         음력 → 양력 변환
 
@@ -52,18 +49,9 @@ class CalendarConverter:
 
         # fallback: korean_lunar_calendar 라이브러리
         self.calendar.setLunarDate(year, month, day, is_leap_month)
-        return date(
-            self.calendar.solarYear,
-            self.calendar.solarMonth,
-            self.calendar.solarDay
-        )
+        return date(self.calendar.solarYear, self.calendar.solarMonth, self.calendar.solarDay)
 
-    def solar_to_lunar(
-        self,
-        year: int,
-        month: int,
-        day: int
-    ) -> Tuple[int, int, int, bool]:
+    def solar_to_lunar(self, year: int, month: int, day: int) -> tuple[int, int, int, bool]:
         """
         양력 → 음력 변환
 
@@ -91,13 +79,10 @@ class CalendarConverter:
             self.calendar.lunarYear,
             self.calendar.lunarMonth,
             self.calendar.lunarDay,
-            self.calendar.isIntercalation
+            self.calendar.isIntercalation,
         )
 
-    def get_lunar_date_info(
-        self,
-        solar_date: date
-    ) -> dict:
+    def get_lunar_date_info(self, solar_date: date) -> dict:
         """
         양력 날짜의 음력 정보 상세 반환
 
@@ -107,11 +92,7 @@ class CalendarConverter:
         Returns:
             음력 정보 딕셔너리
         """
-        self.calendar.setSolarDate(
-            solar_date.year,
-            solar_date.month,
-            solar_date.day
-        )
+        self.calendar.setSolarDate(solar_date.year, solar_date.month, solar_date.day)
 
         return {
             "lunar_year": self.calendar.lunarYear,
@@ -122,10 +103,7 @@ class CalendarConverter:
             "chinese_gapja_year": self.calendar.getChineseGapJaString(),
         }
 
-    def get_gapja_string(
-        self,
-        solar_date: date
-    ) -> Tuple[str, str]:
+    def get_gapja_string(self, solar_date: date) -> tuple[str, str]:
         """
         날짜의 간지 문자열 반환
 
@@ -135,21 +113,10 @@ class CalendarConverter:
         Returns:
             (한글 간지, 한자 간지)
         """
-        self.calendar.setSolarDate(
-            solar_date.year,
-            solar_date.month,
-            solar_date.day
-        )
-        return (
-            self.calendar.getGapJaString(),
-            self.calendar.getChineseGapJaString()
-        )
+        self.calendar.setSolarDate(solar_date.year, solar_date.month, solar_date.day)
+        return (self.calendar.getGapJaString(), self.calendar.getChineseGapJaString())
 
-    def is_leap_month(
-        self,
-        lunar_year: int,
-        lunar_month: int
-    ) -> bool:
+    def is_leap_month(self, lunar_year: int, lunar_month: int) -> bool:
         """
         해당 음력 연월에 윤달이 있는지 확인
 
@@ -169,22 +136,13 @@ class CalendarConverter:
             return False
 
 
-def lunar_to_solar(
-    year: int,
-    month: int,
-    day: int,
-    is_leap_month: bool = False
-) -> date:
+def lunar_to_solar(year: int, month: int, day: int, is_leap_month: bool = False) -> date:
     """편의 함수: 음력 → 양력"""
     converter = CalendarConverter()
     return converter.lunar_to_solar(year, month, day, is_leap_month)
 
 
-def solar_to_lunar(
-    year: int,
-    month: int,
-    day: int
-) -> Tuple[int, int, int, bool]:
+def solar_to_lunar(year: int, month: int, day: int) -> tuple[int, int, int, bool]:
     """편의 함수: 양력 → 음력"""
     converter = CalendarConverter()
     return converter.solar_to_lunar(year, month, day)

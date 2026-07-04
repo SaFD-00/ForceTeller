@@ -3,7 +3,7 @@
 사주팔자 산출을 위한 천문/역학 계산 모듈
 """
 
-from .models.input_model import SajuInput, CalendarType, Gender
+from .models.input_model import CalendarType, Gender, SajuInput
 from .models.saju_result import SajuResult
 from .output.json_exporter import JsonExporter
 
