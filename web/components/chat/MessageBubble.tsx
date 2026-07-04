@@ -35,7 +35,7 @@ export function MessageBubble({ message, onSuggestedQuestionClick }: MessageBubb
           'w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0',
           isUser
             ? 'bg-primary/20'
-            : 'bg-gradient-to-br from-purple-500/30 to-blue-500/30'
+            : 'bg-gradient-to-br from-accent/25 to-info/25'
         )}
       >
         <Icon
@@ -77,7 +77,7 @@ export function MessageBubble({ message, onSuggestedQuestionClick }: MessageBubb
           <MarkdownRenderer content={message.content} />
         )}
         {message.timestamp && (
-          <p className="text-xs text-gray-400 mt-2">
+          <p className="text-xs text-muted-foreground mt-2">
             {new Date(message.timestamp).toLocaleTimeString('ko-KR', {
               hour: '2-digit',
               minute: '2-digit',

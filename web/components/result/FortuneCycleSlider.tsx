@@ -116,21 +116,21 @@ function entryToItem(entry: CurrentFortuneEntry, isCurrent: boolean): FortuneCyc
   };
 }
 
-// 오행별 배경색
+// 오행별 배경색 (element-* 토큰과 정렬)
 const ELEMENT_BG: Record<Element, string> = {
-  '목': 'bg-green-600/80',
-  '화': 'bg-red-500/80',
-  '토': 'bg-yellow-600/80',
-  '금': 'bg-gray-400/80',
-  '수': 'bg-blue-500/80',
+  '목': 'bg-element-wood/80',
+  '화': 'bg-element-fire/80',
+  '토': 'bg-element-earth/80',
+  '금': 'bg-element-metal/80',
+  '수': 'bg-element-water/80',
 };
 
 const ELEMENT_BG_LIGHT: Record<Element, string> = {
-  '목': 'bg-green-200/60',
-  '화': 'bg-red-200/60',
-  '토': 'bg-yellow-200/60',
-  '금': 'bg-gray-200/60',
-  '수': 'bg-blue-200/60',
+  '목': 'bg-element-wood/20',
+  '화': 'bg-element-fire/20',
+  '토': 'bg-element-earth/20',
+  '금': 'bg-element-metal/20',
+  '수': 'bg-element-water/20',
 };
 
 // 개별 섹션 컴포넌트
@@ -184,7 +184,7 @@ function FortuneSection({
       </div>
 
       {comment && (
-        <p className="text-gray-600 text-sm mb-3 bg-muted rounded-lg px-3 py-2">
+        <p className="text-muted-foreground text-sm mb-3 bg-muted rounded-lg px-3 py-2">
           💫 {comment}
         </p>
       )}
@@ -193,14 +193,14 @@ function FortuneSection({
         <div className="relative">
           <button
             onClick={scrollLeft}
-            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-black/50 hover:bg-black/70 p-1.5 rounded-full text-gray-600 hover:text-foreground transition-colors hidden md:block"
+            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-primary/80 hover:bg-primary p-1.5 rounded-full text-primary-foreground transition-colors hidden md:block"
           >
             <Icon name="solar:alt-arrow-left-bold" size={16} />
           </button>
 
           <button
             onClick={scrollRight}
-            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-black/50 hover:bg-black/70 p-1.5 rounded-full text-gray-600 hover:text-foreground transition-colors hidden md:block"
+            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-primary/80 hover:bg-primary p-1.5 rounded-full text-primary-foreground transition-colors hidden md:block"
           >
             <Icon name="solar:alt-arrow-right-bold" size={16} />
           </button>
@@ -237,7 +237,7 @@ function FortuneSection({
                   <span className="text-base font-bold text-foreground">
                     {item.heavenly_stem.korean}
                   </span>
-                  <span className="text-xs text-gray-600 ml-0.5">
+                  <span className="text-xs text-muted-foreground ml-0.5">
                     {item.heavenly_stem.hanja}
                   </span>
                 </div>
@@ -246,10 +246,10 @@ function FortuneSection({
                 <div
                   className={`${ELEMENT_BG_LIGHT[item.earthly_branch.element]} rounded-md p-1.5`}
                 >
-                  <span className="text-base font-bold text-gray-800">
+                  <span className="text-base font-bold text-foreground">
                     {item.earthly_branch.korean}
                   </span>
-                  <span className="text-xs text-gray-600 ml-0.5">
+                  <span className="text-xs text-muted-foreground ml-0.5">
                     {item.earthly_branch.hanja}
                   </span>
                 </div>
@@ -263,7 +263,7 @@ function FortuneSection({
 
                 {/* 12운성 */}
                 {item.twelve_phase && item.twelve_phase !== '-' && (
-                  <div className="text-gray-400 text-xs">
+                  <div className="text-muted-foreground text-xs">
                     {item.twelve_phase}
                   </div>
                 )}

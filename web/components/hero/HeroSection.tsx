@@ -18,7 +18,7 @@ export function HeroSection() {
           <span className="text-xs font-medium">AI 기반 사주명리 분석</span>
         </div>
 
-        <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground mb-3">
+        <h1 className="font-display text-4xl md:text-5xl tracking-tight text-foreground mb-3">
           사주, <span className="gradient-text">손쉽게 풀이.</span>
         </h1>
         <p className="text-muted-foreground text-base md:text-lg max-w-xl mx-auto">

@@ -112,33 +112,33 @@ export function StrengthDistributionChart({
             <div className="flex items-center gap-1.5">
               <span className="text-sm text-muted-foreground">득령</span>
               {deukryeong ? (
-                <Icon name="solar:check-circle-bold" size={18} className="text-cyan-400" />
+                <Icon name="solar:check-circle-bold" size={18} className="text-info" />
               ) : (
-                <Icon name="solar:close-circle-bold" size={18} className="text-red-400" />
+                <Icon name="solar:close-circle-bold" size={18} className="text-danger" />
               )}
             </div>
             <div className="flex items-center gap-1.5">
               <span className="text-sm text-muted-foreground">득지</span>
               {deukji ? (
-                <Icon name="solar:check-circle-bold" size={18} className="text-cyan-400" />
+                <Icon name="solar:check-circle-bold" size={18} className="text-info" />
               ) : (
-                <Icon name="solar:close-circle-bold" size={18} className="text-red-400" />
+                <Icon name="solar:close-circle-bold" size={18} className="text-danger" />
               )}
             </div>
             <div className="flex items-center gap-1.5">
               <span className="text-sm text-muted-foreground">득시</span>
               {deuksi ? (
-                <Icon name="solar:check-circle-bold" size={18} className="text-cyan-400" />
+                <Icon name="solar:check-circle-bold" size={18} className="text-info" />
               ) : (
-                <Icon name="solar:close-circle-bold" size={18} className="text-red-400" />
+                <Icon name="solar:close-circle-bold" size={18} className="text-danger" />
               )}
             </div>
             <div className="flex items-center gap-1.5">
               <span className="text-sm text-muted-foreground">득세</span>
               {deukse ? (
-                <Icon name="solar:check-circle-bold" size={18} className="text-cyan-400" />
+                <Icon name="solar:check-circle-bold" size={18} className="text-info" />
               ) : (
-                <Icon name="solar:close-circle-bold" size={18} className="text-red-400" />
+                <Icon name="solar:close-circle-bold" size={18} className="text-danger" />
               )}
             </div>
           </div>
@@ -218,7 +218,7 @@ export function StrengthDistributionChart({
         </div>
 
         {/* Y축 레이블 */}
-        <div className="flex justify-between text-xs text-gray-400 mt-2 px-2">
+        <div className="flex justify-between text-xs text-muted-foreground mt-2 px-2">
           <span>0%</span>
           <span>25</span>
           <span></span>

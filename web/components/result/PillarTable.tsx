@@ -94,7 +94,7 @@ export function PillarTable({
               {columns.map((col) => (
                 <th
                   key={col.key}
-                  className="text-center text-gray-600 text-sm font-medium py-2 px-2 border-b border-border"
+                  className="text-center text-muted-foreground text-sm font-medium py-2 px-2 border-b border-border"
                 >
                   <span className="underline decoration-white/30">{col.label}</span>
                 </th>
@@ -211,7 +211,7 @@ export function PillarTable({
                   const pillar = getPillar(col.key);
                   return (
                     <td key={col.key} className="text-center py-2 px-2">
-                      <span className="text-xs text-gray-600">
+                      <span className="text-xs text-muted-foreground">
                         {pillar.twelve_phase || '-'}
                       </span>
                     </td>

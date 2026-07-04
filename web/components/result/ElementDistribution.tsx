@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { GlassCard, Icon, GlossaryModal } from '@/components/ui';
 import { getGlossaryEntry, type GlossaryEntry } from '@/data/saju-glossary';
+import { ELEMENT_COLORS } from '@/lib/constants/elements';
 import type { Element } from '@/types/saju';
 
 interface ElementDistributionProps {
@@ -12,13 +13,13 @@ interface ElementDistributionProps {
   dominant: Element | null;
 }
 
-// 오행별 정보
+// 오행별 정보 (색상은 element-* 토큰 = 시맨틱 팔레트와 정렬)
 const ELEMENT_INFO: Record<Element, { hanja: string; color: string; bg: string }> = {
-  '목': { hanja: '木', color: 'bg-green-600', bg: 'bg-green-600/20' },
-  '화': { hanja: '火', color: 'bg-red-500', bg: 'bg-red-500/20' },
-  '토': { hanja: '土', color: 'bg-yellow-500', bg: 'bg-yellow-500/20' },
-  '금': { hanja: '金', color: 'bg-gray-400', bg: 'bg-gray-400/20' },
-  '수': { hanja: '水', color: 'bg-blue-500', bg: 'bg-blue-500/20' },
+  '목': { hanja: '木', color: 'bg-element-wood', bg: 'bg-element-wood/20' },
+  '화': { hanja: '火', color: 'bg-element-fire', bg: 'bg-element-fire/20' },
+  '토': { hanja: '土', color: 'bg-element-earth', bg: 'bg-element-earth/20' },
+  '금': { hanja: '金', color: 'bg-element-metal', bg: 'bg-element-metal/20' },
+  '수': { hanja: '水', color: 'bg-element-water', bg: 'bg-element-water/20' },
 };
 
 // 십성별 오행 매핑
@@ -93,8 +94,8 @@ export function ElementDistribution({ distribution, tenGods, dominant }: Element
   };
 
   const getStatus = (element: Element, percentage: number) => {
-    if (percentage === 0) return { label: '부족', color: 'text-red-400' };
-    if (percentage >= 30) return { label: '발달', color: 'text-green-400' };
+    if (percentage === 0) return { label: '부족', color: 'text-danger' };
+    if (percentage >= 30) return { label: '발달', color: 'text-success' };
     return { label: '', color: '' };
   };
 
@@ -115,7 +116,7 @@ export function ElementDistribution({ distribution, tenGods, dominant }: Element
               setIsModalOpen(true);
             }
           }}
-          className="text-xl font-bold text-foreground underline decoration-white/30 hover:decoration-primary transition-colors"
+          className="text-xl font-bold text-foreground underline decoration-border hover:decoration-primary transition-colors"
         >
           오행 / 십성 분포
         </button>
@@ -167,7 +168,7 @@ export function ElementDistribution({ distribution, tenGods, dominant }: Element
                             onClick={() => handleClick(pair.yin)}
                             className="flex justify-between text-sm cursor-pointer hover:bg-muted rounded px-1 -mx-1 transition-colors"
                           >
-                            <span className="text-gray-600">
+                            <span className="text-muted-foreground">
                               {pair.yin}({pair.hanja.yin})
                             </span>
                             <span className="text-muted-foreground">
@@ -188,7 +189,7 @@ export function ElementDistribution({ distribution, tenGods, dominant }: Element
                             onClick={() => handleClick(pair.yang)}
                             className="flex justify-between text-sm border-t border-border pt-1 cursor-pointer hover:bg-muted rounded px-1 -mx-1 transition-colors"
                           >
-                            <span className="text-gray-600">
+                            <span className="text-muted-foreground">
                               {pair.yang}({pair.hanja.yang})
                             </span>
                             <span className="text-muted-foreground">
@@ -236,13 +237,7 @@ export function ElementDistribution({ distribution, tenGods, dominant }: Element
                           cy="50"
                           r={radius}
                           fill="none"
-                          stroke={
-                            element === '목' ? '#22c55e' :
-                            element === '화' ? '#ef4444' :
-                            element === '토' ? '#eab308' :
-                            element === '금' ? '#9ca3af' :
-                            '#3b82f6'
-                          }
+                          stroke={ELEMENT_COLORS[element].hex}
                           strokeWidth="12"
                           strokeDasharray={dashArray}
                           strokeDashoffset={dashOffset}

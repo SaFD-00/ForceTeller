@@ -52,7 +52,7 @@ export function ChatInput({
             placeholder={placeholder}
             disabled={disabled}
             rows={1}
-            className="w-full px-4 py-3 rounded-xl bg-muted border border-border text-foreground placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all resize-none"
+            className="w-full px-4 py-3 rounded-xl bg-muted border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all resize-none"
           />
         </div>
         <Button
@@ -63,7 +63,7 @@ export function ChatInput({
           <Icon name="solar:plain-2-bold" size={20} />
         </Button>
       </div>
-      <p className="text-xs text-gray-400 mt-2 text-center">
+      <p className="text-xs text-muted-foreground mt-2 text-center">
         Shift + Enter로 줄바꿈
       </p>
     </form>

@@ -208,11 +208,11 @@ export function PentagonChart({ dayMaster, distribution, tenGodMapping, dayStemK
                     y={pos.y + 10}
                     textAnchor="middle"
                     className={`text-sm font-bold ${colors.text}`}
-                    style={{ fill: colors.text.includes('green') ? '#4ade80' :
-                             colors.text.includes('red') ? '#f87171' :
-                             colors.text.includes('yellow') ? '#facc15' :
-                             colors.text.includes('gray') ? '#d1d5db' :
-                             '#60a5fa' }}
+                    style={{ fill: colors.text.includes('green') ? '#16A34A' :
+                             colors.text.includes('red') ? '#DC2626' :
+                             colors.text.includes('yellow') ? '#D97706' :
+                             colors.text.includes('gray') ? '#64748B' :
+                             '#2563EB' }}
                   >
                     {percentage}%
                   </text>

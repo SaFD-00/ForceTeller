@@ -19,9 +19,9 @@ const CATEGORY_LABELS: Record<string, string> = {
 };
 
 function confidenceLabel(c: number): { label: string; cls: string } {
-  if (c >= 0.8) return { label: '일치도 높음', cls: 'bg-green-500/15 text-green-600' };
-  if (c >= 0.5) return { label: '일치도 보통', cls: 'bg-amber-500/15 text-amber-600' };
-  return { label: '해석 분분', cls: 'bg-rose-500/15 text-rose-600' };
+  if (c >= 0.8) return { label: '일치도 높음', cls: 'bg-success/15 text-success' };
+  if (c >= 0.5) return { label: '일치도 보통', cls: 'bg-warning/15 text-warning' };
+  return { label: '해석 분분', cls: 'bg-danger/15 text-danger' };
 }
 
 export function SchoolComparison({ comparison }: SchoolComparisonProps) {
@@ -68,7 +68,7 @@ export function SchoolComparison({ comparison }: SchoolComparisonProps) {
         {consensus && consensus.length > 0 && (
           <div>
             <p className="flex items-center gap-1 text-sm font-medium text-foreground mb-2">
-              <Icon name="solar:check-read-bold" size={16} className="text-green-500" />
+              <Icon name="solar:check-read-bold" size={16} className="text-success" />
               학파 공통 견해
             </p>
             <ul className="space-y-2">
@@ -79,7 +79,7 @@ export function SchoolComparison({ comparison }: SchoolComparisonProps) {
                   </span>
                   <span className="text-muted-foreground">
                     {c.agreement}
-                    <span className="text-xs text-gray-400"> ({c.schools.length}개 학파 동의)</span>
+                    <span className="text-xs text-muted-foreground"> ({c.schools.length}개 학파 동의)</span>
                   </span>
                 </li>
               ))}

@@ -40,8 +40,8 @@ export function SuggestedQuestions({
               inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full
               text-sm transition-all duration-200 text-left
               ${disabled
-                ? 'bg-muted text-gray-400 cursor-not-allowed'
-                : 'bg-muted text-gray-600 hover:bg-purple-500/30 hover:text-foreground cursor-pointer'
+                ? 'bg-muted text-muted-foreground cursor-not-allowed'
+                : 'bg-muted text-muted-foreground hover:bg-accent/20 hover:text-foreground cursor-pointer'
               }
             `}
           >

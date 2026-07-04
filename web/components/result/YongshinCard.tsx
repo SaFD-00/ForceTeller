@@ -13,13 +13,13 @@ interface YongshinCardProps {
   description?: string;
 }
 
-// 오행별 색상 및 한자
+// 오행별 색상 및 한자 (element-* 토큰 = 시맨틱 팔레트와 정렬)
 const ELEMENT_INFO: Record<Element, { hanja: string; bg: string; text: string }> = {
-  '목': { hanja: '木', bg: 'bg-green-500/20', text: 'text-green-400' },
-  '화': { hanja: '火', bg: 'bg-red-500/20', text: 'text-red-400' },
-  '토': { hanja: '土', bg: 'bg-yellow-500/20', text: 'text-yellow-400' },
-  '금': { hanja: '金', bg: 'bg-gray-300/20', text: 'text-gray-300' },
-  '수': { hanja: '水', bg: 'bg-blue-500/20', text: 'text-blue-400' },
+  '목': { hanja: '木', bg: 'bg-element-wood/20', text: 'text-element-wood' },
+  '화': { hanja: '火', bg: 'bg-element-fire/20', text: 'text-element-fire' },
+  '토': { hanja: '土', bg: 'bg-element-earth/20', text: 'text-element-earth' },
+  '금': { hanja: '金', bg: 'bg-element-metal/20', text: 'text-element-metal' },
+  '수': { hanja: '水', bg: 'bg-element-water/20', text: 'text-element-water' },
 };
 
 export function YongshinCard({ type, element, hanja, description }: YongshinCardProps) {
@@ -52,7 +52,7 @@ export function YongshinCard({ type, element, hanja, description }: YongshinCard
           <Icon name="solar:star-bold" size={24} className="text-primary" />
           <button
             onClick={handleTitleClick}
-            className="text-xl font-bold text-foreground underline decoration-white/30 hover:decoration-primary transition-colors"
+            className="text-xl font-bold text-foreground underline decoration-border hover:decoration-primary transition-colors"
           >
             용신
           </button>
@@ -69,7 +69,7 @@ export function YongshinCard({ type, element, hanja, description }: YongshinCard
 
             {description && (
               <div className="flex-1 min-w-[200px]">
-                <p className="text-gray-600 text-sm leading-relaxed">{description}</p>
+                <p className="text-muted-foreground text-sm leading-relaxed">{description}</p>
               </div>
             )}
           </div>

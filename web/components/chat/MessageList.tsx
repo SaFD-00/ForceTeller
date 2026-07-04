@@ -47,7 +47,7 @@ export function MessageList({
   if (messages.length === 0 && !isLoading) {
     return (
       <div className="flex-1 flex items-center justify-center">
-        <div className="text-center text-gray-400">
+        <div className="text-center text-muted-foreground">
           <Icon name="solar:chat-round-dots-bold" size={48} className="mx-auto mb-4" />
           <p>AI 상담사에게 사주에 대해 질문해보세요</p>
           <p className="text-sm mt-2">예: "제 성격은 어떤가요?" "직업운은 어떤가요?"</p>
@@ -85,7 +85,7 @@ export function MessageList({
           animate={{ opacity: 1, y: 0 }}
           className="flex gap-3"
         >
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500/30 to-blue-500/30 flex items-center justify-center flex-shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent/25 to-info/25 flex items-center justify-center flex-shrink-0">
             <Icon name="solar:magic-stick-3-bold" size={20} className="text-foreground" />
           </div>
           <div className="max-w-[75%] p-4 rounded-2xl rounded-tl-md bg-muted border border-border">
@@ -104,7 +104,7 @@ export function MessageList({
       {/* 로딩 중이지만 아직 스트리밍 시작 전: 기본 로딩 인디케이터 */}
       {isLoading && !reasoning && !streamingOutput && (
         <div className="flex gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500/30 to-blue-500/30 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent/25 to-info/25 flex items-center justify-center">
             <Icon name="solar:magic-stick-3-bold" size={20} className="text-foreground" />
           </div>
           <div className="bg-muted border border-border rounded-2xl rounded-tl-md p-4">

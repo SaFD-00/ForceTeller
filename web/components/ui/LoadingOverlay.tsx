@@ -22,7 +22,7 @@ export function LoadingOverlay({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3 }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-xl"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-background/95 backdrop-blur-xl"
         >
           <div className="text-center">
             {/* Animated circles */}
@@ -38,14 +38,14 @@ export function LoadingOverlay({
               <motion.div
                 animate={{ rotate: -360 }}
                 transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
-                className="absolute inset-2 rounded-full border-2 border-transparent border-b-purple-400 border-l-purple-400/50"
+                className="absolute inset-2 rounded-full border-2 border-transparent border-b-accent border-l-accent/50"
               />
 
               {/* Inner pulsing circle */}
               <motion.div
                 animate={{ scale: [1, 1.1, 1], opacity: [0.5, 1, 0.5] }}
                 transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
-                className="absolute inset-4 rounded-full bg-gradient-to-br from-primary/20 to-purple-500/20 flex items-center justify-center"
+                className="absolute inset-4 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center"
               >
                 <Icon
                   name="solar:stars-bold"

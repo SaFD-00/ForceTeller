@@ -35,9 +35,9 @@ const elementChars: Record<Element, string> = {
 
 // 기본 색상 (fallback)
 const defaultColors = {
-  bg: 'bg-gray-500/20',
-  text: 'text-gray-400',
-  border: 'border-gray-500/50',
+  bg: 'bg-muted',
+  text: 'text-muted-foreground',
+  border: 'border-border',
 };
 
 export function ElementBadge({

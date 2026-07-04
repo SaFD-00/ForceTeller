@@ -39,43 +39,43 @@ interface ShenshaDetailCardProps {
   };
 }
 
-// 신살 타입별 색상
+// 신살 타입별 색상 (길/흉/중성 = 시맨틱 상태 토큰과 정렬)
 const typeColors = {
   '길신': {
-    bg: 'bg-green-500/20',
-    text: 'text-green-400',
-    border: 'border-green-500/30',
+    bg: 'bg-success/20',
+    text: 'text-success',
+    border: 'border-success/30',
     icon: 'solar:star-bold',
   },
   '흉신': {
-    bg: 'bg-red-500/20',
-    text: 'text-red-400',
-    border: 'border-red-500/30',
+    bg: 'bg-danger/20',
+    text: 'text-danger',
+    border: 'border-danger/30',
     icon: 'solar:danger-triangle-bold',
   },
   '중성': {
-    bg: 'bg-yellow-500/20',
-    text: 'text-yellow-400',
-    border: 'border-yellow-500/30',
+    bg: 'bg-warning/20',
+    text: 'text-warning',
+    border: 'border-warning/30',
     icon: 'solar:star-shine-bold',
   },
 };
 
-// 오행별 배경색
+// 오행별 배경색 (element-* 토큰과 정렬)
 const ELEMENT_BG: Record<Element, string> = {
-  '목': 'bg-green-600/80',
-  '화': 'bg-red-500/80',
-  '토': 'bg-yellow-600/80',
-  '금': 'bg-gray-400/80',
-  '수': 'bg-blue-500/80',
+  '목': 'bg-element-wood/80',
+  '화': 'bg-element-fire/80',
+  '토': 'bg-element-earth/80',
+  '금': 'bg-element-metal/80',
+  '수': 'bg-element-water/80',
 };
 
 const ELEMENT_BG_LIGHT: Record<Element, string> = {
-  '목': 'bg-green-200/60',
-  '화': 'bg-red-200/60',
-  '토': 'bg-yellow-200/60',
-  '금': 'bg-gray-200/60',
-  '수': 'bg-blue-200/60',
+  '목': 'bg-element-wood/20',
+  '화': 'bg-element-fire/20',
+  '토': 'bg-element-earth/20',
+  '금': 'bg-element-metal/20',
+  '수': 'bg-element-water/20',
 };
 
 // 위치 한글 표시
@@ -214,7 +214,7 @@ export function ShenshaDetailCard({ shensha, pillars }: ShenshaDetailCardProps) 
                       <span className="text-lg font-bold text-foreground">
                         {pillar.heavenly_stem.korean}
                       </span>
-                      <span className="text-xs text-gray-600 ml-0.5">
+                      <span className="text-xs text-muted-foreground ml-0.5">
                         {pillar.heavenly_stem.hanja}
                       </span>
                     </div>
@@ -243,10 +243,10 @@ export function ShenshaDetailCard({ shensha, pillars }: ShenshaDetailCardProps) 
                       key={`branch-${pos}`}
                       className={`${ELEMENT_BG_LIGHT[pillar.earthly_branch.element]} rounded-lg p-2 text-center`}
                     >
-                      <span className="text-lg font-bold text-gray-800">
+                      <span className="text-lg font-bold text-foreground">
                         {pillar.earthly_branch.korean}
                       </span>
-                      <span className="text-xs text-gray-600 ml-0.5">
+                      <span className="text-xs text-muted-foreground ml-0.5">
                         {pillar.earthly_branch.hanja}
                       </span>
                     </div>
@@ -279,7 +279,7 @@ export function ShenshaDetailCard({ shensha, pillars }: ShenshaDetailCardProps) 
                   return (
                     <div key={`shensha-${pos}`} className="space-y-1">
                       {positionShensha.length === 0 ? (
-                        <span className="text-xs text-gray-400">-</span>
+                        <span className="text-xs text-muted-foreground">-</span>
                       ) : (
                         positionShensha.map((item, idx) => {
                           const colors = typeColors[item.type];
@@ -316,7 +316,7 @@ export function ShenshaDetailCard({ shensha, pillars }: ShenshaDetailCardProps) 
                   <div className="flex items-center gap-2 mb-3">
                     <Icon name={colors.icon} size={18} className={colors.text} />
                     <span className={`font-medium ${colors.text}`}>{type}</span>
-                    <span className="text-xs text-gray-400">({items.length})</span>
+                    <span className="text-xs text-muted-foreground">({items.length})</span>
                   </div>
 
                   {/* 신살 목록 */}
@@ -345,7 +345,7 @@ export function ShenshaDetailCard({ shensha, pillars }: ShenshaDetailCardProps) 
                             {positionNames[item.position] || item.position}
                           </span>
                         </div>
-                        <p className="text-sm text-gray-600 line-clamp-2">
+                        <p className="text-sm text-muted-foreground line-clamp-2">
                           {item.description}
                         </p>
                         <div className="mt-2 text-xs text-primary flex items-center gap-1">

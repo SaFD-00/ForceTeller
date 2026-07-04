@@ -12,14 +12,16 @@ interface GlossaryModalProps {
 }
 
 // 카테고리별 색상
+// 다색 카테고리 코딩 유지 + 라이트 tint 위 대비 확보를 위해 텍스트는 -700로 어둡게.
+// (십성=퍼플 계열은 리터럴 대신 accent 토큰 사용)
 const categoryColors: Record<GlossaryEntry['category'], string> = {
-  '천간': 'bg-green-500/20 text-green-400',
-  '지지': 'bg-blue-500/20 text-blue-400',
-  '십성': 'bg-purple-500/20 text-purple-400',
-  '12운성': 'bg-yellow-500/20 text-yellow-400',
-  '신살': 'bg-red-500/20 text-red-400',
-  '합충': 'bg-orange-500/20 text-orange-400',
-  '용어': 'bg-gray-500/20 text-gray-400',
+  '천간': 'bg-green-500/20 text-green-700',
+  '지지': 'bg-blue-500/20 text-blue-700',
+  '십성': 'bg-accent/15 text-accent',
+  '12운성': 'bg-yellow-500/20 text-yellow-700',
+  '신살': 'bg-red-500/20 text-red-700',
+  '합충': 'bg-orange-500/20 text-orange-700',
+  '용어': 'bg-muted text-muted-foreground',
 };
 
 export function GlossaryModal({ entry, isOpen, onClose }: GlossaryModalProps) {

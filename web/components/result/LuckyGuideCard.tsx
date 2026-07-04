@@ -87,7 +87,7 @@ export function LuckyGuideCard({ recommendations, comparison }: LuckyGuideCardPr
         {recommendations.lifestyle_tips && recommendations.lifestyle_tips.length > 0 && (
           <div>
             <p className="flex items-center gap-1 text-sm font-medium text-foreground mb-2">
-              <Icon name="solar:check-circle-bold" size={16} className="text-green-500" />
+              <Icon name="solar:check-circle-bold" size={16} className="text-success" />
               생활 속 개운법
             </p>
             <ul className="space-y-1">
@@ -104,13 +104,13 @@ export function LuckyGuideCard({ recommendations, comparison }: LuckyGuideCardPr
         {recommendations.cautions && recommendations.cautions.length > 0 && (
           <div>
             <p className="flex items-center gap-1 text-sm font-medium text-foreground mb-2">
-              <Icon name="solar:danger-triangle-bold" size={16} className="text-amber-500" />
+              <Icon name="solar:danger-triangle-bold" size={16} className="text-warning" />
               주의할 점
             </p>
             <ul className="space-y-1">
               {recommendations.cautions.map((c, i) => (
                 <li key={i} className="text-sm text-muted-foreground pl-5 relative">
-                  <span className="absolute left-0 text-amber-500">•</span>
+                  <span className="absolute left-0 text-warning">•</span>
                   {c}
                 </li>
               ))}

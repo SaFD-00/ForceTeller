@@ -27,7 +27,7 @@ export default function ChatPage() {
           <Icon
             name="solar:chat-round-dots-bold"
             size={48}
-            className="text-gray-400 mx-auto mb-4"
+            className="text-muted-foreground mx-auto mb-4"
           />
           <h2 className="text-xl font-bold text-foreground mb-2">
             사주 분석이 필요합니다

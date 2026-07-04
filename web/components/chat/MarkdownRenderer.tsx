@@ -45,13 +45,13 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
       const isInline = !className;
       if (isInline) {
         return (
-          <code className="bg-muted px-1.5 py-0.5 rounded text-sm font-mono text-purple-300" {...props}>
+          <code className="bg-muted px-1.5 py-0.5 rounded text-sm font-mono text-accent" {...props}>
             {children}
           </code>
         );
       }
       return (
-        <code className="block bg-black/40 p-3 rounded-lg my-2 overflow-x-auto font-mono text-sm text-foreground" {...props}>
+        <code className="block bg-muted p-3 rounded-lg my-2 overflow-x-auto font-mono text-sm text-foreground" {...props}>
           {children}
         </code>
       );
@@ -62,7 +62,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
 
     // 인용구
     blockquote: ({ children }) => (
-      <blockquote className="border-l-4 border-purple-400/50 pl-4 my-3 italic text-gray-600">
+      <blockquote className="border-l-4 border-accent/50 pl-4 my-3 italic text-muted-foreground">
         {children}
       </blockquote>
     ),
@@ -77,7 +77,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
 
     // 구분선
     hr: () => (
-      <hr className="my-4 border-gray-300" />
+      <hr className="my-4 border-border" />
     ),
 
     // 링크
@@ -86,7 +86,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
         href={href}
         target="_blank"
         rel="noopener noreferrer"
-        className="text-purple-400 hover:text-purple-300 underline underline-offset-2"
+        className="text-accent hover:text-accent/80 underline underline-offset-2"
       >
         {children}
       </a>
@@ -95,7 +95,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
     // 테이블
     table: ({ children }) => (
       <div className="overflow-x-auto my-3">
-        <table className="min-w-full border border-gray-300 rounded-lg overflow-hidden">
+        <table className="min-w-full border border-border rounded-lg overflow-hidden">
           {children}
         </table>
       </div>

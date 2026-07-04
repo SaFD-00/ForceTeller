@@ -94,7 +94,7 @@ export default function ResultPage() {
           <Icon
             name="solar:danger-triangle-bold"
             size={48}
-            className="text-red-400 mx-auto mb-4"
+            className="text-danger mx-auto mb-4"
           />
           <h2 className="text-xl font-bold text-foreground mb-2">오류가 발생했습니다</h2>
           <p className="text-muted-foreground mb-6">{error}</p>
@@ -276,7 +276,7 @@ export default function ResultPage() {
               )}
               {/* 시간 보정 */}
               {result.adjusted_time && (
-                <p className="text-gray-400 text-xs md:text-sm">
+                <p className="text-muted-foreground text-xs md:text-sm">
                   지역시: 양 {result.adjusted_time.true_solar_time.split(' ')[0]} {result.adjusted_time.true_solar_time.split(' ')[1]?.slice(0, 5)}
                   {' '}(보정: 지역 {result.adjusted_time.longitude_correction_minutes > 0 ? '+' : ''}{Math.round(result.adjusted_time.longitude_correction_minutes)}분)
                 </p>

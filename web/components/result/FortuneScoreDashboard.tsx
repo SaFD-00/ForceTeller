@@ -20,10 +20,10 @@ const FORTUNE_META: Record<string, { label: string; icon: string }> = {
 const ORDER = ['general', 'career', 'wealth', 'health', 'love'];
 
 function scoreColor(score: number): string {
-  if (score >= 70) return 'bg-green-500';
+  if (score >= 70) return 'bg-success';
   if (score >= 50) return 'bg-primary';
-  if (score >= 35) return 'bg-amber-500';
-  return 'bg-rose-500';
+  if (score >= 35) return 'bg-warning';
+  return 'bg-danger';
 }
 
 export function FortuneScoreDashboard({ scores }: FortuneScoreDashboardProps) {
@@ -68,7 +68,7 @@ export function FortuneScoreDashboard({ scores }: FortuneScoreDashboardProps) {
                     className={`h-full rounded-full ${scoreColor(item.score)}`}
                   />
                 </div>
-                <span className="text-sm font-semibold text-foreground w-10 text-right flex-shrink-0">
+                <span className="font-display text-base text-foreground w-10 text-right flex-shrink-0">
                   {item.score}
                 </span>
                 <Icon

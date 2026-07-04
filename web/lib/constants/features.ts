@@ -6,7 +6,7 @@ export const FEATURES = [
     title: '사주계산',
     description: '정확한 사주팔자 산출',
     detail: '생년월일시를 기반으로 정확한 사주 4주를 계산합니다.',
-    color: 'from-purple-500 to-violet-500',
+    color: 'from-accent to-primary',
   },
   {
     icon: 'solar:user-heart-bold',
@@ -62,7 +62,7 @@ export const FEATURES = [
     title: 'AI 대화',
     description: '전문 에이전트 상담',
     detail: '다양한 전문 AI 에이전트와 자유롭게 대화하세요.',
-    color: 'from-violet-500 to-purple-500',
+    color: 'from-accent to-primary',
   },
 ] as const;
 

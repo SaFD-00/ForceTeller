@@ -75,7 +75,7 @@ export function GlossaryTooltip({ term, children, onDetailClick }: GlossaryToolt
     <span className="relative inline-block">
       <span
         ref={triggerRef}
-        className="cursor-help border-b border-dotted border-gray-300 hover:border-primary transition-colors"
+        className="cursor-help border-b border-dotted border-border hover:border-primary transition-colors"
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         onClick={handleClick}
@@ -109,7 +109,7 @@ export function GlossaryTooltip({ term, children, onDetailClick }: GlossaryToolt
             {/* 헤더 */}
             <div className="flex items-center gap-2 mb-2">
               <span className="text-primary font-bold">{entry.term}</span>
-              <span className="text-gray-400 text-sm">{entry.hanja}</span>
+              <span className="text-muted-foreground text-sm">{entry.hanja}</span>
             </div>
 
             {/* 한자 풀이 */}
