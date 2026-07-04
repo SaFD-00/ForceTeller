@@ -17,6 +17,9 @@ from agents.prompts.system_prompts import (
 )
 from agents.schemas import InterpretationResult, RouterDecision, SynthesisResult
 from agents.state import AgentState
+from config.logging_config import get_logger
+
+logger = get_logger(__name__)
 
 # 최대 반복 횟수 (무한 루프 방지)
 MAX_ITERATIONS = 10
@@ -140,8 +143,8 @@ synthesis나 FINISH는 선택하지 마세요."""
         agent = decision.next_agent
         if agent in AGENT_CONFIGS and agent != "synthesis":
             return agent
-    except Exception:
-        pass
+    except Exception as exc:
+        logger.warning("라우팅 결정 실패, 기본 에이전트(personality)로 폴백: %s", exc)
     return "personality"
 
 

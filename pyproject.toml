@@ -1,6 +1,7 @@
 [project]
 name = "forceteller"
-version = "0.1.0"
+# config/version.py의 __version__과 동기화할 것 (단일 진실 공급원)
+version = "1.0.0"
 description = "사주 명리학 기반 AI 운세 상담 서비스 (만세력 계산 + LangGraph 멀티 에이전트)"
 readme = "README.md"
 requires-python = ">=3.11"

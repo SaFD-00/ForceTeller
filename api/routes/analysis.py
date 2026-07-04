@@ -7,6 +7,7 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from api.converters import EnumConverter, SajuDataConverter
 from api.dependencies import get_session_manager
+from api.errors import http_500
 from api.formatters import (
     FortuneFormatter,
     SchoolComparisonFormatter,
@@ -26,6 +27,7 @@ from api.schemas import (
     YongSinMethodType,
     YongSinResultSchema,
 )
+from config.logging_config import get_logger
 from manseol.analysis import (
     # 운세 분석
     analyze_fortune,
@@ -36,6 +38,8 @@ from manseol.analysis import (
     select_yongsin_auto,
 )
 from utils.protocols import SessionManagerProtocol
+
+logger = get_logger(__name__)
 
 router = APIRouter(prefix="/api/analysis", tags=["analysis"])
 
@@ -325,7 +329,4 @@ async def analyze(
     except HTTPException:
         raise
     except Exception as e:
-        import traceback
-
-        traceback.print_exc()
-        raise HTTPException(status_code=500, detail=f"분석 처리 중 오류: {str(e)}")
+        raise http_500(logger, "분석 처리 중 오류가 발생했습니다", e) from e

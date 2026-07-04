@@ -6,7 +6,7 @@ ForceTeller 설정 모듈
 from pathlib import Path
 
 from pydantic import Field
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
@@ -77,10 +77,11 @@ class Settings(BaseSettings):
     DEFAULT_CITY: str = "Seoul"
     USE_TRUE_SOLAR_TIME: bool = True
 
-    class Config:
-        env_file = ".env"
-        env_file_encoding = "utf-8"
-        extra = "ignore"
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore",
+    )
 
 
 # 전역 설정 인스턴스

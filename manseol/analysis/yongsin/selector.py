@@ -6,6 +6,8 @@ Reference: fortuneteller/src/lib/yongsin/selector.ts
 
 from typing import Any
 
+from config.logging_config import get_logger
+
 from .base import (
     YongSinAlgorithm,
     YongSinMethod,
@@ -15,6 +17,8 @@ from .disease import DiseaseYongSinAlgorithm
 from .mediation import MediationYongSinAlgorithm
 from .seasonal import SeasonalYongSinAlgorithm
 from .strength import StrengthYongSinAlgorithm
+
+logger = get_logger(__name__)
 
 # 용신 알고리즘 레지스트리
 ALGORITHMS: dict[YongSinMethod, YongSinAlgorithm] = {
@@ -63,7 +67,7 @@ class YongSinSelector:
             try:
                 results[method] = algorithm.select(saju_data)
             except Exception as e:
-                print(f"Error selecting YongSin with {method}: {e}")
+                logger.warning("용신 산출 실패, 건너뜀 (method=%s): %s", method, e)
 
         return results
 

@@ -139,8 +139,11 @@ class OpenRouterClient:
             yield {"type": "done", "content": ""}
 
         except Exception as e:
+            # 이 error chunk는 SSE 패스스루로 클라이언트에 도달한다. 상세는 서버
+            # 로그에만 남기고, 응답에는 DEBUG=True일 때만 원본 예외를 노출한다.
             logger.error(f"OpenRouter 스트리밍 오류: {type(e).__name__}: {e}")
-            yield {"type": "error", "content": str(e)}
+            content = str(e) if settings.DEBUG else "응답 생성 중 오류가 발생했습니다."
+            yield {"type": "error", "content": content}
             yield {"type": "done", "content": ""}
 
 

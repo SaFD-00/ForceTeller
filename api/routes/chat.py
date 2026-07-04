@@ -12,6 +12,7 @@ from fastapi.responses import StreamingResponse
 from agents.agent_configs import AGENT_CONFIGS, get_agent_config
 from agents.nodes import route_question
 from api.dependencies import get_orchestrator, get_session_manager
+from api.errors import http_500, safe_error_content
 from api.formatters import SuggestedQuestionsGenerator
 from api.schemas import (
     ChatRequest,
@@ -20,11 +21,14 @@ from api.schemas import (
     SessionDetailResponse,
     SessionListResponse,
 )
+from config.logging_config import get_logger
 from config.settings import get_allowed_models, settings
 from manseol.calculator.current_fortune import calculate_current_fortune
 from manseol.data.stems_branches import StemBranchData
 from utils.llm_client import get_llm_client
 from utils.protocols import SessionManagerProtocol
+
+logger = get_logger(__name__)
 
 router = APIRouter(prefix="/api/chat", tags=["chat"])
 
@@ -106,7 +110,7 @@ async def chat(
         orchestrator = get_orchestrator(model=model)
 
         # 대화 이력 가져오기
-        history = session.get_messages_for_llm(limit=10)
+        history = session.get_messages_for_llm(limit=settings.CONVERSATION_HISTORY_LIMIT)
 
         # 전체 해석 (Supervisor 패턴 동적 라우팅)
         suggested_questions: list[str] = []
@@ -153,7 +157,7 @@ async def chat(
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"대화 처리 중 오류: {str(e)}")
+        raise http_500(logger, "대화 처리 중 오류가 발생했습니다", e) from e
 
 
 @router.get(
@@ -374,7 +378,7 @@ async def chat_stream(
 한국어로 답변하며, 전문적이면서도 이해하기 쉽게 설명해주세요."""
 
             # 대화 이력
-            history = session.get_messages_for_llm(limit=10)
+            history = session.get_messages_for_llm(limit=settings.CONVERSATION_HISTORY_LIMIT)
             messages = [{"role": "system", "content": system_prompt}]
             messages.extend(history)
             messages.append({"role": "user", "content": request.message})
@@ -408,7 +412,9 @@ async def chat_stream(
                 yield f"data: {json.dumps({'type': 'suggested_questions', 'content': suggested_questions}, ensure_ascii=False)}\n\n"
 
         except Exception as e:
-            yield f"data: {json.dumps({'type': 'error', 'content': str(e)})}\n\n"
+            logger.exception("스트리밍 대화 처리 중 오류")
+            content = safe_error_content("응답 생성 중 오류가 발생했습니다", e)
+            yield f"data: {json.dumps({'type': 'error', 'content': content}, ensure_ascii=False)}\n\n"
 
     return StreamingResponse(
         generate(),

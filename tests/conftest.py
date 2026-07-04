@@ -168,13 +168,18 @@ def test_client():
 
 @pytest.fixture
 def async_test_client():
-    """비동기 테스트 클라이언트"""
+    """비동기 테스트 클라이언트
+
+    httpx 0.28+는 AsyncClient(app=...) 단축 인자를 제거했으므로
+    ASGITransport로 FastAPI 앱을 명시적으로 감싼다.
+    """
     import httpx
 
     from api.server import create_app
 
     app = create_app()
-    return httpx.AsyncClient(app=app, base_url="http://test")
+    transport = httpx.ASGITransport(app=app)
+    return httpx.AsyncClient(transport=transport, base_url="http://test")
 
 
 # ============================================================================
@@ -195,14 +200,5 @@ def freeze_time():
         yield fixed_time
 
 
-# ============================================================================
-# Test Markers
-# ============================================================================
-
-
-def pytest_configure(config):
-    """pytest 마커 등록"""
-    config.addinivalue_line("markers", "unit: 단위 테스트")
-    config.addinivalue_line("markers", "integration: 통합 테스트")
-    config.addinivalue_line("markers", "e2e: End-to-End 테스트")
-    config.addinivalue_line("markers", "slow: 느린 테스트")
+# 마커(unit/integration/e2e/slow)는 pyproject.toml [tool.pytest.ini_options].markers에서
+# 등록한다. --strict-markers가 그 목록을 강제하므로 여기서 중복 등록하지 않는다.

@@ -5,12 +5,16 @@
 
 from datetime import datetime
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Query
 
 from api.converters import enrich_with_analysis
+from api.errors import http_500
 from api.schemas import ErrorResponse, ManseolRequest, ManseolResponse
+from config.logging_config import get_logger
 from manseol.models.input_model import CalendarType, Gender, SajuInput
 from manseol.output.json_exporter import JsonExporter
+
+logger = get_logger(__name__)
 
 router = APIRouter(prefix="/api/manseol", tags=["manseol"])
 
@@ -69,7 +73,7 @@ async def calculate_saju(request: ManseolRequest) -> ManseolResponse:
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"계산 중 오류 발생: {str(e)}")
+        raise http_500(logger, "계산 중 오류가 발생했습니다", e) from e
 
 
 @router.post(
@@ -79,7 +83,10 @@ async def calculate_saju(request: ManseolRequest) -> ManseolResponse:
     description="최소 정보로 빠르게 사주를 계산합니다.",
 )
 async def quick_calculate(
-    name: str, birth_date: str, gender: str, birth_time: str = None
+    name: str = Query(..., description="이름"),
+    birth_date: str = Query(..., description="생년월일 (YYYY-MM-DD)"),
+    gender: str = Query(..., description="성별 (male/female)"),
+    birth_time: str | None = Query(None, description="출생시간 (HH:MM, 선택)"),
 ) -> ManseolResponse:
     """
     빠른 사주 계산 (쿼리 파라미터)
@@ -109,7 +116,7 @@ async def quick_calculate(
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise http_500(logger, "계산 중 오류가 발생했습니다", e) from e
 
 
 @router.get(

@@ -22,11 +22,13 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.prompt import Prompt
 
+from config.version import __version__
+
 console = Console()
 
 
 @click.group()
-@click.version_option(version="1.0.0", prog_name="ForceTeller")
+@click.version_option(version=__version__, prog_name="ForceTeller")
 def main():
     """🔮 ForceTeller: 사주명리학 만세력 계산 및 AI 해석 시스템"""
     pass
@@ -223,7 +225,7 @@ def info():
     key_status = "설정됨" if settings.OPENROUTER_API_KEY else "미설정"
     console.print(
         Panel(
-            f"[bold]ForceTeller[/bold] v1.0.0\n\n"
+            f"[bold]ForceTeller[/bold] v{__version__}\n\n"
             f"📦 만세력 계산 엔진 + AI 해석 에이전트\n\n"
             f"[bold]LLM 설정 (OpenRouter):[/bold]\n"
             f"  • API Key: {key_status}\n"

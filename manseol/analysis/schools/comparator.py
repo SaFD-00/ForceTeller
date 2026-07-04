@@ -6,6 +6,8 @@ Reference: fortuneteller/src/lib/school_comparator.ts
 
 from typing import Any
 
+from config.logging_config import get_logger
+
 from .base_interpreter import (
     SCHOOL_NAMES,
     BaseSchoolInterpreter,
@@ -20,6 +22,8 @@ from .modern import ModernInterpreter
 from .qtbj import QTBJInterpreter
 from .shensha import ShenshaInterpreter
 from .ziping import ZipingInterpreter
+
+logger = get_logger(__name__)
 
 # 유파별 해석기 레지스트리
 INTERPRETERS: dict[SchoolCode, type[BaseSchoolInterpreter]] = {
@@ -68,7 +72,7 @@ class SchoolComparator:
                 interpretation = interpreter.interpret(saju_data)
                 interpretations.append(interpretation)
             except Exception as e:
-                print(f"Error interpreting with {school}: {e}")
+                logger.warning("유파 해석 실패, 건너뜀 (school=%s): %s", school, e)
 
         # 합의 항목 찾기
         consensus = SchoolComparator._find_consensus(interpretations)

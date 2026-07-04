@@ -12,23 +12,27 @@ from fastapi.responses import JSONResponse
 
 from api.routes import analysis_router, chat_router, manseol_router
 from api.schemas import HealthResponse
+from config.logging_config import get_logger
 from config.settings import settings
+from config.version import __version__
 from db.base import dispose_engine, init_models
+
+logger = get_logger(__name__)
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """애플리케이션 생명주기 관리"""
     # 시작시 실행
-    print("🔮 ForceTeller API 서버 시작")
+    logger.info("ForceTeller API 서버 시작")
     # DB 스키마 부트스트랩 (없는 테이블만 생성). 운영 마이그레이션은 Alembic 사용.
     await init_models()
-    print(f"🗄️  DB 준비 완료: {settings.DATABASE_URL.split('://', 1)[0]}")
-    print(f"📍 API 문서: http://{settings.API_HOST}:{settings.API_PORT}/docs")
+    logger.info("DB 준비 완료: %s", settings.DATABASE_URL.split("://", 1)[0])
+    logger.info("API 문서: http://%s:%s/docs", settings.API_HOST, settings.API_PORT)
     yield
     # 종료시 실행
     await dispose_engine()
-    print("👋 ForceTeller API 서버 종료")
+    logger.info("ForceTeller API 서버 종료")
 
 
 def create_app() -> FastAPI:
@@ -49,7 +53,7 @@ def create_app() -> FastAPI:
 ### Part 2: AI 해석 (`/api/chat`)
 - 다중 전문 에이전트 기반 사주 해석
 - Multi-turn 대화 지원
-- OpenAI (gpt-5-nano) / Google (gemini-3-flash-preview) 지원
+- OpenRouter 게이트웨이(OpenAI 호환 API)로 다중 LLM 모델 라우팅·폴백
 
 ## 사용 예시
 
@@ -73,33 +77,40 @@ chat_response = requests.post("http://localhost:8000/api/chat", json={
 print(chat_response.json()["message"])
 ```
         """,
-        version="1.0.0",
+        version=__version__,
         lifespan=lifespan,
         docs_url="/docs",
         redoc_url="/redoc",
     )
 
     # CORS 설정
-    cors_origins = (
-        ["*"]
-        if settings.CORS_ORIGINS == "*"
-        else [origin.strip() for origin in settings.CORS_ORIGINS.split(",")]
-    )
+    # 와일드카드 출처("*")에는 자격증명(쿠키/Authorization)을 허용하지 않는다:
+    # allow_origins=["*"] + allow_credentials=True 조합은 CORS 명세상 무효라
+    # 브라우저가 요청을 차단한다. 명시 도메인 목록일 때만 자격증명을 허용한다.
+    raw_origins = settings.CORS_ORIGINS.strip()
+    if raw_origins == "*":
+        cors_origins = ["*"]
+        allow_credentials = False
+    else:
+        cors_origins = [origin.strip() for origin in raw_origins.split(",") if origin.strip()]
+        allow_credentials = True
     app.add_middleware(
         CORSMiddleware,
         allow_origins=cors_origins,
-        allow_credentials=True,
+        allow_credentials=allow_credentials,
         allow_methods=["*"],
         allow_headers=["*"],
     )
 
-    # 전역 예외 핸들러
+    # 전역 예외 핸들러: 상세(str(exc))는 서버 로그에만, 클라이언트에는 일반화 메시지.
+    # DEBUG=True일 때만 응답에 상세를 포함한다.
     @app.exception_handler(Exception)
     async def global_exception_handler(request: Request, exc: Exception):
-        return JSONResponse(
-            status_code=500,
-            content={"success": False, "error": "Internal Server Error", "detail": str(exc)},
-        )
+        logger.exception("처리되지 않은 예외: %s %s", request.method, request.url.path)
+        content: dict = {"success": False, "error": "내부 오류가 발생했습니다."}
+        if settings.DEBUG:
+            content["detail"] = str(exc)
+        return JSONResponse(status_code=500, content=content)
 
     # 라우터 등록
     app.include_router(manseol_router)
@@ -118,7 +129,7 @@ print(chat_response.json()["message"])
         """API 정보"""
         return {
             "name": "ForceTeller API",
-            "version": "1.0.0",
+            "version": __version__,
             "description": "사주명리학 만세력 계산 및 해석 API",
             "docs": "/docs",
             "endpoints": {

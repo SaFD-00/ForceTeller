@@ -7,7 +7,10 @@
 from typing import Any
 
 from api.schemas import AnalysisType, SchoolCodeType, YongSinMethodType
+from config.logging_config import get_logger
 from manseol.analysis import FortuneType, SchoolCode
+
+logger = get_logger(__name__)
 
 
 class SajuDataConverter:
@@ -158,7 +161,8 @@ def enrich_with_analysis(result_dict: dict[str, Any]) -> dict[str, Any]:
 
     try:
         analysis_data = SajuDataConverter.to_analysis_format(result_dict)
-    except Exception:
+    except Exception as exc:
+        logger.warning("분석 형식 변환 실패, 보강 생략: %s", exc)
         return enriched
 
     # 용신 4방법 비교 + 개운법 추천 (강약/조후/통관/병약)
@@ -171,8 +175,8 @@ def enrich_with_analysis(result_dict: dict[str, Any]) -> dict[str, Any]:
         enriched["yongsin_comparison"] = compare_yongsin_methods(analysis_data)
         yongsin_result = select_yongsin_auto(analysis_data)
         enriched["yongsin_recommendations"] = generate_detailed_recommendations(yongsin_result)
-    except Exception:
-        pass
+    except Exception as exc:
+        logger.warning("용신 분석 보강 실패, 건너뜀: %s", exc)
 
     # 5학파 비교 + 일치도(신뢰도)
     try:
@@ -217,8 +221,8 @@ def enrich_with_analysis(result_dict: dict[str, Any]) -> dict[str, Any]:
             "recommendation": sc.recommendation,
             "confidence": confidence,
         }
-    except Exception:
-        pass
+    except Exception as exc:
+        logger.warning("유파 비교 보강 실패, 건너뜀: %s", exc)
 
     # 운세 유형별 점수 (종합/직업/재물/건강/애정)
     try:
@@ -239,8 +243,8 @@ def enrich_with_analysis(result_dict: dict[str, Any]) -> dict[str, Any]:
                 "lucky_directions": fa.lucky_elements.directions,
             }
         enriched["fortune_scores"] = fortune_scores
-    except Exception:
-        pass
+    except Exception as exc:
+        logger.warning("운세 점수 보강 실패, 건너뜀: %s", exc)
 
     return enriched
 

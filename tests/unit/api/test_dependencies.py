@@ -15,6 +15,7 @@ from api.dependencies import (
     reset_session_manager,
     set_session_manager,
 )
+from config.settings import settings
 from utils.protocols import LLMClientProtocol, SessionManagerProtocol
 
 
@@ -92,7 +93,16 @@ class TestOrchestratorDependency:
 
 
 class TestLLMClientDependency:
-    """LLM 클라이언트 의존성 테스트"""
+    """LLM 클라이언트 의존성 테스트
+
+    OpenRouterClient 내부의 AsyncOpenAI는 api_key가 None이면 생성을 거부한다.
+    CI에는 시크릿이 없으므로 이 스코프에서만 더미 키를 주입해 밀폐화한다
+    (전역 autouse 대신 해당 테스트 클래스 한정).
+    """
+
+    @pytest.fixture(autouse=True)
+    def _dummy_api_key(self, monkeypatch):
+        monkeypatch.setattr(settings, "OPENROUTER_API_KEY", "test-dummy-key")
 
     def test_get_llm_client_creates_instance(self):
         """get_llm_client가 인스턴스를 생성하는지 확인"""

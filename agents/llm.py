@@ -11,6 +11,7 @@ from typing import Any, TypeVar
 
 from langchain_core.exceptions import OutputParserException
 from langchain_core.language_models import BaseChatModel
+from langchain_core.messages import BaseMessage
 from langchain_openai import ChatOpenAI
 from pydantic import BaseModel, ValidationError
 from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
@@ -84,17 +85,17 @@ def create_structured_llm(
     retry=retry_if_exception_type((ValidationError, OutputParserException, json.JSONDecodeError)),
     reraise=True,
 )
-async def ainvoke_structured(chain: Any, payload: dict) -> Any:
+async def ainvoke_structured(chain: Any, messages: list[BaseMessage]) -> Any:
     """구조화 출력 체인을 재시도와 함께 호출
 
     무료/오픈 모델은 JSON 스키마 준수가 불안정할 수 있어
     검증 실패 시 지수 백오프로 재시도한다.
 
     Args:
-        chain: prompt | structured_llm 형태의 Runnable
-        payload: chain.ainvoke에 전달할 입력
+        chain: with_structured_output이 적용된 Runnable
+        messages: chain.ainvoke에 전달할 LangChain 메시지 리스트
 
     Returns:
         검증된 Pydantic 결과
     """
-    return await chain.ainvoke(payload)
+    return await chain.ainvoke(messages)
