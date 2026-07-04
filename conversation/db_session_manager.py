@@ -2,7 +2,7 @@
 DB 백엔드 세션 매니저
 
 인메모리 SessionManager를 대체한다. 동일한 Session/Message dataclass를 반환하므로
-conversation.context_builder 및 프롬프트 빌드는 변경 없이 호환된다.
+프롬프트 빌드는 변경 없이 호환된다.
 
 핵심: 엔드포인트가 매니저에서 받은 Session 객체를 직접 변형(add_user_message 등)하므로,
 변형 후 반드시 save_session(session)으로 명시적 flush 해야 영속된다.

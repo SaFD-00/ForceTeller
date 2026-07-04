@@ -262,18 +262,6 @@ class TestSessionManager:
 
         assert msg is None
 
-    def test_get_conversation_history(self, session_manager, sample_saju_data):
-        """대화 이력 조회"""
-        session = session_manager.create_session(sample_saju_data)
-        session_manager.add_message(session.session_id, "user", "질문")
-        session_manager.add_message(session.session_id, "assistant", "응답")
-
-        history = session_manager.get_conversation_history(session.session_id)
-
-        assert len(history) == 2
-        assert history[0]["role"] == "user"
-        assert history[1]["role"] == "assistant"
-
     def test_list_sessions(self, session_manager, sample_saju_data):
         """세션 목록 조회"""
         session_manager.create_session(sample_saju_data)
@@ -327,23 +315,6 @@ class TestSessionManager:
         assert exported is not None
         assert exported["session_id"] == session.session_id
         assert len(exported["messages"]) == 1
-
-    def test_import_session(self, session_manager, sample_saju_data):
-        """세션 가져오기"""
-        data = {
-            "session_id": "imported-session",
-            "saju_data": sample_saju_data,
-            "messages": [],
-            "interpretation_cache": {},
-            "created_at": datetime.now().isoformat(),
-            "last_activity": datetime.now().isoformat(),
-            "metadata": {},
-        }
-
-        imported = session_manager.import_session(data)
-
-        assert imported.session_id == "imported-session"
-        assert session_manager.get_session("imported-session") is not None
 
     def test_session_name_extraction_input_format(self, session_manager, sample_saju_data):
         """input 형식에서 이름 추출"""

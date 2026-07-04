@@ -6,7 +6,6 @@ AsyncOpenAI 클라이언트를 base_url만 바꿔 사용한다.
 스트리밍 시 reasoning 토큰은 delta.reasoning 필드로 전달된다.
 """
 
-import asyncio
 from collections.abc import AsyncIterator
 from typing import Any
 
@@ -143,10 +142,6 @@ class OpenRouterClient:
             logger.error(f"OpenRouter 스트리밍 오류: {type(e).__name__}: {e}")
             yield {"type": "error", "content": str(e)}
             yield {"type": "done", "content": ""}
-
-    def chat_sync(self, messages: list[dict[str, str]], **kwargs) -> str:
-        """동기 채팅 (CLI용)"""
-        return asyncio.run(self.chat(messages, **kwargs))
 
 
 def get_llm_client(model: str | None = None, **kwargs) -> OpenRouterClient:

@@ -16,6 +16,7 @@ from typing import Any
 from sqlalchemy import delete, func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from config.settings import settings
 from conversation.session_manager import Message, Session
 from db.models import MessageORM, SessionORM
 
@@ -213,7 +214,8 @@ class SessionRepository:
 
         total = int(await self.db.scalar(select(func.count()).select_from(SessionORM)) or 0)
         if total >= max_sessions:
-            keep = int(max_sessions * 0.8)
+            # 유지 비율 = 1 - SESSION_CLEANUP_PERCENTAGE (기본 0.2 → 상위 80% 유지)
+            keep = int(max_sessions * (1 - settings.SESSION_CLEANUP_PERCENTAGE))
             to_remove = total - keep
             if to_remove > 0:
                 old_ids = (

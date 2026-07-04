@@ -20,7 +20,6 @@ from agents.graph import (
 from agents.llm import (
     ainvoke_structured,
     create_llm,
-    create_llm_with_fallback,
     create_structured_llm,
 )
 from agents.nodes import (
@@ -43,7 +42,6 @@ __all__ = [
     "SynthesisResult",
     "create_llm",
     "create_structured_llm",
-    "create_llm_with_fallback",
     "ainvoke_structured",
     "supervisor_node",
     "interpreter_node",

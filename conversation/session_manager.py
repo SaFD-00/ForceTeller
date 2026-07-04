@@ -8,6 +8,8 @@ from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from typing import Any
 
+from config.settings import settings
+
 
 @dataclass
 class Message:
@@ -119,15 +121,20 @@ class Session:
 class SessionManager:
     """세션 관리자"""
 
-    def __init__(self, max_sessions: int = 1000, session_ttl_hours: int = 24):
+    def __init__(self, max_sessions: int | None = None, session_ttl_hours: float | None = None):
         """
         Args:
-            max_sessions: 최대 세션 수
-            session_ttl_hours: 세션 유효 시간 (시간)
+            max_sessions: 최대 세션 수 (None이면 settings.MAX_SESSIONS)
+            session_ttl_hours: 세션 유효 시간 (시간, None이면 settings.SESSION_TIMEOUT_MINUTES 환산)
         """
         self._sessions: dict[str, Session] = {}
-        self.max_sessions = max_sessions
-        self.session_ttl_hours = session_ttl_hours
+        # 명시 인자가 있으면 우선, 없으면 설정값 사용 (DBSessionManager와 동일 패턴)
+        self.max_sessions = max_sessions if max_sessions is not None else settings.MAX_SESSIONS
+        self.session_ttl_hours = (
+            session_ttl_hours
+            if session_ttl_hours is not None
+            else settings.SESSION_TIMEOUT_MINUTES / 60
+        )
 
     def create_session(
         self, saju_data: dict[str, Any], metadata: dict[str, Any] | None = None
@@ -206,22 +213,6 @@ class SessionManager:
             return session.add_message(role, content, metadata)
         return None
 
-    def get_conversation_history(self, session_id: str, limit: int = 10) -> list[dict]:
-        """
-        대화 이력 조회
-
-        Args:
-            session_id: 세션 ID
-            limit: 최근 메시지 개수
-
-        Returns:
-            메시지 목록
-        """
-        session = self.get_session(session_id)
-        if session:
-            return session.get_messages_for_llm(limit)
-        return []
-
     def list_sessions(self) -> list[dict]:
         """
         모든 세션 목록
@@ -272,8 +263,9 @@ class SessionManager:
         # 최대 세션 수 초과시 오래된 것부터 삭제
         if len(self._sessions) >= self.max_sessions:
             sorted_sessions = sorted(self._sessions.items(), key=lambda x: x[1].last_activity)
-            # 20% 정리
-            to_remove = len(self._sessions) - int(self.max_sessions * 0.8)
+            # 유지 비율 = 1 - SESSION_CLEANUP_PERCENTAGE (기본 0.2 → 상위 80% 유지)
+            keep = int(self.max_sessions * (1 - settings.SESSION_CLEANUP_PERCENTAGE))
+            to_remove = len(self._sessions) - keep
             for sid, _ in sorted_sessions[:to_remove]:
                 del self._sessions[sid]
 
@@ -287,9 +279,3 @@ class SessionManager:
         if session:
             return session.to_dict()
         return None
-
-    def import_session(self, session_data: dict) -> Session:
-        """세션 데이터 가져오기"""
-        session = Session.from_dict(session_data)
-        self._sessions[session.session_id] = session
-        return session

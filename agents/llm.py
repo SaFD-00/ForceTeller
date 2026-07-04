@@ -78,26 +78,6 @@ def create_structured_llm(
     return llm.with_structured_output(schema, method="json_schema")
 
 
-def create_llm_with_fallback(
-    model: str | None = None,
-    fallback_model: str | None = None,
-) -> BaseChatModel:
-    """모델 폴백 체인이 있는 LLM 생성
-
-    Primary 모델이 실패하면 자동으로 fallback 모델을 시도한다.
-
-    Args:
-        model: 기본 모델 ID (None이면 설정 기본값)
-        fallback_model: 폴백 모델 ID (None이면 설정 폴백값)
-
-    Returns:
-        폴백 체인이 적용된 LLM
-    """
-    primary = create_llm(model=model or settings.OPENROUTER_MODEL)
-    fallback = create_llm(model=fallback_model or settings.OPENROUTER_FALLBACK_MODEL)
-    return primary.with_fallbacks([fallback])
-
-
 @retry(
     stop=stop_after_attempt(3),
     wait=wait_exponential(multiplier=1, min=1, max=8),
@@ -118,29 +98,3 @@ async def ainvoke_structured(chain: Any, payload: dict) -> Any:
         검증된 Pydantic 결과
     """
     return await chain.ainvoke(payload)
-
-
-@retry(
-    stop=stop_after_attempt(3),
-    wait=wait_exponential(multiplier=1, min=1, max=10),
-)
-async def invoke_with_retry(
-    llm: BaseChatModel,
-    messages: list,
-) -> str:
-    """재시도 로직이 있는 LLM 호출
-
-    Args:
-        llm: LLM 인스턴스
-        messages: 메시지 리스트
-
-    Returns:
-        LLM 응답 내용
-    """
-    response = await llm.ainvoke(messages)
-    return response.content
-
-
-def clear_llm_cache() -> None:
-    """LLM 캐시 초기화 (테스트나 설정 변경 시 사용)"""
-    create_llm.cache_clear()
