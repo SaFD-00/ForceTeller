@@ -71,7 +71,7 @@ class TestTenGodsForStem:
         assert calculate_ten_god(6, 0) == "편재"  # 경 일간 → 갑
 
 
-# 갑(甲, 양목) 일간 기준 지지 본기(정기) 십성 — 표준 정기 기준, 오(午)는 별도
+# 갑(甲, 양목) 일간 기준 지지 본기(정기) 십성 — 표준 정기 기준, 오(午)는 별도 명시 테스트
 # 자:계(정인) 축:기(정재) 인:갑(비견) 묘:을(겁재) 진:무(편재) 사:병(식신)
 # 미:기(정재) 신:경(편관) 유:신(정관) 술:무(편재) 해:임(편인)
 GAP_BRANCH_TEN_GODS = {
@@ -107,7 +107,7 @@ GYEONG_BRANCH_TEN_GODS = {
 
 
 class TestTenGodsForBranch:
-    """지지 본기 기준 십성 검증 (오 제외 — 오는 별도 xfail)"""
+    """지지 본기 기준 십성 검증 (오는 별도 명시 테스트)"""
 
     @pytest.mark.parametrize("branch, expected", sorted(GAP_BRANCH_TEN_GODS.items()))
     def test_gap_branch(self, branch, expected):
@@ -119,11 +119,6 @@ class TestTenGodsForBranch:
         """경 일간 기준 지지 본기 십성"""
         assert TenGodsCalculator(6).get_ten_god_for_branch(branch) == expected
 
-    @pytest.mark.xfail(
-        reason="구현이 오(午)의 지장간 본기를 기(己·토)로 잡음. 표준 정기는 정(丁·화)이라 "
-        "갑 일간 기준 표준=상관이나 구현=정재. hidden_stems 오 본기 이슈와 동일 원인.",
-        strict=True,
-    )
     def test_gap_branch_o_standard(self):
-        """갑 일간 기준 오(午) 십성 표준값(상관) — 구현 본기 오류로 실패 예상"""
+        """갑 일간 기준 오(午) 십성 표준값(상관) — 표준 본기 정(丁·음화), 목생화·이음양"""
         assert TenGodsCalculator(0).get_ten_god_for_branch(6) == "상관"

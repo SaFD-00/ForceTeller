@@ -276,8 +276,9 @@ HIDDEN_STEMS: dict[int, list[tuple[int, float]]] = {
 }
 
 # 정확한 지장간 (한국 전통 기준) - {stem: 천간인덱스, ratio: 비율}
+# 월률분야 표준표 기준 (여기·중기·정기 순, 마지막이 본기)
 HIDDEN_STEMS_DETAILED: dict[int, list[dict[str, Any]]] = {
-    0: [{"stem": 9, "ratio": 100}],  # 자: 계
+    0: [{"stem": 8, "ratio": 30}, {"stem": 9, "ratio": 70}],  # 자: 임, 계
     1: [
         {"stem": 9, "ratio": 30},
         {"stem": 7, "ratio": 30},
@@ -288,7 +289,7 @@ HIDDEN_STEMS_DETAILED: dict[int, list[dict[str, Any]]] = {
         {"stem": 2, "ratio": 30},
         {"stem": 0, "ratio": 50},
     ],  # 인: 무, 병, 갑
-    3: [{"stem": 1, "ratio": 100}],  # 묘: 을
+    3: [{"stem": 0, "ratio": 30}, {"stem": 1, "ratio": 70}],  # 묘: 갑, 을
     4: [
         {"stem": 1, "ratio": 30},
         {"stem": 9, "ratio": 30},
@@ -299,18 +300,22 @@ HIDDEN_STEMS_DETAILED: dict[int, list[dict[str, Any]]] = {
         {"stem": 6, "ratio": 30},
         {"stem": 2, "ratio": 50},
     ],  # 사: 무, 경, 병
-    6: [{"stem": 3, "ratio": 30}, {"stem": 5, "ratio": 70}],  # 오: 정, 기
+    6: [
+        {"stem": 2, "ratio": 30},
+        {"stem": 5, "ratio": 30},
+        {"stem": 3, "ratio": 40},
+    ],  # 오: 병, 기, 정
     7: [
         {"stem": 3, "ratio": 30},
         {"stem": 1, "ratio": 30},
         {"stem": 5, "ratio": 40},
     ],  # 미: 정, 을, 기
     8: [
-        {"stem": 5, "ratio": 20},
+        {"stem": 4, "ratio": 20},
         {"stem": 8, "ratio": 30},
         {"stem": 6, "ratio": 50},
-    ],  # 신: 기, 임, 경
-    9: [{"stem": 7, "ratio": 100}],  # 유: 신
+    ],  # 신: 무, 임, 경
+    9: [{"stem": 6, "ratio": 30}, {"stem": 7, "ratio": 70}],  # 유: 경, 신
     10: [
         {"stem": 7, "ratio": 30},
         {"stem": 3, "ratio": 30},
