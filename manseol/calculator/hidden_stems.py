@@ -22,9 +22,8 @@ class HiddenStemsCalculator:
         """
         지지의 지장간 반환
 
-        지지별 지장간 개수에 따라 타입 분류:
-        - 1개: 본기만 (자, 묘, 유)
-        - 2개: 중기 + 본기 (오, 해)
+        지지별 지장간 개수에 따라 타입 분류 (월률분야 표준표 기준):
+        - 2개: 여기 + 본기 (왕지: 자, 묘, 유)
         - 3개: 여기 + 중기 + 본기 (나머지)
 
         Args:
@@ -39,10 +38,10 @@ class HiddenStemsCalculator:
         count = len(hidden)
 
         # 지장간 개수에 따른 타입 분류
-        if count == 1:
+        if count == 1:  # 표준표에는 없으나 방어적으로 유지
             type_map = {0: "본기"}
-        elif count == 2:
-            type_map = {0: "중기", 1: "본기"}
+        elif count == 2:  # 왕지(자·묘·유): 여기 + 본기
+            type_map = {0: "여기", 1: "본기"}
         else:  # count == 3
             type_map = {0: "여기", 1: "중기", 2: "본기"}
 
