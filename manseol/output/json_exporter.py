@@ -4,8 +4,14 @@ JSON 출력 모듈
 """
 
 from datetime import datetime
+from typing import Any
 
 from config.constants import BRANCHES, STEM_ELEMENT_COLORS, STEMS
+from manseol.calculator.current_fortune import (
+    calculate_current_fortune,
+    calculate_fortune_ranges,
+    now_kst,
+)
 from manseol.calculator.fortune_cycle import FortuneCycleCalculator
 from manseol.calculator.hidden_stems import HiddenStemsCalculator
 from manseol.calculator.interactions import InteractionsCalculator
@@ -141,6 +147,12 @@ class JsonExporter:
         # 7.6 세운(歲運) - 올해부터 향후 수년간 연운 (시간 미상과 무관)
         sewun = self._build_sewun(calc_datetime, pillars_raw, ten_gods_calc, twelve_phases_calc)
 
+        # 7.7 현재 운세(연운·월운·일운) + 슬라이더 범위 — 일간만 필요(has_time 무관)
+        # 두 빌더에 같은 기준 시각을 넘겨 자정 경계에서 일운 날짜가 어긋나지 않게 한다.
+        reference_now = now_kst()
+        current_fortune = self._build_current_fortune(day_stem_idx, reference_now)
+        fortune_ranges = self._build_fortune_ranges(day_stem_idx, reference_now)
+
         # 8. 최종 결과 조립
         return SajuResult(
             meta=MetaInfo(version="1.0.0", generated_at=datetime.now(), engine="ForceTeller"),
@@ -169,7 +181,17 @@ class JsonExporter:
             fortune_cycles=fortune_cycles,
             interactions=interactions,
             sewun=sewun,
+            current_fortune=current_fortune,
+            fortune_ranges=fortune_ranges,
         )
+
+    def _build_current_fortune(self, day_stem_idx: int, now: datetime) -> dict[str, Any]:
+        """현재 연운·월운·일운(단일 진실 공급원) 구성 — current_fortune에 위임"""
+        return calculate_current_fortune(day_stem_idx, now)
+
+    def _build_fortune_ranges(self, day_stem_idx: int, now: datetime) -> dict[str, Any]:
+        """웹 슬라이더용 연/월/일 운세 범위 구성 — current_fortune에 위임"""
+        return calculate_fortune_ranges(day_stem_idx, now)
 
     def _build_sewun(
         self,
@@ -187,11 +209,12 @@ class JsonExporter:
             month_stem=pillars_raw["month"][0],
             month_branch=pillars_raw["month"][1],
         )
-        current_year = datetime.now().year
+        current_year = now_kst().year
         result = []
         for year in range(current_year, current_year + years):
             sewun = fortune_calc.calculate_sewun(year)
             sewun["ten_god"] = ten_gods_calc.get_ten_god_for_stem(sewun["stem_index"])
+            sewun["branch_ten_god"] = ten_gods_calc.get_ten_god_for_branch(sewun["branch_index"])
             sewun["twelve_phase"] = twelve_phases_calc.get_twelve_phase(sewun["branch_index"])
             result.append(sewun)
         return result
@@ -470,6 +493,7 @@ class JsonExporter:
         cycles = []
         for cycle in summary["cycles"]:
             ten_god = ten_gods_calc.get_ten_god_for_stem(cycle["stem_index"])
+            branch_ten_god = ten_gods_calc.get_ten_god_for_branch(cycle["branch_index"])
             twelve_phase = twelve_phases_calc.get_twelve_phase(cycle["branch_index"])
 
             cycles.append(
@@ -481,6 +505,7 @@ class JsonExporter:
                     ganji_korean=cycle["ganji_korean"],
                     ganji_chinese=cycle["ganji_chinese"],
                     ten_god=ten_god,
+                    branch_ten_god=branch_ten_god,
                     twelve_phase=twelve_phase,
                 )
             )

@@ -146,7 +146,8 @@ class FortuneCycle(BaseModel):
     branch_index: int = Field(..., description="지지 인덱스")
     ganji_korean: str = Field(..., description="간지 한글")
     ganji_chinese: str = Field(..., description="간지 한자")
-    ten_god: str = Field(..., description="십성")
+    ten_god: str = Field(..., description="십성 (천간 기준)")
+    branch_ten_god: str = Field("", description="십성 (지지 본기 기준)")
     twelve_phase: str = Field(..., description="12운성")
 
 
@@ -230,6 +231,14 @@ class SajuResult(BaseModel):
 
     sewun: list[dict[str, Any]] | None = Field(
         None, description="세운(歲運) - 올해부터 향후 수년간 연운"
+    )
+
+    current_fortune: dict[str, Any] | None = Field(
+        None, description="현재 연운·월운·일운 (서버 기준 KST 시각, 단일 진실 공급원)"
+    )
+
+    fortune_ranges: dict[str, Any] | None = Field(
+        None, description="웹 슬라이더용 연/월/일 운세 범위 (현재 전후)"
     )
 
     def to_json(self, indent: int = 2) -> str:

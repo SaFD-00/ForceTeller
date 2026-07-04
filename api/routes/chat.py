@@ -21,6 +21,8 @@ from api.schemas import (
     SessionListResponse,
 )
 from config.settings import get_allowed_models, settings
+from manseol.calculator.current_fortune import calculate_current_fortune
+from manseol.data.stems_branches import StemBranchData
 from utils.llm_client import get_llm_client
 from utils.protocols import SessionManagerProtocol
 
@@ -34,6 +36,28 @@ def _resolve_model(model_value: str | None) -> str | None:
     if model_value not in get_allowed_models():
         raise HTTPException(status_code=400, detail=f"허용되지 않은 모델: {model_value}")
     return model_value
+
+
+def _build_current_fortune_from_saju(saju: dict) -> dict | None:
+    """세션 saju_data(display 형식)의 일간으로 현재 연운·월운·일운을 서버 재계산.
+
+    세션 저장값은 생성 시점 스냅샷이라 일운이 낡는다. 저장된
+    four_pillars.day.heavenly_stem.korean(한글 천간 1글자)에서 일간 인덱스를
+    복원해 매 메시지 시점(KST) 기준으로 다시 계산한다. 구조 불일치·미등록
+    천간 등 복원 실패 시 None을 반환해 호출부가 저장값으로 폴백하도록 한다.
+    """
+    four_pillars = saju.get("four_pillars", {})
+    day_pillar = four_pillars.get("day", {}) if isinstance(four_pillars, dict) else {}
+    stem = day_pillar.get("heavenly_stem", {}) if isinstance(day_pillar, dict) else {}
+    korean = stem.get("korean") if isinstance(stem, dict) else None
+    if not korean:
+        return None
+
+    day_stem_index = StemBranchData.stem_index_by_korean(korean)
+    if day_stem_index is None:
+        return None
+
+    return calculate_current_fortune(day_stem_index)
 
 
 @router.post(
@@ -264,6 +288,17 @@ async def chat_stream(
             monthly = fortune_cycles.get("monthly", {})
             daily = fortune_cycles.get("daily", {})
 
+            # 서버 단일 진실 공급원: 저장 스냅샷(프론트 근사)을 매 메시지 시점
+            # 서버 재계산으로 대체한다. 복원 실패 시에만 저장값 폴백(구 세션 호환).
+            # 대운(current_daewun)은 출생 기준 고정값이라 저장값을 그대로 쓴다.
+            server_fortune = _build_current_fortune_from_saju(saju)
+            monthly_label = ""
+            if server_fortune is not None:
+                yearly = server_fortune["yearly"]
+                monthly = server_fortune["monthly"]
+                daily = server_fortune["daily"]
+                monthly_label = ", 절기월"
+
             saju_context = f"""
 ## 사주 정보
 - 이름: {name}
@@ -285,7 +320,7 @@ async def chat_stream(
 ## 현재 운세 흐름
 - 현재 대운: {json.dumps(current_daewun, ensure_ascii=False) if current_daewun else "정보 없음"}
 - 연운 ({yearly.get("year", "")}년): {yearly.get("stem", "")}{yearly.get("branch", "")} - {yearly.get("ten_god", "")}
-- 월운 ({monthly.get("month", "")}월): {monthly.get("stem", "")}{monthly.get("branch", "")} - {monthly.get("ten_god", "")}
+- 월운 ({monthly.get("month", "")}월{monthly_label}): {monthly.get("stem", "")}{monthly.get("branch", "")} - {monthly.get("ten_god", "")}
 - 일운: {daily.get("stem", "")}{daily.get("branch", "")} - {daily.get("ten_god", "")}
 """
 
