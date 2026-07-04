@@ -81,9 +81,11 @@ class PillarEngine:
         year_stem_base = year_stem % 5
         month_stem_start = (year_stem_base * 2 + 2) % 10
 
-        # 월간 = 시작 천간 + (월 - 2)
+        # 월간 = 시작 천간 + 인월 기준 경과 월수
         # 참조: manseryeok의 월 번호 체계(1=인월)와 현재 체계(2=인월) 차이 보정
-        stem_index = (month_stem_start + jeolgi_month - 2) % 10
+        # 축월(jeolgi_month=1)은 입춘 기준 연의 12번째 달이므로 % 12로 +11이 되어야
+        # 한다 — 이전의 (jeolgi_month - 2)는 축월에서 -1이 되어 월간이 2칸 어긋났다.
+        stem_index = (month_stem_start + (jeolgi_month - 2) % 12) % 10
 
         return stem_index, branch_index
 
