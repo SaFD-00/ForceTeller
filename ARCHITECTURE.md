@@ -157,7 +157,7 @@ web/
 │   ├── layout/       # Sidebar
 │   ├── result/       # 결과 표시 (13개)
 │   ├── chat/         # 채팅 UI (8개)
-│   └── ui/           # 재사용 UI (9개)
+│   └── ui/           # 재사용 UI (10개)
 ├── stores/
 │   └── sajuStore.ts  # Zustand 상태관리
 ├── lib/

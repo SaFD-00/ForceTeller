@@ -118,7 +118,7 @@ ForceTeller는 정확한 만세력 계산과 AI 해석을 결합한 사주팔자
 │   │   ├── layout/               # Sidebar (아이콘 내비게이션)
 │   │   ├── result/               # 결과 표시 (13개 컴포넌트)
 │   │   ├── chat/                 # 채팅 UI (8개 컴포넌트)
-│   │   └── ui/                   # 재사용 UI (9개 컴포넌트)
+│   │   └── ui/                   # 재사용 UI (10개 컴포넌트)
 │   ├── data/
 │   │   └── saju-glossary.ts      # 사주 용어 사전
 │   ├── stores/
