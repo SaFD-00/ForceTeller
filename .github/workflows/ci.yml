@@ -62,6 +62,32 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      # 디자인 규칙 가드 1 — primary(#49B6E5, 백색 대비 2.31:1)는 채움/장식 전용.
+      # 텍스트·아이콘강조·포커스링·선택보더에 쓰면 AA 대비를 만족하지 못하므로 accent를 써야 한다.
+      - name: Design guard - primary is fill-only
+        run: |
+          MATCHES=$(grep -rnE "(text|ring|border|decoration|stroke)-primary" --include="*.tsx" --include="*.ts" app components lib 2>/dev/null | grep -v "primary-foreground" || true)
+          if [ -n "$MATCHES" ]; then
+            echo "$MATCHES"
+            echo "::error::primary(#49B6E5)는 채움/장식 전용입니다. 텍스트·링·보더·스트로크 강조에는 accent를 쓰세요."
+            exit 1
+          fi
+          echo "OK: text/ring/border/decoration/stroke-primary 위반 0건"
+
+      # 디자인 규칙 가드 2 — 손그림 카드 클래스(block-card/glass-card/card/glass)는
+      # globals.css에서 자체 hand-drawn radius(255px 15px 225px 15px / ...)를 이미 적용한다.
+      # 같은 className에 rounded-*를 더하면 그 손그림 윤곽이 조용히 무효화된다.
+      - name: Design guard - no rounded-* on hand-drawn card classes
+        run: |
+          PATTERN='(^|[^a-zA-Z0-9-])(block-card|glass-card|card|glass)([^a-zA-Z0-9-]|$)'
+          MATCHES=$(grep -rnE "$PATTERN" --include="*.tsx" app components 2>/dev/null | grep "rounded-" || true)
+          if [ -n "$MATCHES" ]; then
+            echo "$MATCHES"
+            echo "::error::block-card/glass-card/card/glass는 자체 hand-drawn radius를 갖습니다. 같은 className에 rounded-*를 함께 쓰지 마세요."
+            exit 1
+          fi
+          echo "OK: 손그림 카드 클래스 + rounded-* 동시 출현 0건"
+
       - name: Type check
         run: npx tsc --noEmit
 

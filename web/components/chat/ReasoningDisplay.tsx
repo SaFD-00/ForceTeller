@@ -48,8 +48,8 @@ export function ReasoningDisplay({
                 className="flex items-center gap-1"
               >
                 <div className="w-1.5 h-1.5 rounded-full bg-warning" />
-                <div className="w-1.5 h-1.5 rounded-full bg-warning animation-delay-200" />
-                <div className="w-1.5 h-1.5 rounded-full bg-warning animation-delay-400" />
+                <div className="w-1.5 h-1.5 rounded-full bg-warning" style={{ animationDelay: '200ms' }} />
+                <div className="w-1.5 h-1.5 rounded-full bg-warning" style={{ animationDelay: '400ms' }} />
               </motion.div>
             )}
             {isComplete && (
