@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { GlassCard, ElementBadge } from '@/components/ui';
+import { GlassCard, GlossaryTooltip } from '@/components/ui';
 import type { Element } from '@/types/saju';
 
 // 오행별 배경색
@@ -110,7 +110,9 @@ export function PillarTable({
                 return (
                   <td key={col.key} className="text-center py-2 px-2">
                     <span className="text-sm text-foreground">
-                      {pillar.ten_god || '-'}
+                      <GlossaryTooltip term={pillar.ten_god || ''}>
+                        {pillar.ten_god || '-'}
+                      </GlossaryTooltip>
                     </span>
                   </td>
                 );
@@ -179,7 +181,9 @@ export function PillarTable({
                 return (
                   <td key={col.key} className="text-center py-2 px-2">
                     <span className="text-sm text-foreground">
-                      {pillar.branch_ten_god || '-'}
+                      <GlossaryTooltip term={pillar.branch_ten_god || ''}>
+                        {pillar.branch_ten_god || '-'}
+                      </GlossaryTooltip>
                     </span>
                   </td>
                 );
@@ -189,7 +193,9 @@ export function PillarTable({
             {/* 지장간 행 */}
             {showHiddenStems && (
               <tr>
-                <td className="text-muted-foreground text-xs py-2 px-2">지장간</td>
+                <td className="text-muted-foreground text-xs py-2 px-2">
+                  <GlossaryTooltip term="지장간">지장간</GlossaryTooltip>
+                </td>
                 {columns.map((col) => {
                   const pillar = getPillar(col.key);
                   return (
@@ -212,7 +218,9 @@ export function PillarTable({
                   return (
                     <td key={col.key} className="text-center py-2 px-2">
                       <span className="text-xs text-muted-foreground">
-                        {pillar.twelve_phase || '-'}
+                        <GlossaryTooltip term={pillar.twelve_phase || ''}>
+                          {pillar.twelve_phase || '-'}
+                        </GlossaryTooltip>
                       </span>
                     </td>
                   );
@@ -223,13 +231,17 @@ export function PillarTable({
             {/* 12신살 행 */}
             {showTwelveShensha && (
               <tr>
-                <td className="text-muted-foreground text-xs py-2 px-2">12신살</td>
+                <td className="text-muted-foreground text-xs py-2 px-2">
+                  <GlossaryTooltip term="신살">12신살</GlossaryTooltip>
+                </td>
                 {columns.map((col) => {
                   const pillar = getPillar(col.key);
                   return (
                     <td key={col.key} className="text-center py-2 px-2">
                       <span className="text-xs text-muted-foreground">
-                        {pillar.twelve_shensha || '-'}
+                        <GlossaryTooltip term={pillar.twelve_shensha || ''}>
+                          {pillar.twelve_shensha || '-'}
+                        </GlossaryTooltip>
                       </span>
                     </td>
                   );

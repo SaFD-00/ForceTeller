@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { Bangers, JetBrains_Mono } from 'next/font/google';
 import { Sidebar } from '@/components/layout/Sidebar';
+import { BottomNav } from '@/components/layout/BottomNav';
+import { MotionProvider } from '@/components/providers/MotionProvider';
 import './globals.css';
 
 // Tetris 디자인 시스템 디스플레이/모노 폰트.
@@ -56,10 +58,14 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen bg-background text-foreground font-sans">
-        <div className="flex min-h-screen">
-          <Sidebar />
-          <div className="flex-1 min-w-0 lg:pl-16">{children}</div>
-        </div>
+        <MotionProvider>
+          <div className="flex min-h-screen">
+            <Sidebar />
+            {/* pb-16: 모바일 하단 네비(h-16)가 콘텐츠 끝을 가리지 않도록 확보 */}
+            <div className="flex-1 min-w-0 pb-16 lg:pb-0 lg:pl-16">{children}</div>
+          </div>
+          <BottomNav />
+        </MotionProvider>
       </body>
     </html>
   );

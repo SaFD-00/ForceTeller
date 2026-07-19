@@ -66,29 +66,39 @@ export function AgentSelector({ selected, onSelect }: AgentSelectorProps) {
     <div className="p-3 border-b-[1.5px] border-border">
       <h3 className="text-xs font-medium text-muted-foreground mb-2">상담 분야 선택</h3>
       <div className="flex flex-wrap gap-1.5">
-        {AGENTS.map((agent) => (
-          <motion.button
-            key={agent.type}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={() => onSelect(agent.type)}
-            className={cn(
-              'px-3 py-1.5 rounded-lg border-[1.5px] border-border transition-all flex items-center gap-1.5 block-press focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
-              selected === agent.type
-                ? 'bg-primary/15 text-primary border-border shadow-block-sm'
-                : 'bg-surface hover:bg-muted'
-            )}
-          >
-            <Icon
-              name={agent.icon}
-              size={16}
+        {AGENTS.map((agent) => {
+          const isSelected = selected === agent.type;
+          return (
+            <motion.button
+              key={agent.type}
+              type="button"
+              aria-pressed={isSelected}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => onSelect(agent.type)}
               className={cn(
-                selected === agent.type ? 'text-primary' : 'text-muted-foreground'
+                'focus-ring min-h-11 px-4 rounded-lg border-[1.5px] border-border transition-all flex items-center gap-1.5 block-press',
+                isSelected
+                  ? 'bg-primary/15 text-primary border-border shadow-block-sm'
+                  : 'bg-surface hover:bg-muted'
               )}
-            />
-            <span className="text-xs font-medium text-foreground">{agent.name}</span>
-          </motion.button>
-        ))}
+            >
+              <Icon
+                name={isSelected ? 'solar:check-circle-bold' : agent.icon}
+                size={16}
+                className={cn(isSelected ? 'text-primary' : 'text-muted-foreground')}
+              />
+              <span
+                className={cn(
+                  'text-xs text-foreground',
+                  isSelected ? 'font-semibold' : 'font-medium'
+                )}
+              >
+                {agent.name}
+              </span>
+            </motion.button>
+          );
+        })}
       </div>
     </div>
   );

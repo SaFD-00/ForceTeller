@@ -1,7 +1,5 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { ChatContainer } from '@/components/chat';
@@ -9,16 +7,22 @@ import { Button, Icon, GlassCard } from '@/components/ui';
 import { useSajuStore, useChatStore } from '@/stores/sajuStore';
 
 export default function ChatPage() {
-  const router = useRouter();
-  const { result } = useSajuStore();
+  const { result, hasHydrated } = useSajuStore();
   const { clearChat } = useChatStore();
 
-  // Redirect if no saju result
-  useEffect(() => {
-    if (!result) {
-      router.push('/');
-    }
-  }, [result, router]);
+  // 저장된 결과 복원 전에는 판단을 보류한다 (자동 리다이렉트 없음 — 사용자가 직접 선택한다).
+  if (!hasHydrated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Icon
+          name="solar:refresh-bold"
+          size={32}
+          className="text-muted-foreground animate-spin"
+          aria-label="불러오는 중"
+        />
+      </div>
+    );
+  }
 
   if (!result) {
     return (
