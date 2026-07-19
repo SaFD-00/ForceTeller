@@ -12,15 +12,17 @@
   src: url('./PretendardVariable.woff2') format('woff2-variations');
 }
 
-/* tetris-refined 디스플레이/모노 폰트 (라틴 전용 서브셋, Google Fonts woff2 vendor).
- * Bangers: 라틴 워드마크/대형 헤딩(font-display). JetBrains Mono: 점수·간지·숫자(font-mono).
- * 한글은 Pretendard 가 담당 — Bangers/JetBrains 는 라틴·숫자 glyph 만 포함한다. */
+/* Doodle 디스플레이/모노 폰트 (라틴 전용 서브셋, Google Fonts woff2 vendor).
+ * Delius Swash Caps: 라틴 워드마크/대형 헤딩(font-display, 손글씨).
+ * JetBrains Mono: 점수·간지·숫자(font-mono, Doodle label-caps).
+ * 한글은 Pretendard 가 담당 — 앱은 한글 디스플레이로 Gaegu 를 <link> 로드하지만
+ * Gaegu 는 한글 서브셋이 ~100 분할이라 vendor 하지 않는다(NOTES.md 폰트 절 참조). */
 @font-face {
-  font-family: 'Bangers';
+  font-family: 'Delius Swash Caps';
   font-weight: 400;
   font-style: normal;
   font-display: swap;
-  src: url('./Bangers-Regular.woff2') format('woff2');
+  src: url('./DeliusSwashCaps-Regular.woff2') format('woff2');
 }
 @font-face {
   font-family: 'JetBrains Mono';
