@@ -59,9 +59,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Lint
-        run: npm run lint
-
       # 디자인 규칙 가드 1 — primary(#49B6E5, 백색 대비 2.31:1)는 채움/장식 전용.
       # 텍스트·아이콘강조·포커스링·선택보더에 쓰면 AA 대비를 만족하지 못하므로 accent를 써야 한다.
       - name: Design guard - primary is fill-only
@@ -88,14 +85,10 @@ jobs:
           fi
           echo "OK: 손그림 카드 클래스 + rounded-* 동시 출현 0건"
 
-      - name: Type check
-        run: npx tsc --noEmit
-
-      - name: Test
-        run: npm test
-
-      - name: Build
-        run: npm run build
+      # 집계 게이트 — lint → typecheck → test → build → design-sync CSS 컴파일.
+      # 로컬 `npm run gate`와 동일 정의를 재사용해 CI/로컬 드리프트를 없앤다(package.json 참조).
+      - name: Gate (lint + typecheck + test + build + ds-css compile)
+        run: npm run gate
         env:
           NEXT_PUBLIC_API_URL: http://localhost:8000
 

@@ -6,8 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "next lint --max-warnings=0",
+    "typecheck": "tsc --noEmit",
     "test": "vitest run",
+    "gate": "npm run lint && npm run typecheck && npm test && npm run build && node .ds-css/compile.mjs",
     "e2e": "node e2e/a11y-result.mjs && node e2e/a11y-chat.mjs && node e2e/a11y-mobile-chat.mjs && node e2e/a11y-loading.mjs",
     "e2e:selftest": "A11Y_SELFTEST=1 node e2e/a11y-result.mjs; test $? -ne 0"
   },
