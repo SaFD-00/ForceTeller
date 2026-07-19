@@ -91,6 +91,15 @@ non-text/UI 기준(3:1) 을 **모두 탈락**한다. 앱은 `text-primary` / `ri
   잉크는 4.5:1 이상을 확보한다. 이 값을 white 로 되돌리지 말 것.
 - 접근성 기준선: **WCAG 2.2 AA, keyboard-first, 항상 보이는 focus state**(`.focus-ring` = accent 2px + offset).
 
+### 원색 텍스트 금지 — ink 파생 토큰
+
+오행·상태 원색(600급 hex)은 채움·보더·차트·아이콘 등 **non-text 전용**이다 — 텍스트는 항상
+같은 계열의 `*-ink` 토큰(틴트·muted 포함 전 배경 조합 4.5:1 실측 보증)을 쓴다.
+칩·배지 윤곽선은 잉크(`border-border`)이며 원색 `/50` 보더(1.75~2.29:1)는 금지.
+ink 는 도메인 값이 아니라 표현 파생값이다 — 도메인 SSOT(`elements.ts` `ELEMENT_COLORS.hex`)는 불변.
+(wood #166534 / fire #991B1B / earth #92400E / metal #475569 / water #1E40AF,
+ success·warning·danger·info 는 동일 hue 미러.)
+
 ### 오행(五行) 색 보존
 
 `element.{wood,fire,earth,metal,water}` 는 **리디자인 대상이 아니다.** 오행 색은 브랜드 장식이 아니라
