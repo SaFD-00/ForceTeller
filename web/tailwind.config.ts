@@ -7,6 +7,7 @@ const config: Config = {
   content: [
     './app/**/*.{js,ts,jsx,tsx,mdx}',
     './components/**/*.{js,ts,jsx,tsx,mdx}',
+    './lib/**/*.{js,ts}',
   ],
   theme: {
     extend: {
@@ -37,18 +38,19 @@ const config: Config = {
           foreground: '#111827',
         },
         // 시맨틱 상태 토큰
-        success: { DEFAULT: '#16A34A', foreground: '#FFFFFF' },
-        warning: { DEFAULT: '#D97706', foreground: '#FFFFFF' },
-        danger: { DEFAULT: '#DC2626', foreground: '#FFFFFF' },
-        info: { DEFAULT: '#2563EB', foreground: '#FFFFFF' },
+        // ink = 텍스트 전용 파생(같은 계열 800급, 전 배경 조합 4.5:1 실측) — DEFAULT hex(도메인 SSOT)는 불변
+        success: { DEFAULT: '#16A34A', foreground: '#FFFFFF', ink: '#166534' },
+        warning: { DEFAULT: '#D97706', foreground: '#FFFFFF', ink: '#92400E' },
+        danger: { DEFAULT: '#DC2626', foreground: '#FFFFFF', ink: '#991B1B' },
+        info: { DEFAULT: '#2563EB', foreground: '#FFFFFF', ink: '#1E40AF' },
         // 오행 색 — lib/constants/elements.ts ELEMENT_COLORS.hex 단일 소스와 일치.
         // Doodle 스펙의 success/warning/danger 와 hex 가 그대로 일치해 리디자인에도 불변.
         element: {
-          wood: '#16A34A',   // = success
-          fire: '#DC2626',   // = danger
-          earth: '#D97706',  // = warning
-          metal: '#64748B',  // slate (무채색 유지)
-          water: '#2563EB',  // = info
+          wood:  { DEFAULT: '#16A34A', ink: '#166534' },
+          fire:  { DEFAULT: '#DC2626', ink: '#991B1B' },
+          earth: { DEFAULT: '#D97706', ink: '#92400E' },
+          metal: { DEFAULT: '#64748B', ink: '#475569' },
+          water: { DEFAULT: '#2563EB', ink: '#1E40AF' },
         },
       },
       fontFamily: {

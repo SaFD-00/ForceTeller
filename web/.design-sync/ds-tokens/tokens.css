@@ -38,6 +38,17 @@
   --ft-color-element-metal: #64748b; /* 금 金 */
   --ft-color-element-water: #2563eb; /* 수 水 */
 
+  /* ink — 텍스트 전용 파생(틴트 위 4.5:1). 도메인 hex(600급)는 non-text 전용 */
+  --ft-color-success-ink: #166534;
+  --ft-color-warning-ink: #92400e;
+  --ft-color-danger-ink: #991b1b;
+  --ft-color-info-ink: #1e40af;
+  --ft-color-element-wood-ink: #166534;
+  --ft-color-element-fire-ink: #991b1b;
+  --ft-color-element-earth-ink: #92400e;
+  --ft-color-element-metal-ink: #475569;
+  --ft-color-element-water-ink: #1e40af;
+
   /* 그림자 — Doodle 소프트 섀도(잉크 저알파 블러) */
   --ft-shadow-card: 0 2px 6px rgba(38, 61, 91, 0.12);
   --ft-shadow-card-hover: 0 4px 12px rgba(38, 61, 91, 0.18);
