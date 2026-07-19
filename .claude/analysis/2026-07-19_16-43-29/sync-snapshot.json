@@ -1,0 +1,17 @@
+{
+  "date": "2026-07-19",
+  "project": "ForceTeller",
+  "category": "analysis",
+  "summary": "접근성 이니셔티브는 /result 데스크톱에서만 완결 — 채팅 로딩 점이 대비 1:1로 비가시, aria-live 0건, design-sync 가이드가 ink 규칙 위반을 지시 중",
+  "details": "4라운드 접근성·디자인 작업 종료 후 4개 stage(도달범위·디자인드리프트·검증체계·문서정합)를 병렬 조사하고 핵심 주장 9건을 직접 재검산했다. 이니셔티브 전체가 components/result/* 하위에만 착지했고, 3개 라우트 중 2개에 렌더되는 채팅 서브트리는 아무것도 받지 못했다. 가장 시급한 것은 web/.design-sync/guidelines/02가 디자인 에이전트에게 text-element-fire·border-element-*/30을 권장하며 ink 언급이 0건이라는 점 — 방금 고친 접근성 회귀를 자동 재유입시키는 경로다. 사전 전제 하나는 반박됐다: CI는 실재하며 프론트 4게이트를 전부 블로킹 실행한다. 다만 판별력을 가졌던 a11y 하네스는 저장소 밖 세션 scratchpad에 있어 살아남지 못한다.",
+  "source": {
+    "workflow": "workflow:analyze",
+    "path": ".claude/analysis/2026-07-19_16-43-29"
+  },
+  "analysis": {
+    "report_path": ".claude/analysis/2026-07-19_16-43-29/README.md",
+    "metric": "라우트 3개 중 브라우저 실측 1개(/result 데스크톱만) · aria-live 0건(repo 전역) · 오버레이 3개 중 계약 준수 1개 · 기계적으로 강제되는 디자인 규칙 2개 · 프론트 테스트 2파일 21케이스(렌더 0·이벤트 0·훅 0) · 토큰 미러 #3 누락 키 11개 (source: _current-vs-baseline.md)",
+    "status": "reviewed",
+    "stage": "all"
+  }
+}
