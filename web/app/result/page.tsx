@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useId, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -22,6 +23,8 @@ import {
   LifetimeReport,
 } from '@/components/result';
 import { ChatContainer } from '@/components/chat';
+import { useFocusTrap } from '@/lib/hooks/useFocusTrap';
+import { useOverlayPortal } from '@/lib/hooks/useOverlayPortal';
 import { TEN_GOD_GROUP } from '@/lib/ganji';
 import type { Element, HiddenStemDisplay, ShenshaDisplay } from '@/types/saju';
 
@@ -66,6 +69,30 @@ export default function ResultPage() {
     window.addEventListener('resize', checkDesktop);
     return () => window.removeEventListener('resize', checkDesktop);
   }, []);
+
+  // ── 모바일 전체화면 채팅 오버레이: 오버레이 접근성 계약(DESIGN.md) 전체 적용 ──
+  // 훅은 아래 early return들보다 위에 있어야 한다(rules of hooks).
+  const chatDialogRef = useRef<HTMLDivElement>(null);
+  const chatTitleId = useId();
+  const isChatOverlayOpen = isChatOpen && isMobile;
+  const closeChat = useCallback(() => setIsChatOpen(false), []);
+
+  // ⚠ useOverlayPortal(portal + inert + 스크롤 잠금)은 반드시 useFocusTrap보다 "앞에"
+  // 호출해야 한다. cleanup은 effect 등록 순서대로 돌기 때문에 inert 해제가 포커스 복원보다
+  // 먼저 실행돼야 복원 대상(AI 상담 열기 버튼)이 그 시점에 focusable하다. 훅 상세는
+  // web/lib/hooks/useOverlayPortal.ts 참고.
+  const chatPortalContainer = useOverlayPortal('data-chat-portal', isChatOverlayOpen);
+  useFocusTrap(chatDialogRef, isChatOverlayOpen);
+
+  // Escape는 document 수준에서 받는다 — 포커스가 오버레이 밖에 있을 수 있다.
+  useEffect(() => {
+    if (!isChatOverlayOpen) return;
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') closeChat();
+    };
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [isChatOverlayOpen, closeChat]);
 
   // 저장된 결과 복원 전에는 판단을 보류한다 (자동 리다이렉트 없음 — 사용자가 직접 선택한다).
   if (!hasHydrated) {
@@ -505,39 +532,51 @@ export default function ResultPage() {
         )}
       </div>
 
-      {/* Mobile: Full-screen Chat Overlay */}
-      <AnimatePresence>
-        {isChatOpen && isMobile && (
-          <motion.div
-            initial={{ opacity: 0, y: '100%' }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: '100%' }}
-            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed inset-0 z-50 bg-background"
-          >
-            <div className="h-full flex flex-col">
-              <div className="flex items-center justify-between p-4 border-b-[1.5px] border-border">
-                <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
-                  <Icon name="solar:chat-round-dots-bold" size={24} className="text-accent" />
-                  AI 상담
-                </h2>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setIsChatOpen(false)}
-                  className="text-muted-foreground hover:text-foreground"
-                  aria-label="AI 상담 닫기"
-                >
-                  <Icon name="solar:close-circle-bold" size={24} />
-                </Button>
-              </div>
-              <div className="flex-1 min-h-0">
-                <ChatContainer />
-              </div>
-            </div>
-          </motion.div>
+      {/* Mobile: Full-screen Chat Overlay — AnimatePresence는 portal "안쪽"에 둔다 */}
+      {chatPortalContainer &&
+        createPortal(
+          <AnimatePresence>
+            {isChatOverlayOpen && (
+              <motion.div
+                ref={chatDialogRef}
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby={chatTitleId}
+                tabIndex={-1}
+                initial={{ opacity: 0, y: '100%' }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: '100%' }}
+                transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+                className="fixed inset-0 z-50 bg-background"
+              >
+                <div className="h-full flex flex-col">
+                  <div className="flex items-center justify-between p-4 border-b-[1.5px] border-border">
+                    <h2
+                      id={chatTitleId}
+                      className="text-lg font-semibold text-foreground flex items-center gap-2"
+                    >
+                      <Icon name="solar:chat-round-dots-bold" size={24} className="text-accent" />
+                      AI 상담
+                    </h2>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={closeChat}
+                      className="text-muted-foreground hover:text-foreground"
+                      aria-label="AI 상담 닫기"
+                    >
+                      <Icon name="solar:close-circle-bold" size={24} />
+                    </Button>
+                  </div>
+                  <div className="flex-1 min-h-0">
+                    <ChatContainer />
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>,
+          chatPortalContainer
         )}
-      </AnimatePresence>
     </main>
   );
 }

@@ -105,8 +105,10 @@ export function BirthInfoForm() {
 
     if (!validateForm()) return;
 
-    setLoading(true);
+    // setError 는 isLoading:false 를 함께 세팅한다(sajuStore.ts) — 순서가 뒤집히면
+    // 방금 켠 로딩 플래그를 즉시 꺼서 LoadingOverlay 가 영영 뜨지 않는다.
     setError(null);
+    setLoading(true);
 
     try {
       const result = await calculateManseol(formData);

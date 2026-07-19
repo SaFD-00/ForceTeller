@@ -1,7 +1,9 @@
 'use client';
 
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mascot } from './Mascot';
+import { useOverlayPortal } from '@/lib/hooks/useOverlayPortal';
 
 interface LoadingOverlayProps {
   isVisible: boolean;
@@ -14,10 +16,23 @@ export function LoadingOverlay({
   message = '사주를 분석하고 있습니다',
   subMessage = '잠시만 기다려주세요...',
 }: LoadingOverlayProps) {
-  return (
+  // 오버레이 접근성 계약의 "축소판". 뒤 폼이 Tab으로 도달 가능한 채 남지 않도록
+  // portal + inert 로 배경을 봉쇄하되, 포커스 트랩과 Escape는 의도적으로 제외한다:
+  // - 트랩 없음: 이 오버레이 안에는 focusable 요소가 하나도 없다. 트랩을 걸면 포커스가
+  //   갇힌 채 어디로도 못 간다. 배경이 inert라 어차피 포커스가 새어 나가지도 않는다.
+  // - Escape 없음: 분석 요청에는 취소 경로가 없다(스토어에 abort/cancel 액션이 없어
+  //   응답이 오면 isLoading이 내려간다). 닫히지 않는 키를 광고하지 않는다.
+  // 알림은 role="status" + aria-live="polite" 로 — 대기 상태를 끼어들지 않고 전달한다.
+  const portalContainer = useOverlayPortal('data-loading-portal', isVisible);
+
+  if (!portalContainer) return null;
+
+  return createPortal(
     <AnimatePresence>
       {isVisible && (
         <motion.div
+          role="status"
+          aria-live="polite"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -68,6 +83,7 @@ export function LoadingOverlay({
           </div>
         </motion.div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    portalContainer
   );
 }
