@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useId, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Icon } from './Icon';
+import { useFocusTrap } from '@/lib/hooks/useFocusTrap';
 import type { GlossaryEntry } from '@/data/saju-glossary';
 
 interface GlossaryModalProps {
@@ -25,6 +26,12 @@ const categoryColors: Record<GlossaryEntry['category'], string> = {
 };
 
 export function GlossaryModal({ entry, isOpen, onClose }: GlossaryModalProps) {
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const titleId = useId();
+
+  // 포커스 트랩 + 복귀 (early return 위에서 호출 — rules of hooks)
+  useFocusTrap(dialogRef, isOpen && !!entry);
+
   // ESC 키로 닫기
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -61,6 +68,11 @@ export function GlossaryModal({ entry, isOpen, onClose }: GlossaryModalProps) {
 
           {/* 모달 (데스크톱) / 바텀시트 (모바일) */}
           <motion.div
+            ref={dialogRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={titleId}
+            tabIndex={-1}
             initial={{ opacity: 0, y: 100 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 100 }}
@@ -82,7 +94,7 @@ export function GlossaryModal({ entry, isOpen, onClose }: GlossaryModalProps) {
             {/* 헤더 */}
             <div className="flex items-center justify-between px-5 py-4 border-b border-border">
               <div className="flex items-center gap-3">
-                <span className="text-2xl font-bold text-foreground">{entry.term}</span>
+                <span id={titleId} className="text-2xl font-bold text-foreground">{entry.term}</span>
                 <span className="text-lg text-muted-foreground">{entry.hanja}</span>
               </div>
               <button

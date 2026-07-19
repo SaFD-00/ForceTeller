@@ -17,6 +17,8 @@ export function GlossaryTooltip({ term, children, onDetailClick }: GlossaryToolt
   const triggerRef = useRef<HTMLSpanElement>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  // Escape로 닫은 직후의 focus 복귀가 handleFocus를 통해 툴팁을 즉시 재열지 못하게 막는 가드.
+  const escapeRef = useRef(false);
   const tooltipId = useId();
 
   const entry = getGlossaryEntry(term);
@@ -71,6 +73,11 @@ export function GlossaryTooltip({ term, children, onDetailClick }: GlossaryToolt
 
   // 키보드 사용자는 hover가 없다. 포커스로 즉시 열고(지연 없음) 블러로 닫는다.
   const handleFocus = () => {
+    // Escape 처리에서 트리거로 되돌린 포커스는 "열기" 신호가 아니다.
+    if (escapeRef.current) {
+      escapeRef.current = false;
+      return;
+    }
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
@@ -90,12 +97,25 @@ export function GlossaryTooltip({ term, children, onDetailClick }: GlossaryToolt
     setIsOpen(false);
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Escape' && isOpen) {
-      setIsOpen(false);
-      return;
+  // 툴팁 내부("자세히 보기")에 포커스가 있어도 Escape가 닿도록 래퍼에서 버블링을 받는다.
+  const handleWrapperKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key !== 'Escape' || !isOpen) return;
+
+    setIsOpen(false);
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
     }
 
+    const trigger = triggerRef.current;
+    // 이미 트리거에 포커스가 있으면 focus 이벤트가 발화하지 않으므로 가드를 세우지 않는다
+    // (세우면 다음 번 정상 포커스가 잘못 삼켜진다).
+    if (trigger && document.activeElement !== trigger) {
+      escapeRef.current = true;
+      trigger.focus();
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault(); // Space 페이지 스크롤 방지
       if (!isOpen) {
@@ -113,7 +133,7 @@ export function GlossaryTooltip({ term, children, onDetailClick }: GlossaryToolt
   }
 
   return (
-    <span className="relative inline-block" onBlur={handleWrapperBlur}>
+    <span className="relative inline-block" onBlur={handleWrapperBlur} onKeyDown={handleWrapperKeyDown}>
       <span
         ref={triggerRef}
         tabIndex={0}
