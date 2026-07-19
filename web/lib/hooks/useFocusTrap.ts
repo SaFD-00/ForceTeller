@@ -73,6 +73,9 @@ export function useFocusTrap<T extends HTMLElement>(
 
     return () => {
       container.removeEventListener('keydown', handleKeyDown);
+      // 저장 요소가 DOM에서 사라지면 복원을 생략한다(포커스는 body로 낙하) — 현재 모든
+      // 호출부의 previouslyFocused는 존속하는 헤딩 버튼이라 실경로 없음. 소멸 가능한
+      // 트리거를 도입하면 폴백 설계가 필요하다.
       if (previouslyFocused && document.contains(previouslyFocused)) {
         previouslyFocused.focus();
       }

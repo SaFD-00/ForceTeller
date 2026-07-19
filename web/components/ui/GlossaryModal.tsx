@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useId, useRef } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Icon } from './Icon';
 import { useFocusTrap } from '@/lib/hooks/useFocusTrap';
@@ -29,33 +30,83 @@ export function GlossaryModal({ entry, isOpen, onClose }: GlossaryModalProps) {
   const dialogRef = useRef<HTMLDivElement>(null);
   const titleId = useId();
 
-  // 포커스 트랩 + 복귀 (early return 위에서 호출 — rules of hooks)
-  useFocusTrap(dialogRef, isOpen && !!entry);
+  // 호출부 5곳이 전부 "isOpen=false + entry=null"을 한 번에 세팅한다.
+  // 마지막 entry를 캐시해 두지 않으면 닫는 순간 본문이 사라져(early return) exit 애니메이션이
+  // 통째로 스킵된다. 렌더 기준은 isOpen, 존재 기준은 캐시된 shown으로 분리한다.
+  const lastEntryRef = useRef(entry);
+  if (entry) lastEntryRef.current = entry;
+  const shown = entry ?? lastEntryRef.current;
 
-  // ESC 키로 닫기
+  const active = isOpen && !!shown;
+
+  // 포탈 컨테이너. body 직계에 붙여야 "배경 = body의 나머지 직계 자식"이라는
+  // 단순한 규칙으로 inert를 걸 수 있다(레이아웃 래퍼 + BottomNav).
+  const [portalContainer, setPortalContainer] = useState<HTMLDivElement | null>(null);
   useEffect(() => {
+    const el = document.createElement('div');
+    el.setAttribute('data-glossary-portal', '');
+    document.body.appendChild(el);
+    setPortalContainer(el);
+    return () => {
+      el.remove();
+    };
+  }, []);
+
+  // ⚠ 이 effect는 반드시 아래 useFocusTrap 호출보다 "앞에" 선언돼 있어야 한다.
+  // React는 한 컴포넌트의 cleanup을 effect 선언 순서대로 실행한다. inert 해제가
+  // useFocusTrap의 포커스 복원보다 먼저 돌아야 복원 대상(모달을 연 헤딩 버튼)이
+  // 그 시점에 focusable하다. 순서가 뒤집히면 아직 inert인 서브트리 안의 요소에
+  // focus()를 거는 셈이라 no-op이 되고 포커스가 body로 낙하한다.
+  useEffect(() => {
+    if (!active || !portalContainer) return;
+    // 이미 inert를 갖고 있던 요소를 구분해 두었다가 cleanup에서 원래 상태로 되돌린다.
+    // (일괄 removeAttribute는 남의 inert를 지운다)
+    const previousInert = new Map<Element, string | null>();
+    Array.from(document.body.children).forEach((child) => {
+      if (child === portalContainer) return;
+      previousInert.set(child, child.getAttribute('inert'));
+      child.setAttribute('inert', '');
+    });
+    return () => {
+      previousInert.forEach((prev, child) => {
+        if (prev === null) child.removeAttribute('inert');
+        else child.setAttribute('inert', prev);
+      });
+    };
+  }, [active, portalContainer]);
+
+  // 포커스 트랩 + 복귀 (early return 위에서 호출 — rules of hooks)
+  useFocusTrap(dialogRef, active);
+
+  // ESC 키로 닫기 + 배경 스크롤 잠금
+  useEffect(() => {
+    if (!active) return;
+
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         onClose();
       }
     };
+    document.addEventListener('keydown', handleEscape);
 
-    if (isOpen) {
-      document.addEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'hidden';
-    }
+    // 인라인 overflow의 원래 값을 저장했다가 그대로 되돌린다.
+    // 'unset'으로 리셋하면 모달이 열리기 전에 누군가 걸어 둔 값을 조용히 지운다.
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
 
     return () => {
       document.removeEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = previousOverflow;
     };
-  }, [isOpen, onClose]);
+  }, [active, onClose]);
 
-  if (!entry) return null;
+  // shown이 없으면 그릴 내용 자체가 없다. isOpen=false는 여기서 걸러내지 않는다 —
+  // AnimatePresence가 계속 마운트돼 있어야 exit가 재생된다.
+  if (!shown || !portalContainer) return null;
 
-  return (
+  return createPortal(
     <AnimatePresence>
-      {isOpen && (
+      {active && (
         <>
           {/* 배경 오버레이 */}
           <motion.div
@@ -94,8 +145,8 @@ export function GlossaryModal({ entry, isOpen, onClose }: GlossaryModalProps) {
             {/* 헤더 */}
             <div className="flex items-center justify-between px-5 py-4 border-b border-border">
               <div className="flex items-center gap-3">
-                <span id={titleId} className="text-2xl font-bold text-foreground">{entry.term}</span>
-                <span className="text-lg text-muted-foreground">{entry.hanja}</span>
+                <span id={titleId} className="text-2xl font-bold text-foreground">{shown.term}</span>
+                <span className="text-lg text-muted-foreground">{shown.hanja}</span>
               </div>
               <button
                 onClick={onClose}
@@ -110,27 +161,27 @@ export function GlossaryModal({ entry, isOpen, onClose }: GlossaryModalProps) {
             <div className="px-5 py-4 overflow-y-auto max-h-[60vh]">
               {/* 카테고리 태그 */}
               <div className="mb-4">
-                <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${categoryColors[entry.category]}`}>
-                  {entry.category}
+                <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${categoryColors[shown.category]}`}>
+                  {shown.category}
                 </span>
               </div>
 
               {/* 한자 풀이 */}
               <div className="mb-4 p-3 bg-muted rounded-lg">
                 <p className="text-xs text-muted-foreground mb-1">한자 풀이</p>
-                <p className="text-sm text-foreground">{entry.hanjaBreakdown}</p>
+                <p className="text-sm text-foreground">{shown.hanjaBreakdown}</p>
               </div>
 
               {/* 짧은 설명 */}
               <div className="mb-4">
                 <p className="text-xs text-muted-foreground mb-1">간단 설명</p>
-                <p className="text-base text-accent font-medium">{entry.shortDesc}</p>
+                <p className="text-base text-accent font-medium">{shown.shortDesc}</p>
               </div>
 
               {/* 상세 설명 */}
               <div className="mb-4">
                 <p className="text-xs text-muted-foreground mb-2">상세 설명</p>
-                <p className="text-sm text-foreground leading-relaxed">{entry.longDesc}</p>
+                <p className="text-sm text-foreground leading-relaxed">{shown.longDesc}</p>
               </div>
             </div>
 
@@ -146,7 +197,8 @@ export function GlossaryModal({ entry, isOpen, onClose }: GlossaryModalProps) {
           </motion.div>
         </>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    portalContainer
   );
 }
 
