@@ -98,3 +98,46 @@ jobs:
         run: npm run build
         env:
           NEXT_PUBLIC_API_URL: http://localhost:8000
+
+      # ── 접근성 실측 하네스 (Playwright) ───────────────────────────────────
+      # lint/tsc/test/build 4게이트 중 무엇도 잡지 못하는 회귀를 잡는다:
+      # 모달 포커스 트랩·inert 배경 봉쇄·overflow 복원·툴팁 Escape 해제(WCAG 1.4.13)·
+      # 실렌더 색 대비·aria-label ↔ 데이터 정합. 위 Build 산출물(.next)을 그대로 재사용한다.
+      #
+      # 백엔드는 띄우지 않는다. 하네스는 localStorage에 mock 사주를 주입해 /result를 렌더하고,
+      # 도시 검색은 프론트의 오프라인 폴백 목록으로 동작한다(로컬에서 백엔드 없는 조건으로 실측 확인).
+      - name: Install Playwright chromium
+        run: npx playwright install --with-deps chromium
+        continue-on-error: true
+
+      - name: Start production server
+        continue-on-error: true
+        run: |
+          PORT=3456 npm run start > /tmp/next-e2e.log 2>&1 &
+          for i in $(seq 1 60); do
+            if curl -sf -o /dev/null http://127.0.0.1:3456/result; then
+              echo "서버 기동 완료 (${i}s)"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "::error::60초 안에 프로덕션 서버가 응답하지 않았다"
+          cat /tmp/next-e2e.log
+          exit 1
+
+      # flake 정책: 아직 비차단(mypy와 동일한 스테이징 취급).
+      # 이 하네스는 이 저장소에서 처음 CI로 돌아가며, 실렌더 대비/요소 수 핀(EXPECT_TAB_CANDIDATES=16 등)이
+      # 개발 머신 렌더 기준으로 박혀 있다. 한글 폰트가 없는 ubuntu-latest에서 폰트 폴백으로 메트릭이 달라지면
+      # 접근성 회귀가 아닌 환경 차이로 main이 막힌다.
+      # 승격 조건: 위 설치·기동 2스텝과 아래 실행·셀프테스트 2스텝이 연속 3회 이상 녹색이면
+      # 네 스텝 모두에서 continue-on-error를 제거해 차단 게이트로 올린다.
+      - name: A11y harness
+        run: npm run e2e
+        continue-on-error: true
+
+      # 하네스가 "공허하게 통과"하지 않음을 증명하는 유일한 장치.
+      # A11Y_SELFTEST=1은 알려진 결함 4종(화살촉 defs 제거·aria 변조·범례 항목 삭제·% 텍스트 제거)을
+      # DOM에 주입한다. 하네스가 이를 잡아 exit 1이 나와야 이 스텝이 성공한다(npm script가 종료코드를 반전).
+      - name: A11y harness self-test (mutation must FAIL)
+        run: npm run e2e:selftest
+        continue-on-error: true

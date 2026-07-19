@@ -22,6 +22,9 @@ npm-debug.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# e2e 하네스 산출물(스크린샷 등)
+/e2e/.artifacts/
+
 # ───────────────────────────────────────────────────────────
 # design-sync (생성물·스테이징·캐시 — 커밋 제외)
 # 커밋 대상: .design-sync/{config.json,conventions.md,NOTES.md,previews/,overrides/}

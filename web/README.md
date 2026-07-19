@@ -107,6 +107,40 @@ npm test          # vitest (lib 순수 함수 단위 테스트)
 `role`)와 `getComputedStyle`(포커스 링 등)로 판정한다. 검증 하네스 자체는 셀프테스트를 갖춘다 — 고의로 계약을
 깨는 변이(예: inert 미해제)를 주입해 FAIL이 실제로 뜨는지 먼저 확인한 뒤에만 정상 시나리오의 PASS를 신뢰한다.
 
+#### a11y 하네스 실행
+
+```bash
+npx playwright install chromium   # 최초 1회 (브라우저 다운로드)
+
+npm run build
+PORT=3456 npm run start &         # 하네스는 3456 포트의 프로덕션 서버를 기대한다
+
+npm run e2e                       # 4종 전부 — 전부 VERDICT: PASS 여야 한다
+npm run e2e:selftest              # 변이 주입 — 하네스가 결함을 잡으면 성공(종료코드 0)
+```
+
+`e2e:selftest`는 `A11Y_SELFTEST=1`로 알려진 결함 4종을 DOM에 심고, 하네스가 이를 잡아 실패(exit 1)하는지
+확인한다. npm script가 종료코드를 반전하므로 **`npm run e2e:selftest`가 성공해야 정상**이다. 이 스텝이 실패하면
+하네스가 아무것도 판별하지 못하고 공허하게 통과하고 있다는 뜻이다.
+
+| 스크립트 | 대상 | 검사 |
+|---|---|---|
+| `e2e/a11y-result.mjs` | `/result` | 렌더 가드, 전역 대비 스윕, 도넛 갭/대비, 오각형 화살표·범례, aria-label ↔ fixture 대조, 용어 모달(포커스 트랩·`inert`·`overflow` 복원·exit 애니메이션), 툴팁 Escape 해제, 십성 범례 |
+| `e2e/a11y-chat.mjs` | `/chat` | 로딩 점 대비, `aria-live`, textarea 접근 가능한 이름 |
+| `e2e/a11y-mobile-chat.mjs` | `/result` 390×844 | 모바일 채팅 오버레이 M0~M11 (포탈·ARIA·`inert`·트랩·Escape·포커스 복귀) |
+| `e2e/a11y-loading.mjs` | `/` | LoadingOverlay L0~L10 (포탈·`role=status`·`inert`·배경 Tab 차단·복원) |
+
+- 브라우저 채널: 로컬은 시스템 Chrome, CI는 번들 chromium을 쓴다. `PW_CHANNEL=`(빈 값)으로 실행하면
+  로컬에서도 CI와 동일한 번들 chromium 조건을 재현할 수 있다.
+- 다른 포트로 띄웠다면 `E2E_BASE_URL=http://localhost:PORT`로 넘긴다.
+- 백엔드는 필요 없다. mock은 `e2e/fixtures/mock-saju.json`을 localStorage(`saju-storage`)에 주입하고,
+  도시 검색은 프론트의 오프라인 폴백 목록으로 동작한다.
+- CI에서는 아직 **비차단**(`continue-on-error`)으로 스테이징 중이다 — `.github/workflows/ci.yml` 참조.
+
+> ⚠️ `e2e/fixtures/mock-saju.json`은 백엔드 골든(`tests/unit/manseol/test_manseol_regression.py`)과
+> **다른 입력**에서 파생됐다(mock은 1990-03-15, 백엔드 골든은 1990-05-15 → 사주팔자 자체가 다르다).
+> 이 mock은 프론트 렌더 계약 검증용 고정 입력일 뿐 만세력 계산의 정답이 아니다. 둘을 같은 것으로 읽지 마라.
+
 ## API 연동 · 경로 정책
 
 웹이 사용하는 백엔드 엔드포인트 (전체 API는 루트 README 참조):

@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "vitest run"
+    "test": "vitest run",
+    "e2e": "node e2e/a11y-result.mjs && node e2e/a11y-chat.mjs && node e2e/a11y-mobile-chat.mjs && node e2e/a11y-loading.mjs",
+    "e2e:selftest": "A11Y_SELFTEST=1 node e2e/a11y-result.mjs; test $? -ne 0"
   },
   "dependencies": {
     "@iconify/react": "^5.0.0",
@@ -23,6 +25,7 @@
     "zustand": "^4.5.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.61.1",
     "@types/node": "^20.0.0",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",

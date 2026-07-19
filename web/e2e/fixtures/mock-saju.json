@@ -1,0 +1,152 @@
+{
+  "birth_info": {
+    "name": "홍길동",
+    "birth_date": "1990-03-15",
+    "birth_time": "14:30",
+    "city": "Seoul",
+    "gender": "male",
+    "lunar_year": 1990,
+    "lunar_month": 2,
+    "lunar_day": 19,
+    "is_leap_month": false,
+    "day_ganji_korean": "갑인",
+    "day_ganji_chinese": "甲寅",
+    "day_metaphor": "큰 나무",
+    "day_animal": "호랑이"
+  },
+  "four_pillars": {
+    "year": {
+      "heavenly_stem": { "hanja": "庚", "korean": "경", "element": "금", "index": 6 },
+      "earthly_branch": {
+        "hanja": "午",
+        "korean": "오",
+        "element": "화",
+        "hidden_stems": [
+          { "korean": "병", "chinese": "丙", "element": "화", "type": "여기", "ratio": 0.3, "ten_god": "편관" },
+          { "korean": "정", "chinese": "丁", "element": "화", "type": "정기", "ratio": 0.7, "ten_god": "정관" }
+        ]
+      },
+      "ten_god": "편관",
+      "twelve_phase": "목욕"
+    },
+    "month": {
+      "heavenly_stem": { "hanja": "己", "korean": "기", "element": "토", "index": 5 },
+      "earthly_branch": {
+        "hanja": "卯",
+        "korean": "묘",
+        "element": "목",
+        "hidden_stems": [
+          { "korean": "을", "chinese": "乙", "element": "목", "type": "정기", "ratio": 1, "ten_god": "겁재" }
+        ]
+      },
+      "ten_god": "정재",
+      "twelve_phase": "제왕"
+    },
+    "day": {
+      "heavenly_stem": { "hanja": "甲", "korean": "갑", "element": "목", "index": 0 },
+      "earthly_branch": {
+        "hanja": "寅",
+        "korean": "인",
+        "element": "목",
+        "hidden_stems": [
+          { "korean": "무", "chinese": "戊", "element": "토", "type": "여기", "ratio": 0.2, "ten_god": "편재" },
+          { "korean": "병", "chinese": "丙", "element": "화", "type": "중기", "ratio": 0.2, "ten_god": "식신" },
+          { "korean": "갑", "chinese": "甲", "element": "목", "type": "정기", "ratio": 0.6, "ten_god": "비견" }
+        ]
+      },
+      "ten_god": "비견",
+      "twelve_phase": "건록"
+    },
+    "hour": {
+      "heavenly_stem": { "hanja": "辛", "korean": "신", "element": "금", "index": 7 },
+      "earthly_branch": {
+        "hanja": "未",
+        "korean": "미",
+        "element": "토",
+        "hidden_stems": [
+          { "korean": "정", "chinese": "丁", "element": "화", "type": "여기", "ratio": 0.2, "ten_god": "상관" },
+          { "korean": "을", "chinese": "乙", "element": "목", "type": "중기", "ratio": 0.2, "ten_god": "겁재" },
+          { "korean": "기", "chinese": "己", "element": "토", "type": "정기", "ratio": 0.6, "ten_god": "정재" }
+        ]
+      },
+      "ten_god": "정관",
+      "twelve_phase": "묘"
+    }
+  },
+  "five_elements": {
+    "distribution": { "목": 3, "화": 2, "토": 2, "금": 2, "수": 0 },
+    "dominant": "목",
+    "lacking": "수",
+    "yongshin": "수",
+    "gishin": "금"
+  },
+  "ten_gods": {
+    "counts": { "비견": 2, "겁재": 1, "식신": 1, "상관": 1, "편재": 1, "정재": 2, "편관": 1, "정관": 2 },
+    "primary": "정재"
+  },
+  "strength": {
+    "score": 62,
+    "is_strong": true,
+    "type": "신강",
+    "description": "일간이 월령을 얻어 뿌리가 튼튼합니다."
+  },
+  "fortune_cycles": [
+    {
+      "start_age": 5,
+      "heavenly_stem": { "hanja": "戊", "korean": "무", "element": "토" },
+      "earthly_branch": { "hanja": "寅", "korean": "인", "element": "목" },
+      "ten_god": "편재",
+      "branch_ten_god": "비견",
+      "twelve_phase": "건록"
+    },
+    {
+      "start_age": 15,
+      "heavenly_stem": { "hanja": "丁", "korean": "정", "element": "화" },
+      "earthly_branch": { "hanja": "丑", "korean": "축", "element": "토" },
+      "ten_god": "상관",
+      "branch_ten_god": "정재",
+      "twelve_phase": "관대"
+    },
+    {
+      "start_age": 25,
+      "heavenly_stem": { "hanja": "丙", "korean": "병", "element": "화" },
+      "earthly_branch": { "hanja": "子", "korean": "자", "element": "수" },
+      "ten_god": "식신",
+      "branch_ten_god": "정인",
+      "twelve_phase": "목욕"
+    },
+    {
+      "start_age": 35,
+      "heavenly_stem": { "hanja": "乙", "korean": "을", "element": "목" },
+      "earthly_branch": { "hanja": "亥", "korean": "해", "element": "수" },
+      "ten_god": "겁재",
+      "branch_ten_god": "편인",
+      "twelve_phase": "장생"
+    },
+    {
+      "start_age": 45,
+      "heavenly_stem": { "hanja": "甲", "korean": "갑", "element": "목" },
+      "earthly_branch": { "hanja": "戌", "korean": "술", "element": "토" },
+      "ten_god": "비견",
+      "branch_ten_god": "편재",
+      "twelve_phase": "양"
+    }
+  ],
+  "shensha": [
+    { "name": "도화살", "type": "흉신", "position": "year", "description": "이성의 인기가 많습니다." },
+    { "name": "역마살", "type": "중성", "position": "month", "description": "이동과 변화가 잦습니다." },
+    { "name": "천을귀인", "type": "길신", "position": "day", "description": "귀인의 도움을 받습니다." },
+    { "name": "화개살", "type": "중성", "position": "hour", "description": "예술적 재능이 있습니다." }
+  ],
+  "adjusted_time": {
+    "true_solar_time": "1990-03-15 14:02:00",
+    "longitude_correction_minutes": -28
+  },
+  "sewun": [
+    { "year": 2026, "age": 36, "ganji_korean": "병오", "ganji_chinese": "丙午", "ten_god": "식신", "score": 72 },
+    { "year": 2027, "age": 37, "ganji_korean": "정미", "ganji_chinese": "丁未", "ten_god": "상관", "score": 58 }
+  ],
+  "fortune_scores": {
+    "general": { "score": 72, "summary": "전반적으로 안정적인 흐름입니다." }
+  }
+}
