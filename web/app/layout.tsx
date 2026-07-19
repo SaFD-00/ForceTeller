@@ -1,15 +1,15 @@
 import type { Metadata } from 'next';
-import { Bangers, JetBrains_Mono } from 'next/font/google';
+import { Delius_Swash_Caps, JetBrains_Mono } from 'next/font/google';
 import { Sidebar } from '@/components/layout/Sidebar';
 import './globals.css';
 
-// Tetris 디자인 시스템 디스플레이/모노 폰트.
-// Bangers = 라틴/숫자 디스플레이(단일 weight라 weight 명시 필수),
-// JetBrains Mono = 간지 한자·수치 모노. 둘 다 next/font로 번들.
-// 한글 디스플레이(Black Han Sans)는 latin subset만 노출하는 next/font로는
-// 한글 글리프를 번들할 수 없어 <head>의 Google Fonts <link>로 로드한다
+// Doodle 디자인 시스템 디스플레이/모노 폰트.
+// Delius Swash Caps = 라틴/숫자 손글씨 디스플레이(단일 weight라 weight 명시 필수),
+// JetBrains Mono = 간지 한자·수치 모노(Doodle label-caps). 둘 다 next/font로 번들.
+// 한글 디스플레이(Gaegu)는 latin subset만 노출하는 next/font로는 한글 글리프를
+// 번들할 수 없어 <head>의 Google Fonts <link>로 로드한다
 // (Pretendard와 동일한 CDN link 방식). 본문은 Pretendard 유지.
-const bangers = Bangers({
+const deliusSwashCaps = Delius_Swash_Caps({
   weight: '400',
   subsets: ['latin'],
   variable: '--font-display-latin',
@@ -36,15 +36,15 @@ export default function RootLayout({
   return (
     <html
       lang="ko"
-      className={`${bangers.variable} ${jetbrainsMono.variable}`}
+      className={`${deliusSwashCaps.variable} ${jetbrainsMono.variable}`}
     >
       <head>
         <link
           rel="stylesheet"
           href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css"
         />
-        {/* 한글 디스플레이 서체(Black Han Sans) — Google Fonts. 실패 시 Pretendard 폴백.
-            Bangers(라틴)·JetBrains Mono는 next/font로 번들되므로 여기서 로드하지 않는다. */}
+        {/* 한글 디스플레이 서체(Gaegu, 손글씨) — Google Fonts. 실패 시 Pretendard 폴백.
+            Delius Swash Caps(라틴)·JetBrains Mono는 next/font로 번들되므로 여기서 로드하지 않는다. */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         {/* App Router에는 pages/_document.js가 없고, 한글 글리프는 next/font(latin subset)로
@@ -52,7 +52,7 @@ export default function RootLayout({
         {/* eslint-disable-next-line @next/next/no-page-custom-font */}
         <link
           rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Gaegu&display=swap"
         />
       </head>
       <body className="min-h-screen bg-background text-foreground font-sans">

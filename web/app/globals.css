@@ -3,18 +3,18 @@
 @tailwind utilities;
 
 /*
- * Tetris 디자인 시스템 — 타이포 접근성 주석
+ * Doodle 디자인 시스템 — 타이포 접근성 주석
  * ------------------------------------------------------------------
- * `font-display` 체인: Bangers(라틴/숫자) → Black Han Sans(한글) → Pretendard.
- * - Bangers에는 한글 글리프가 없으므로 한글 문자는 Black Han Sans로 렌더된다.
- * - Black Han Sans는 next/font/google이 latin subset만 노출해 한글을 번들하지
- *   못하므로 layout.tsx <head>의 Google Fonts <link>로 로드한다(로드 실패 시
- *   Pretendard로 자연 폴백).
+ * `font-display` 체인: Delius Swash Caps(라틴/숫자) → Gaegu(한글) → Pretendard.
+ * - Delius Swash Caps에는 한글 글리프가 없으므로 한글 문자는 Gaegu로 렌더된다.
+ * - Gaegu는 300/400/700 다중 웨이트지만 next/font/google이 latin subset만 노출해
+ *   한글을 번들하지 못하므로 layout.tsx <head>의 Google Fonts <link>로 로드한다
+ *   (로드 실패 시 Pretendard로 자연 폴백).
  * 본문·긴 해석 텍스트에는 디스플레이 폰트를 쓰지 않는다(가독성 우선) —
  * `font-display`는 로고/제목/큰 숫자 등 짧은 강조 요소에만 사용한다.
- * 디스플레이 폰트 두 종 모두 단일 웨이트(400)라 font-bold를 겹치면 브라우저
- * 합성 볼드가 밀도 높은 한글 글리프('풀' 등)의 속공간을 메워 뭉갠다 —
- * 아래 가드가 weight를 400으로 고정하므로 font-display에 font-bold를 얹지 말 것.
+ * Delius Swash Caps는 단일 웨이트(400)라 font-bold를 겹치면 브라우저 합성 볼드가
+ * 밀도 높은 한글 글리프('풀' 등)의 속공간을 메워 뭉갠다 — 아래 가드가 weight를
+ * 400으로 고정하므로 font-display에 font-bold를 얹지 말 것.
  */
 
 @layer utilities {
@@ -36,17 +36,21 @@
 
 @layer components {
   /*
-   * 블록 카드 — 딥네이비 1.5px 보더 + 하드 오프셋 섀도(네오브루탈리즘 블록 감성).
+   * 손그림 카드 — 잉크 1.5px 보더 + 소프트 섀도(Doodle 스케치 감성).
+   * 불규칙 radius(255px 15px 225px 15px / 15px 225px 15px 255px)는 고전 hand-drawn
+   * CSS 트릭으로, 네 모서리의 x/y 반지름을 비대칭으로 줘 자를 안 대고 그린 사각형처럼
+   * 보이게 한다 — 신규 런타임 의존성(rough.js 등) 없이 순수 CSS로 구현한다.
    * .block-card 가 표준이며, 구 .card/.glass/.glass-card 는 호환용 별칭으로
-   * 동일 스타일을 공유한다(클래스명 유지). 테두리는 border-border(딥네이비)를 쓴다
-   * — primary 는 팔레트상 비비드 퍼플이므로 카드 테두리에 쓰지 않는다.
+   * 동일 스타일을 공유한다(클래스명 유지). 테두리는 border-border(잉크 네이비)를 쓴다
+   * — primary(#49B6E5)는 백색 대비 2.31:1 이라 경계선/텍스트에 쓰지 않는다.
    */
   .block-card,
   .card,
   .glass,
   .glass-card {
-    @apply bg-surface border border-border rounded-md shadow-card;
+    @apply bg-surface border border-border shadow-card;
     border-width: 1.5px;
+    border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
   }
 
   /* 카드 컨테이너 기본 여백 — compact 밀도 */
@@ -56,36 +60,44 @@
   }
 
   .card-elevated {
-    @apply bg-surface border border-border rounded-md shadow-card-hover;
+    @apply bg-surface border border-border shadow-card-hover;
     border-width: 1.5px;
+    border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
   }
 
   /*
-   * 블록 버튼 — 하드 섀도 + 상태 명시(hover/focus-visible/active/disabled).
-   * active 시 오프셋만큼 눌려 들어가는 물리감(translate + 섀도 제거).
+   * 손그림 버튼 — 소프트 섀도 + 상태 명시(hover/focus-visible/active/disabled).
+   * hover 시 살짝 커지며 기울어지는 스케치 지터, active 시 눌리며 반대로 기운다
+   * (오프셋 translate 없음 — 하드 섀도 물리감 대신 손그림 흔들림으로 대체).
+   * 포커스 링은 accent(#263D5B, 11.0:1)로 keyboard-first 가시성을 유지한다.
    */
   .glass-button {
-    @apply bg-surface border border-border rounded-md px-4 py-2 font-medium text-foreground
+    @apply bg-surface border border-border px-4 py-2 font-medium text-foreground
            shadow-block-sm transition-all duration-150
            hover:bg-muted
            focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background
-           active:translate-x-0.5 active:translate-y-0.5 active:shadow-none
            disabled:opacity-50 disabled:pointer-events-none;
     border-width: 1.5px;
+    border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+  }
+  .glass-button:hover {
+    transform: scale(1.02) rotate(-0.6deg);
   }
 
-  /* 블록 버튼 공통 베이스(채움/외곽 변형은 컴포넌트가 색만 얹음) */
+  /* 손그림 버튼 공통 베이스(채움/외곽 변형은 컴포넌트가 색만 얹음) */
   .btn-block {
-    @apply inline-flex items-center justify-center font-bold border border-border rounded-lg shadow-card transition-all duration-150;
+    @apply inline-flex items-center justify-center font-bold border border-border shadow-card transition-all duration-150;
     border-width: 1.5px;
+    border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
   }
   .btn-block:hover {
-    @apply -translate-x-px -translate-y-px shadow-card-hover;
+    @apply shadow-card-hover;
+    transform: scale(1.02) rotate(-0.6deg);
   }
 
-  /* 눌림 효과 — active 시 그림자 쪽으로 밀려들어가며 그림자 제거 */
+  /* 눌림 효과 — active 시 살짝 줄어들며 반대로 기운다 */
   .block-press:active {
-    @apply translate-x-[3px] translate-y-[3px] shadow-none;
+    transform: scale(0.97) rotate(0.5deg);
   }
 
   /* 오행 배지 (element-* 토큰 = ELEMENT_COLORS 정렬, 블록 톤 채움 15% + 텍스트 + 테두리) */
@@ -116,20 +128,34 @@
     @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background;
   }
 
-  /* 강조 텍스트 그라데이션 (vivid purple → navy) */
+  /* 강조 텍스트 그라데이션 (스카이 → 잉크 네이비) */
   .gradient-text {
     @apply bg-gradient-to-r from-primary via-accent to-accent bg-clip-text text-transparent;
   }
 
-  /* 히어로 배경 그라데이션 (쿨 블루 + 퍼플 라디얼) */
+  /* 히어로 배경 그라데이션 (종이 백색 + 스카이 라디얼 워시) */
   .hero-gradient {
     background:
-      radial-gradient(60% 50% at 50% 0%, rgba(113, 7, 231, 0.08) 0%, rgba(113, 7, 231, 0) 100%),
-      linear-gradient(180deg, #ffffff 0%, #dfe7ff 100%);
+      radial-gradient(60% 50% at 50% 0%, rgba(73, 182, 229, 0.12) 0%, rgba(73, 182, 229, 0) 100%),
+      linear-gradient(180deg, #ffffff 0%, #f4fafe 100%);
+  }
+
+  /*
+   * 손그림 밑줄 — 제목 아래 물결선(Doodle 시그니처).
+   * 잉크 #263D5B SVG data-URI 를 x축 반복해 손으로 그은 언더라인처럼 보이게 한다.
+   * 장식 전용이므로 텍스트 대비에는 영향을 주지 않는다(밑줄은 non-text 장식).
+   * 텍스트와 겹치지 않도록 사용처에서 pb-2 등 하단 여백을 함께 준다.
+   */
+  .sketch-underline {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='6' viewBox='0 0 40 6'%3E%3Cpath d='M0 4 Q 5 0.5 10 4 T 20 4 T 30 4 T 40 4' fill='none' stroke='%23263D5B' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: repeat-x;
+    background-position: left bottom;
+    background-size: 40px 6px;
+    padding-bottom: 0.35em;
   }
 }
 
-/* Scrollbar styling (딥 네이비 계열, 팔레트 정합) */
+/* Scrollbar styling (잉크 네이비 계열, 팔레트 정합) */
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
@@ -140,10 +166,10 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(28, 32, 43, 0.25);
+  background: rgba(38, 61, 91, 0.25);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(28, 32, 43, 0.4);
+  background: rgba(38, 61, 91, 0.4);
 }
