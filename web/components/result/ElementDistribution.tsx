@@ -94,8 +94,8 @@ export function ElementDistribution({ distribution, tenGods, dominant }: Element
   };
 
   const getStatus = (element: Element, percentage: number) => {
-    if (percentage === 0) return { label: '부족', color: 'text-danger' };
-    if (percentage >= 30) return { label: '발달', color: 'text-success' };
+    if (percentage === 0) return { label: '부족', color: 'text-danger-ink' };
+    if (percentage >= 30) return { label: '발달', color: 'text-success-ink' };
     return { label: '', color: '' };
   };
 
@@ -219,11 +219,16 @@ export function ElementDistribution({ distribution, tenGods, dominant }: Element
                     const circumference = 2 * Math.PI * radius;
                     let cumulativeOffset = 0;
                     const startOffset = circumference * 0.25;
+                    const GAP = 2;
+                    const segmentCount = elementOrder.filter(
+                      (element) => getPercentage(distribution[element] || 0, total) > 0
+                    ).length;
 
                     return elementOrder.map((element) => {
                       const percentage = getPercentage(distribution[element] || 0, total);
                       const segmentLength = (percentage / 100) * circumference;
-                      const dashArray = `${segmentLength} ${circumference - segmentLength}`;
+                      const visible = segmentCount > 1 ? Math.max(segmentLength - GAP, 1) : segmentLength;
+                      const dashArray = `${visible} ${circumference - visible}`;
                       const dashOffset = startOffset - cumulativeOffset;
 
                       cumulativeOffset += segmentLength;
@@ -263,22 +268,27 @@ export function ElementDistribution({ distribution, tenGods, dominant }: Element
                     const circumference = 2 * Math.PI * radius;
                     let cumulativeOffset = 0;
                     const startOffset = circumference * 0.25;
+                    const GAP = 2;
 
-                    // 십성 순서 및 색상 (무채색 톤)
+                    // 십성 순서 및 색상 (무채색 톤, 전부 흰 배경 대비 ≥3.08)
                     const tenGodOrder = ['비견', '겁재', '식신', '상관', '편재', '정재', '편관', '정관', '편인', '정인'];
                     const tenGodColors: Record<string, string> = {
-                      '비견': '#6b7280', '겁재': '#9ca3af',
-                      '식신': '#374151', '상관': '#4b5563',
-                      '편재': '#d1d5db', '정재': '#e5e7eb',
-                      '편관': '#1f2937', '정관': '#111827',
-                      '편인': '#f3f4f6', '정인': '#f9fafb',
+                      '비견': '#55647A', '겁재': '#64748B',
+                      '식신': '#374151', '상관': '#46536B',
+                      '편재': '#76839B', '정재': '#8494AD',
+                      '편관': '#111827', '정관': '#243042',
+                      '편인': '#6E7D95', '정인': '#7E8CA4',
                     };
+                    const segmentCount = tenGodOrder.filter(
+                      (god) => getPercentage(tenGods[god] || 0, totalTenGods) > 0
+                    ).length;
 
                     return tenGodOrder.map((god) => {
                       const value = tenGods[god] || 0;
                       const percentage = getPercentage(value, totalTenGods);
                       const segmentLength = (percentage / 100) * circumference;
-                      const dashArray = `${segmentLength} ${circumference - segmentLength}`;
+                      const visible = segmentCount > 1 ? Math.max(segmentLength - GAP, 1) : segmentLength;
+                      const dashArray = `${visible} ${circumference - visible}`;
                       const dashOffset = startOffset - cumulativeOffset;
 
                       cumulativeOffset += segmentLength;
