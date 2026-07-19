@@ -102,6 +102,11 @@ npx tsc --noEmit  # 타입 체크
 npm test          # vitest (lib 순수 함수 단위 테스트)
 ```
 
+접근성(a11y) 회귀는 위 자동 테스트로 잡히지 않는다 — **프로덕션 빌드**(`npm run build && npm run start`)를 띄운
+상태에서 Playwright로 실측 검증한다. 결과 화면에 mock API 응답을 주입해 렌더한 뒤, DOM 상태(`inert`, `aria-*`,
+`role`)와 `getComputedStyle`(포커스 링 등)로 판정한다. 검증 하네스 자체는 셀프테스트를 갖춘다 — 고의로 계약을
+깨는 변이(예: inert 미해제)를 주입해 FAIL이 실제로 뜨는지 먼저 확인한 뒤에만 정상 시나리오의 PASS를 신뢰한다.
+
 ## API 연동 · 경로 정책
 
 웹이 사용하는 백엔드 엔드포인트 (전체 API는 루트 README 참조):

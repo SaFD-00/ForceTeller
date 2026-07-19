@@ -91,6 +91,34 @@ non-text/UI 기준(3:1) 을 **모두 탈락**한다. 앱은 `text-primary` / `ri
   잉크는 4.5:1 이상을 확보한다. 이 값을 white 로 되돌리지 말 것.
 - 접근성 기준선: **WCAG 2.2 AA, keyboard-first, 항상 보이는 focus state**(`.focus-ring` = accent 2px + offset).
 
+### 오버레이 접근성 계약 — 모달·툴팁
+
+`GlossaryModal`(`web/components/ui/GlossaryModal.tsx`)과 `GlossaryTooltip`(`web/components/ui/GlossaryTooltip.tsx`)이
+저장소의 오버레이 접근성 표준이다. 새 다이얼로그·팝오버를 추가할 때 이 계약을 따른다.
+
+- **portal + inert 배경 봉쇄**: `GlossaryModal`은 body 직계 자식에 `data-glossary-portal` 컨테이너를 만들어 그 안에
+  렌더한다. 열려 있는 동안 이 컨테이너를 제외한 body의 나머지 직계 자식 전부에 `inert`를 부여해 배경 상호작용과
+  스크린리더 접근을 차단한다. 이미 `inert`를 갖고 있던 요소는 Map에 원래 값을 저장해 두었다가 닫힐 때 그 값으로
+  복원한다(일괄 `removeAttribute`는 금지 — 남의 inert를 지운다).
+- **포커스 트랩 + 복귀, 순서 의존**: 포커스 관리는 `useFocusTrap`(`web/lib/hooks/useFocusTrap.ts`) 표준 훅을 쓴다.
+  열림 전 포커스를 저장 → 컨테이너 자체로 포커스 이동(닫기 버튼이 아니라 `aria-labelledby` 제목부터 읽히도록) →
+  Tab/Shift+Tab 순환 → 닫힐 때 저장 요소로 복귀. **inert 해제 effect는 반드시 `useFocusTrap` 호출보다 앞서
+  선언돼야 한다** — React는 한 컴포넌트의 cleanup을 effect 선언 순서대로 실행하므로, 이 순서가 지켜져야 포커스
+  복원 시점에 복원 대상이 이미 inert가 풀려 focusable한 상태다. 순서가 뒤집히면 여전히 inert인 서브트리 안의
+  요소에 `focus()`를 거는 셈이 되어 no-op이 되고 포커스가 body로 낙하한다.
+- **Escape 계약**: 모달·툴팁 모두 `document` 수준 keydown 리스너로 Escape를 받는다(포커스가 위젯 밖에 있을 수
+  있어서). hover로 열린 툴팁도 Escape로 닫혀야 하며(WCAG 1.4.13, dismissable), 닫을 때 **포커스를 이동시키지
+  않는다** — hover로 연 것을 닫으며 포커스를 강탈하면 안 되기 때문이다.
+- **exit 애니메이션 엔트리 캐시**: `GlossaryModal`은 마지막 `entry`를 내부 ref에 캐시해 둔다. 호출부가 닫을 때
+  `isOpen=false`와 `entry=null`을 동시에 세팅하므로, 캐시가 없으면 본문이 즉시 사라져(early return)
+  `AnimatePresence`의 exit 애니메이션이 스킵된다. 렌더 여부는 `isOpen`, 존재 여부는 캐시된 값으로 분리한다.
+- **body overflow 저장/복원**: 모달이 열릴 때 `document.body.style.overflow`의 인라인 값을 저장했다가 닫힐 때
+  그대로 되돌린다. `'unset'`으로 리셋하지 않는다 — 그러면 모달이 열리기 전에 다른 코드가 걸어 둔 값을 조용히
+  지운다.
+- **aria = 범례 동일 집합**: 도넛 차트(`ElementDistribution`)의 `aria-label`은 오행·십성 모두 0%를 포함한 전체
+  항목을 나열한다(시각 범례와 동일 집합). aria는 시각 범례의 대체 채널이라 정보 집합이 같아야 하고, 이 도메인에서
+  '없음'은 '부족'이라는 유의미한 신호이기 때문이다.
+
 ### 원색 텍스트 금지 — ink 파생 토큰
 
 오행·상태 원색(600급 hex)은 채움·보더·차트·아이콘 등 **non-text 전용**이다 — 텍스트는 항상
