@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSajuStore } from '@/stores/sajuStore';
 import { Button, Icon, GlassCard, Disclaimer } from '@/components/ui';
@@ -48,7 +49,7 @@ function getBranchTenGod(hiddenStems?: HiddenStemDisplay[]): string {
 
 export default function ResultPage() {
   const router = useRouter();
-  const { result, error, isLoading, clearResult } = useSajuStore();
+  const { result, error, isLoading, hasHydrated, clearResult } = useSajuStore();
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(true);
 
@@ -66,11 +67,19 @@ export default function ResultPage() {
     return () => window.removeEventListener('resize', checkDesktop);
   }, []);
 
-  useEffect(() => {
-    if (!result && !isLoading) {
-      router.push('/');
-    }
-  }, [result, isLoading, router]);
+  // 저장된 결과 복원 전에는 판단을 보류한다 (자동 리다이렉트 없음 — 사용자가 직접 선택한다).
+  if (!hasHydrated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Icon
+          name="solar:refresh-bold"
+          size={32}
+          className="text-muted-foreground animate-spin"
+          aria-label="불러오는 중"
+        />
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (
@@ -108,7 +117,29 @@ export default function ResultPage() {
   }
 
   if (!result) {
-    return null;
+    return (
+      <div className="min-h-screen flex items-center justify-center px-4">
+        <GlassCard className="max-w-md p-8 text-center">
+          <Icon
+            name="solar:chart-2-bold"
+            size={48}
+            className="text-muted-foreground mx-auto mb-4"
+          />
+          <h2 className="text-xl font-bold text-foreground mb-2">
+            사주 분석 결과가 없습니다
+          </h2>
+          <p className="text-muted-foreground mb-6">
+            생년월일시를 입력하면 사주 분석 결과를 확인할 수 있습니다.
+          </p>
+          <Link href="/">
+            <Button>
+              <Icon name="solar:home-2-bold" size={20} className="mr-2" />
+              홈으로 가기
+            </Button>
+          </Link>
+        </GlassCard>
+      </div>
+    );
   }
 
   // Calculate current age
@@ -283,11 +314,54 @@ export default function ResultPage() {
               )}
             </motion.div>
 
+            {/* 운세 유형별 점수 — 요약을 먼저 보여주고 근거(원국)로 내려간다 */}
+            {result.fortune_scores && (
+              <FortuneScoreDashboard scores={result.fortune_scores} />
+            )}
+
             {/* 사주 테이블 (Posteller 스타일) */}
             <PillarTable pillars={pillarTableData} />
 
             {/* 천간 지지 작용 */}
             <InteractionsTabs interactions={result.interactions ?? {}} />
+
+            {/* 오행/십성 분포 */}
+            <ElementDistribution
+              distribution={elementDistribution}
+              tenGods={tenGodsDistribution}
+              dominant={result.five_elements.dominant}
+            />
+
+            {/* 오행 오각형 도표 */}
+            <PentagonChart
+              dayMaster={dayMaster}
+              distribution={elementDistribution}
+              dayStemKorean={result.four_pillars.day.heavenly_stem.korean}
+            />
+
+            {/* 신강/신약 지수 */}
+            <StrengthDistributionChart
+              name={result.birth_info.name}
+              score={strengthScore}
+              strengthType={strengthType}
+              percentile={10.5}
+            />
+
+            {/* 용신 */}
+            {result.five_elements.yongshin && (
+              <YongshinCard
+                type="억부용신"
+                element={result.five_elements.yongshin}
+              />
+            )}
+
+            {/* 용신 개운법 (색/방위/직업/생활) */}
+            {result.yongsin_recommendations && (
+              <LuckyGuideCard
+                recommendations={result.yongsin_recommendations}
+                comparison={result.yongsin_comparison}
+              />
+            )}
 
             {/* 신살 카드 */}
             <ShenshaDetailCard
@@ -320,53 +394,10 @@ export default function ResultPage() {
               }}
             />
 
-            {/* 오행/십성 분포 */}
-            <ElementDistribution
-              distribution={elementDistribution}
-              tenGods={tenGodsDistribution}
-              dominant={result.five_elements.dominant}
-            />
-
-            {/* 오행 오각형 도표 */}
-            <PentagonChart
-              dayMaster={dayMaster}
-              distribution={elementDistribution}
-              dayStemKorean={result.four_pillars.day.heavenly_stem.korean}
-            />
-
-            {/* 운세 유형별 점수 */}
-            {result.fortune_scores && (
-              <FortuneScoreDashboard scores={result.fortune_scores} />
-            )}
-
-            {/* 용신 */}
-            {result.five_elements.yongshin && (
-              <YongshinCard
-                type="억부용신"
-                element={result.five_elements.yongshin}
-              />
-            )}
-
-            {/* 용신 개운법 (색/방위/직업/생활) */}
-            {result.yongsin_recommendations && (
-              <LuckyGuideCard
-                recommendations={result.yongsin_recommendations}
-                comparison={result.yongsin_comparison}
-              />
-            )}
-
             {/* 5학파 비교 해석 */}
             {result.school_comparison && (
               <SchoolComparison comparison={result.school_comparison} />
             )}
-
-            {/* 신강/신약 지수 */}
-            <StrengthDistributionChart
-              name={result.birth_info.name}
-              score={strengthScore}
-              strengthType={strengthType}
-              percentile={10.5}
-            />
 
             {/* 대운 슬라이더 */}
             {fortuneItems.length > 0 && (

@@ -27,6 +27,9 @@ export function ChatInput({
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
+      // 한글/일본어/중국어 조합 중 Enter는 후보 확정용이다.
+      // 여기서 가로채면 조합 중인 글자가 잘린 채 전송된다.
+      if (e.nativeEvent.isComposing) return;
       e.preventDefault();
       handleSubmit(e);
     }

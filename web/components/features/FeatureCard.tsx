@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { Icon, GlassCard } from '@/components/ui';
 
 interface FeatureCardProps {
@@ -11,11 +11,14 @@ interface FeatureCardProps {
 }
 
 export function FeatureCard({ icon, title, description, index }: FeatureCardProps) {
+  const shouldReduceMotion = useReducedMotion();
+
   return (
+    // 마운트 즉시 애니메이션한다. opacity는 건드리지 않는다 —
+    // whileInView + opacity:0 조합은 스크롤 전/JS 미실행 시 카드를 완전히 감춘다.
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-50px' }}
+      initial={shouldReduceMotion ? false : { y: 20 }}
+      animate={{ y: 0 }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
     >
       <GlassCard className="h-full p-6 hover:-translate-x-px hover:-translate-y-px hover:shadow-card-hover transition-all duration-300 group cursor-pointer">

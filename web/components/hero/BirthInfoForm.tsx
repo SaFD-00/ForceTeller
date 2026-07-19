@@ -257,40 +257,51 @@ export function BirthInfoForm() {
           {/* Inline option pills: gender + calendar */}
           <div className="flex flex-wrap items-center gap-2 pt-1">
             <span className="text-sm font-medium text-muted-foreground mr-1">성별</span>
-            {(['male', 'female'] as const).map((gender) => (
-              <button
-                key={gender}
-                type="button"
-                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm border transition-all ${
-                  formData.gender === gender
-                    ? 'bg-primary/10 border-primary text-primary'
-                    : 'bg-surface border-border text-muted-foreground hover:bg-muted'
-                }`}
-                onClick={() => setFormData((prev) => ({ ...prev, gender }))}
-              >
-                <Icon
-                  name={gender === 'male' ? 'solar:men-bold' : 'solar:women-bold'}
-                  size={15}
-                />
-                {gender === 'male' ? '남성' : '여성'}
-              </button>
-            ))}
+            {(['male', 'female'] as const).map((gender) => {
+              const selected = formData.gender === gender;
+              return (
+                <button
+                  key={gender}
+                  type="button"
+                  aria-pressed={selected}
+                  className={`focus-ring inline-flex min-h-11 items-center gap-1.5 px-4 rounded-full text-sm border transition-all ${
+                    selected
+                      ? 'bg-primary/10 border-primary text-primary font-semibold'
+                      : 'bg-surface border-border text-muted-foreground hover:bg-muted'
+                  }`}
+                  onClick={() => setFormData((prev) => ({ ...prev, gender }))}
+                >
+                  <Icon
+                    name={gender === 'male' ? 'solar:men-bold' : 'solar:women-bold'}
+                    size={15}
+                  />
+                  {gender === 'male' ? '남성' : '여성'}
+                  {/* 색 외 선택 신호 (색각 이상·저대비 환경 대비) */}
+                  {selected && <Icon name="solar:check-circle-bold" size={14} />}
+                </button>
+              );
+            })}
 
             <span className="text-sm font-medium text-muted-foreground mx-1">달력</span>
-            {(['solar', 'lunar', 'leap_lunar'] as const).map((type) => (
-              <button
-                key={type}
-                type="button"
-                className={`px-3 py-1.5 rounded-full text-sm border transition-all ${
-                  formData.calendar === type
-                    ? 'bg-primary/10 border-primary text-primary'
-                    : 'bg-surface border-border text-muted-foreground hover:bg-muted'
-                }`}
-                onClick={() => setFormData((prev) => ({ ...prev, calendar: type }))}
-              >
-                {type === 'solar' ? '양력' : type === 'lunar' ? '음력' : '윤달'}
-              </button>
-            ))}
+            {(['solar', 'lunar', 'leap_lunar'] as const).map((type) => {
+              const selected = formData.calendar === type;
+              return (
+                <button
+                  key={type}
+                  type="button"
+                  aria-pressed={selected}
+                  className={`focus-ring inline-flex min-h-11 items-center gap-1.5 px-4 rounded-full text-sm border transition-all ${
+                    selected
+                      ? 'bg-primary/10 border-primary text-primary font-semibold'
+                      : 'bg-surface border-border text-muted-foreground hover:bg-muted'
+                  }`}
+                  onClick={() => setFormData((prev) => ({ ...prev, calendar: type }))}
+                >
+                  {type === 'solar' ? '양력' : type === 'lunar' ? '음력' : '윤달'}
+                  {selected && <Icon name="solar:check-circle-bold" size={14} />}
+                </button>
+              );
+            })}
           </div>
 
           {/* Submit Button */}

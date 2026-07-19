@@ -68,6 +68,27 @@ export function GlossaryTooltip({ term, children, onDetailClick }: GlossaryToolt
     }
   };
 
+  // 키보드 사용자는 hover가 없다. 포커스로 즉시 열고(지연 없음) 블러로 닫는다.
+  const handleFocus = () => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    setIsOpen(true);
+  };
+
+  const handleBlur = () => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    setIsOpen(false);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Escape' && isOpen) {
+      setIsOpen(false);
+    }
+  };
+
   if (!entry) {
     return <>{children}</>;
   }
@@ -76,9 +97,16 @@ export function GlossaryTooltip({ term, children, onDetailClick }: GlossaryToolt
     <span className="relative inline-block">
       <span
         ref={triggerRef}
-        className="cursor-help border-b border-dotted border-muted-foreground hover:border-primary transition-colors"
+        tabIndex={0}
+        role="button"
+        aria-expanded={isOpen}
+        aria-label={`${entry.term} 용어 설명`}
+        className="focus-ring cursor-help border-b border-dotted border-muted-foreground hover:border-primary transition-colors"
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+        onKeyDown={handleKeyDown}
         onClick={handleClick}
       >
         {children}
