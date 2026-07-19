@@ -155,6 +155,24 @@
   }
 }
 
+/*
+ * prefers-reduced-motion — Tailwind 애니메이션 유틸리티 커버리지.
+ * MotionProvider(reducedMotion="user")는 framer-motion 인스턴스만 덮고 .animate-spin/
+ * .animate-bounce/.animate-pulse 같은 Tailwind 키프레임 애니메이션은 못 덮는다.
+ * 완전히 멈추면(animation: none) 스피너·타이핑 점이 로딩 신호를 잃는다 — 대부분의 사용처가
+ * 곁에 텍스트(예: "분석 중...", "검색 중...", sr-only "답변 생성 중")를 두긴 하지만, 시각적으로도
+ * "멈춘 게 아니라 진행 중"이 보이도록 주기를 늘려 모션 강도만 낮춘다(제거하지 않음).
+ * 무한 opacity 펄스(ReasoningDisplay)는 0.8~2.4s 주기로 3Hz 발작 임계(WCAG 2.3.1) 한참 아래라
+ * 접근성 실패가 아니라 편의성 문제 — 과도한 대응(완전 정지) 대신 완화만 한다.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .animate-spin,
+  .animate-bounce,
+  .animate-pulse {
+    animation-duration: 6s !important;
+  }
+}
+
 /* Scrollbar styling (잉크 네이비 계열, 팔레트 정합) */
 ::-webkit-scrollbar {
   width: 10px;
