@@ -452,7 +452,7 @@ NEXT_PUBLIC_API_URL=http://localhost:8000
 
 ## 오행 색상 시스템
 
-Tetris 디자인 시스템에 맞춘 오행별 시맨틱 색상(`web/lib/constants/elements.ts`):
+오행별 시맨틱 색상 — 디자인 테마와 무관하게 도메인 의미로 고정된다(`web/lib/constants/elements.ts`):
 
 | 오행 | 한자 | 색상 코드 | 의미 |
 |------|------|-----------|------|
@@ -501,7 +501,7 @@ Tetris 디자인 시스템에 맞춘 오행별 시맨틱 색상(`web/lib/constan
 ### 레이아웃 컴포넌트 (`components/layout/`)
 - `Sidebar` - 좌측 아이콘 내비게이션 (홈/결과/채팅, 로고는 마스코트 "별이")
 
-> UI 테마: [typeui.sh `tetris`](https://www.typeui.sh/design-skills/tetris) 기반 tetris-refined 블록 디자인 — 쿨블루 배경(`#dfe7ff`) + 비비드 퍼플 포인트(`#7107e7`) + 딥네이비 잉크 + 하드 오프셋 그림자. 폰트 Pretendard·Bangers·JetBrains Mono. 토큰·팔레트는 [DESIGN.md](DESIGN.md) 참조.
+> UI 테마: [typeui.sh `doodle`](https://www.typeui.sh/design-skills/doodle) 기반 손그림 디자인 — 종이 흰 배경 + 스카이 크레용 포인트(`#49B6E5`) + 스케치 잉크(`#263D5B`) + 불규칙 테두리 + 소프트 페이퍼 그림자. 폰트 Pretendard(본문)·Delius Swash Caps/Gaegu(디스플레이)·JetBrains Mono. `primary`는 대비 2.31:1이라 **채움 전용**이고 텍스트·포커스 링은 `accent`를 쓴다 — 토큰·대비 규칙은 [DESIGN.md](DESIGN.md) 참조.
 
 ## 데이터 상수 (config/constants.py)
 

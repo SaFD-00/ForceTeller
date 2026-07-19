@@ -169,7 +169,10 @@ web/
 
 **Key Design:**
 - **컴포넌트 순수 props-driven**: result/chat 컴포넌트 대부분이 store 비결합 → 프리뷰·재사용·테스트 용이.
-- **UI 테마(tetris-refined 블록)**: [typeui.sh `tetris`](https://www.typeui.sh/design-skills/tetris) 기반 — 쿨블루 배경 + 비비드 퍼플 강조 + 딥네이비 잉크 + 하드 오프셋(솔리드) 그림자 + 1.5px 블록 테두리. 폰트 Pretendard(본문)·Bangers(라틴 디스플레이)·JetBrains Mono(숫자·간지). 색상 토큰·타이포·간격 스케일은 루트 [DESIGN.md](DESIGN.md)에 정의되고 `web/tailwind.config.ts`·`web/app/globals.css`가 이를 반영한다. 브랜드 마스코트 **"별이"**(`components/ui/Mascot.tsx`, 별·달 점성술사)가 채팅 아바타·로딩·설명봇·로고에 재사용된다.
+- **UI 테마(Doodle 손그림)**: [typeui.sh `doodle`](https://www.typeui.sh/design-skills/doodle) 기반 — 종이 흰 배경 + 스카이 크레용 강조(`#49B6E5`) + 스케치 잉크(`#263D5B`) + 소프트 페이퍼 그림자 + 1.5px 테두리 + 다중값 border-radius로 만든 불규칙 손그림 윤곽. 폰트 Pretendard(본문)·Delius Swash Caps/Gaegu(라틴/한글 디스플레이)·JetBrains Mono(숫자·간지). 색상 토큰·타이포·간격 스케일은 루트 [DESIGN.md](DESIGN.md)에 정의되고 `web/tailwind.config.ts`·`web/app/globals.css`가 이를 반영한다.
+  - **대비 제약**: `primary`(#49B6E5)는 흰 배경 대비 2.31:1로 WCAG AA를 미달하므로 **채움 전용**이며, 텍스트·아이콘·포커스 링·선택 테두리는 `accent`(#263D5B, 11.05:1)를 쓴다. 이 규칙이 깨지면 앱 전역 접근성 회귀가 발생한다.
+  - **오행(五行) 색**은 `web/lib/constants/elements.ts`가 단일 진실원천이며 **디자인 테마와 무관하게 고정**된다 — 도메인 데이터 인코딩이기 때문이다.
+  - 브랜드 마스코트 **"별이"**(`components/ui/Mascot.tsx`, 별·달 점성술사)가 채팅 아바타·로딩·설명봇·로고에 재사용되며, `web/app/icon.svg`(파비콘)가 같은 팔레트를 공유한다.
 - **계산/표시 분리**: 간지·십성·12운성 계산은 백엔드(manseol) 단일 진실 공급원이 담당하고, 프론트는 `lib/ganji.ts`의 정적 표시 사전으로 인덱스→한글/한자/오행만 조회한다. 절기를 무시하던 프론트 근사 계산은 제거되었다.
 - **design-sync**: 앱을 DS 패키지처럼 synth-entry로 번들해 claude.ai/design에 게시한다(업로드는 별도 승인 단계). process shim·next/navigation no-op stub·framer-motion skipAnimations로 정적 헤드리스 렌더를 보정. 상세 재현 노트는 `web/.design-sync/NOTES.md`.
 
