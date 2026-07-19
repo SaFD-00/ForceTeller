@@ -154,7 +154,8 @@ Next.js 14 App Router 기반 프론트엔드입니다.
 web/
 ├── app/              # App Router (page/layout, result, chat)
 ├── components/
-│   ├── layout/       # Sidebar
+│   ├── layout/       # Sidebar, BottomNav
+│   ├── providers/    # MotionProvider (reduced-motion 게이팅)
 │   ├── result/       # 결과 표시 (13개)
 │   ├── chat/         # 채팅 UI (8개)
 │   └── ui/           # 재사용 UI (10개)
@@ -162,7 +163,9 @@ web/
 │   └── sajuStore.ts  # Zustand 상태관리
 ├── lib/
 │   ├── api/          # API 클라이언트 (client·manseol·chat)
+│   ├── hooks/        # useFocusTrap·useOverlayPortal
 │   └── ganji.ts      # 간지 표시 사전 (인덱스→한글/한자/오행, 표시 전용)
+├── e2e/              # 접근성 e2e 스크립트 (Playwright)
 ├── .design-sync/     # claude.ai/design 디자인시스템 동기화 (synth-entry 번들)
 └── .ds-css/          # design-sync용 Tailwind v3 정적 CSS 컴파일
 ```

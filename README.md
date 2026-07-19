@@ -115,7 +115,8 @@ ForceTeller는 정확한 만세력 계산과 AI 해석을 결합한 사주팔자
 │   ├── components/
 │   │   ├── hero/                 # 랜딩 히어로 섹션
 │   │   ├── features/             # 기능 그리드
-│   │   ├── layout/               # Sidebar (아이콘 내비게이션)
+│   │   ├── layout/               # Sidebar·BottomNav (아이콘 내비게이션)
+│   │   ├── providers/            # MotionProvider (reduced-motion 게이팅)
 │   │   ├── result/               # 결과 표시 (13개 컴포넌트)
 │   │   ├── chat/                 # 채팅 UI (8개 컴포넌트)
 │   │   └── ui/                   # 재사용 UI (10개 컴포넌트)
@@ -126,11 +127,13 @@ ForceTeller는 정확한 만세력 계산과 AI 해석을 결합한 사주팔자
 │   ├── lib/
 │   │   ├── api/                  # API 클라이언트 (client·manseol·chat)
 │   │   ├── constants/            # 프론트엔드 상수
+│   │   ├── hooks/                # useFocusTrap·useOverlayPortal
 │   │   ├── ganji.ts              # 간지(干支) 표시 사전 (인덱스→한글/한자/오행)
 │   │   ├── transforms.ts         # 데이터 변환
 │   │   └── utils.ts              # 유틸리티
 │   ├── types/
 │   │   └── saju.ts               # TypeScript 타입
+│   ├── e2e/                      # 접근성 e2e 스크립트 (Playwright)
 │   ├── next.config.js            # rewrites 프록시 (API_PROXY_TARGET)
 │   ├── package.json
 │   └── tailwind.config.ts
@@ -290,7 +293,7 @@ uv run mypy .              # 타입 체크 (CI 비차단)
 
 # 프론트엔드 (web/)
 cd web && npm run lint     # ESLint
-cd web && npm test         # Vitest 단위 테스트 (21개)
+cd web && npm test         # Vitest 단위 테스트 (30개 — 변환·간지·디자인 토큰 패리티)
 
 # 의존성 추가/제거
 uv add <패키지>            # 런타임 의존성
@@ -500,6 +503,14 @@ NEXT_PUBLIC_API_URL=http://localhost:8000
 
 ### 레이아웃 컴포넌트 (`components/layout/`)
 - `Sidebar` - 좌측 아이콘 내비게이션 (홈/결과/채팅, 로고는 마스코트 "별이")
+- `BottomNav` - 모바일 하단 탭 내비게이션
+
+### 프로바이더 (`components/providers/`)
+- `MotionProvider` - framer-motion `reducedMotion="user"` 게이팅
+
+### 훅 (`lib/hooks/`)
+- `useFocusTrap` - 오버레이 포커스 트랩
+- `useOverlayPortal` - 오버레이 포털 렌더링
 
 > UI 테마: [typeui.sh `doodle`](https://www.typeui.sh/design-skills/doodle) 기반 손그림 디자인 — 종이 흰 배경 + 스카이 크레용 포인트(`#49B6E5`) + 스케치 잉크(`#263D5B`) + 불규칙 테두리 + 소프트 페이퍼 그림자. 폰트 Pretendard(본문)·Delius Swash Caps/Gaegu(디스플레이)·JetBrains Mono. `primary`는 대비 2.31:1이라 **채움 전용**이고 텍스트·포커스 링은 `accent`를 쓴다 — 토큰·대비 규칙은 [DESIGN.md](DESIGN.md) 참조.
 

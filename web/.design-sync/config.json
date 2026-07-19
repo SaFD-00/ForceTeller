@@ -19,17 +19,12 @@
     "AgentSelector": { "cardMode": "column" },
     "SuggestedQuestions": { "cardMode": "column" },
     "ElementDistribution": { "cardMode": "column" },
-    "FiveElementsChart": { "cardMode": "column" },
-    "FortuneCycleTimeline": { "cardMode": "column" },
     "FortuneScoreDashboard": { "cardMode": "column" },
-    "FourPillarsDisplay": { "cardMode": "column" },
     "InteractionsTabs": { "cardMode": "column" },
     "LuckyGuideCard": { "cardMode": "column" },
     "PentagonChart": { "cardMode": "column" },
     "SchoolComparison": { "cardMode": "column" },
     "ShenshaDetailCard": { "cardMode": "column" },
-    "StrengthMeter": { "cardMode": "column" },
-    "TenGodsDistribution": { "cardMode": "column" },
     "YongshinCard": { "cardMode": "column" }
   },
   "libOverrides": {
