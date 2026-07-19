@@ -42,6 +42,8 @@ export function MessageBubble({ message, onSuggestedQuestionClick }: MessageBubb
 
       {/* Message */}
       <div
+        // 실패 알림은 정중한 대화 리전을 가로채고 즉시 낭독되어야 한다
+        role={message.isError ? 'alert' : undefined}
         className={cn(
           'max-w-[75%] p-4 rounded-xl border-[1.5px] border-border shadow-block-sm',
           isUser
@@ -89,7 +91,8 @@ export function MessageBubble({ message, onSuggestedQuestionClick }: MessageBubb
                 onClick={() => onSuggestedQuestionClick?.(question)}
                 className="px-3 py-1.5 text-sm bg-primary/10 hover:bg-primary/20
                          border-[1.5px] border-border rounded-lg text-foreground
-                         shadow-block-sm transition-all hover:-translate-x-px hover:-translate-y-px"
+                         shadow-block-sm transition-all hover:-translate-x-px hover:-translate-y-px
+                         focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
               >
                 {question}
               </button>

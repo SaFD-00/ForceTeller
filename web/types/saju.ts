@@ -352,6 +352,8 @@ export interface ChatMessage {
   agent?: string;
   agent_display_name?: string;
   confidence?: number;
+  // 실패를 알리는 메시지 — 렌더 시 role="alert" 로 즉시 낭독된다
+  isError?: boolean;
 }
 
 // 컴포넌트용 호환 타입 (백엔드 응답을 프론트엔드에서 사용하기 위한 변환 타입)

@@ -1,21 +1,25 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useId } from 'react';
 import { Button, Icon } from '@/components/ui';
 
 interface ChatInputProps {
   onSend: (message: string) => void;
   disabled?: boolean;
   placeholder?: string;
+  /** 접근 가능한 이름. 시각적으로는 감춰지고 스크린리더에만 노출된다. */
+  label?: string;
 }
 
 export function ChatInput({
   onSend,
   disabled = false,
   placeholder = '메시지를 입력하세요...',
+  label = '사주 상담 질문 입력',
 }: ChatInputProps) {
   const [message, setMessage] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const textareaId = useId();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,7 +51,13 @@ export function ChatInput({
     <form onSubmit={handleSubmit} className="p-4 border-t border-border">
       <div className="flex gap-3 items-end">
         <div className="flex-1 relative">
+          {/* placeholder 는 접근 가능한 이름이 아니다(입력 시작하면 사라진다).
+              Input.tsx 와 동일하게 htmlFor/id 로 실제 label 을 연결하고, 레이아웃 유지를 위해 sr-only 로 감춘다. */}
+          <label htmlFor={textareaId} className="sr-only">
+            {label}
+          </label>
           <textarea
+            id={textareaId}
             ref={textareaRef}
             value={message}
             onChange={(e) => setMessage(e.target.value)}
