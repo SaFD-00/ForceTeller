@@ -1,0 +1,37 @@
+{
+  "date": "2026-07-19",
+  "project": "ForceTeller",
+  "category": "devlog",
+  "summary": "접근성 마감 라운드 — 모달 portal+inert 배경 봉쇄, 툴팁 document Escape·죽은 경로 제거, 십성 aria 통일, 검증 하네스 봉합, 문서 정합",
+  "details": "직전 tier-2 검증이 남긴 잔여 결함 4건을 마감했다. 검증 하네스를 먼저 고쳤고(신뢰할 수 없는 게이트로 새 작업을 판정할 수 없다), 그 과정에서 대비 측정 함수 bgAtPoint가 한 번도 작동한 적 없다는 것이 드러났다 — elementsFromPoint는 뷰포트 좌표인데 차트는 뷰포트 밖이라 스택이 항상 비었고 조용히 흰색을 반환했다. 흰색은 어두운 텍스트에 관대한 방향이라 false PASS를 만들 수 있었다.",
+  "source": {
+    "workflow": "workflow:revise",
+    "path": ".claude/devlog/2026-07-19_16-41-23_a11y-overlay-contract.md",
+    "based_on": null
+  },
+  "devlog": {
+    "report_path": ".claude/devlog/2026-07-19_16-41-23_a11y-overlay-contract.md",
+    "based_on": [],
+    "changes": {
+      "files": [
+        "web/components/ui/GlossaryModal.tsx",
+        "web/components/ui/GlossaryTooltip.tsx",
+        "web/components/result/ElementDistribution.tsx",
+        "web/lib/hooks/useFocusTrap.ts",
+        "DESIGN.md",
+        "web/README.md",
+        "web/.design-sync/guidelines/03-mascot.md"
+      ],
+      "commits": [
+        "418ed46 fix(a11y): 용어 모달 portal+inert 배경 봉쇄, overflow·exit 애니메이션 복원",
+        "3527633 fix(a11y): 툴팁 Escape 를 document 수준으로 승격, 도달 불가 상세보기 경로 제거",
+        "271264b fix(a11y): 십성 도넛 aria 를 범례와 동일 집합(0% 포함 10개)으로 통일",
+        "0b4d275 docs(a11y): 오버레이 접근성 계약·실측 게이트 문서화 + mascot 가이드 드리프트 정정"
+      ],
+      "diffstat": "7 files, +145 -77",
+      "summary": "모달을 portal로 옮겨 열림 중 body 직계 자식에 inert를 걸고(기존 inert는 Map으로 보존) overflow·exit 애니메이션·포커스 복원을 정합화했다. 툴팁 Escape를 document 수준으로 올려 hover로 연 것도 닫히게 하고(포커스 비이동), 호출부 0건이던 onDetailClick 경로를 제거했다. 십성 aria-label의 >0 필터를 없애 범례와 같은 10개 집합으로 통일했다. DESIGN.md에 오버레이 접근성 계약 6항목, web/README.md에 실측 게이트 절차를 문서화하고 03-mascot.md의 기존 드리프트를 정정했다."
+    },
+    "why": "tier-2 검증이 지목한 4건: 모달 배경이 inert 미처리(aria-modal만으로는 SR 가상 커서가 배경에 닿음), hover로 연 툴팁을 키보드로 닫을 수 없음(WCAG 1.4.13 dismissable), onDetailClick이 호출부 0건인 죽은 경로, 검증 하네스가 화살표·범례를 계산만 하고 단언하지 않아 화살촉이 전부 깨져도 PASS가 나는 상태. onDetailClick은 배선이 아니라 제거를 택했다 — GlossaryModal은 헤딩 버튼 5개 경로로 이미 살아 있어 고아화가 없고, 배선하면 마감 라운드에 기능 표면을 여는 일이 된다. inert는 배경이 다이얼로그의 형제여야 걸 수 있어 portal이 전제였고, 그 결과 inert 해제가 포커스 복원보다 먼저 돌아야 한다는 effect 선언 순서 의존이 생겨 코드 주석과 DESIGN.md 양쪽에 남겼다.",
+    "verification": "게이트(오케스트레이터 직접 재실행): tsc --noEmit exit 0 / next lint 무경고 / vitest 21 passed / next build 성공 / compile.mjs 48939 bytes. 브라우저 실측(프로덕션 빌드 PORT=3456 npm run start, Playwright channel 'chrome', mock 주입, 알파 합성): node a11y-verify.mjs → VERDICT: PASS, exit 0, 양성 단언 19종(ARROWS/LEGEND/GUARD/ARIA-OHENG/ARIA-TENGOD/ARIA-PENTAGON/SWEEP/DONUT/CONTRAST/TABS/P1-INERT/P1-OVERFLOW/P1-EXITANIM/P1-INERT-RESTORE/P1-FOCUSRETURN/P2-KBD-ESC/P2-HOVER-ESC/P2-NO-DETAIL-BTN/P3). A11Y_SELFTEST=1 → VERDICT: FAIL (7건), exit 1로 주입 변이 4종 전부 포착. 판별력 확인: GlossaryModal을 HEAD로 되돌려 P1 4건 FAIL, 툴팁 document 리스너 제거로 P2 2건 FAIL — 단언이 공허하지 않음을 실증한 뒤 복원."
+  }
+}
