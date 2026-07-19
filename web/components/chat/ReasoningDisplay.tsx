@@ -38,7 +38,7 @@ export function ReasoningDisplay({
         <div className="flex-1 p-4 rounded-xl bg-surface border-[1.5px] border-border shadow-card">
           {/* Header */}
           <div className="flex items-center gap-2 mb-2">
-            <span className="text-xs font-medium text-warning">
+            <span className="text-xs font-medium text-warning-ink">
               AI 사고 과정
             </span>
             {!isComplete && (

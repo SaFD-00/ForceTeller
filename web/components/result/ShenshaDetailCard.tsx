@@ -43,20 +43,20 @@ interface ShenshaDetailCardProps {
 const typeColors = {
   '길신': {
     bg: 'bg-success/20',
-    text: 'text-success',
-    border: 'border-success/30',
+    text: 'text-success-ink',
+    border: 'border-border',
     icon: 'solar:star-bold',
   },
   '흉신': {
     bg: 'bg-danger/20',
-    text: 'text-danger',
-    border: 'border-danger/30',
+    text: 'text-danger-ink',
+    border: 'border-border',
     icon: 'solar:danger-triangle-bold',
   },
   '중성': {
     bg: 'bg-warning/20',
-    text: 'text-warning',
-    border: 'border-warning/30',
+    text: 'text-warning-ink',
+    border: 'border-border',
     icon: 'solar:star-shine-bold',
   },
 };

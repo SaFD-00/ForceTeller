@@ -12,15 +12,15 @@ interface GlossaryModalProps {
 }
 
 // 카테고리별 색상
-// 다색 카테고리 코딩 유지 + 라이트 tint 위 대비 확보를 위해 텍스트는 -700로 어둡게.
-// (십성=퍼플 계열은 리터럴 대신 accent 토큰 사용)
+// 다색 카테고리 코딩 유지 + 라이트 tint 위 4.5:1 대비 확보를 위해 천간/12운성/합충은 -800로,
+// 지지/신살은 -700로 이미 통과라 유지. (십성=퍼플 계열은 리터럴 대신 accent 토큰 사용)
 const categoryColors: Record<GlossaryEntry['category'], string> = {
-  '천간': 'bg-green-500/20 text-green-700',
+  '천간': 'bg-green-500/20 text-green-800',
   '지지': 'bg-blue-500/20 text-blue-700',
   '십성': 'bg-accent/15 text-accent',
-  '12운성': 'bg-yellow-500/20 text-yellow-700',
+  '12운성': 'bg-yellow-500/20 text-yellow-800',
   '신살': 'bg-red-500/20 text-red-700',
-  '합충': 'bg-orange-500/20 text-orange-700',
+  '합충': 'bg-orange-500/20 text-orange-800',
   '용어': 'bg-muted text-muted-foreground',
 };
 

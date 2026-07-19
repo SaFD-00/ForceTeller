@@ -14,11 +14,11 @@ const ELEMENT_BG_COLORS: Record<Element, string> = {
 };
 
 const ELEMENT_TEXT_COLORS: Record<Element, string> = {
-  '목': 'text-element-wood',
-  '화': 'text-element-fire',
-  '토': 'text-element-earth',
-  '금': 'text-element-metal',
-  '수': 'text-element-water',
+  '목': 'text-element-wood-ink',
+  '화': 'text-element-fire-ink',
+  '토': 'text-element-earth-ink',
+  '금': 'text-element-metal-ink',
+  '수': 'text-element-water-ink',
 };
 
 // 영어/한글 오행을 한글로 변환

@@ -19,9 +19,9 @@ const CATEGORY_LABELS: Record<string, string> = {
 };
 
 function confidenceLabel(c: number): { label: string; cls: string } {
-  if (c >= 0.8) return { label: '일치도 높음', cls: 'bg-success/15 text-success' };
-  if (c >= 0.5) return { label: '일치도 보통', cls: 'bg-warning/15 text-warning' };
-  return { label: '해석 분분', cls: 'bg-danger/15 text-danger' };
+  if (c >= 0.8) return { label: '일치도 높음', cls: 'bg-success/15 text-success-ink' };
+  if (c >= 0.5) return { label: '일치도 보통', cls: 'bg-warning/15 text-warning-ink' };
+  return { label: '해석 분분', cls: 'bg-danger/15 text-danger-ink' };
 }
 
 export function SchoolComparison({ comparison }: SchoolComparisonProps) {

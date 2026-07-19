@@ -3,38 +3,33 @@
 export const ELEMENT_COLORS = {
   목: {
     bg: 'bg-element-wood/20',
-    text: 'text-element-wood',
-    border: 'border-element-wood/50',
+    text: 'text-element-wood-ink',
+    border: 'border-border',
     hex: '#16A34A',
-    gradient: 'from-green-500 to-emerald-500',
   },
   화: {
     bg: 'bg-element-fire/20',
-    text: 'text-element-fire',
-    border: 'border-element-fire/50',
+    text: 'text-element-fire-ink',
+    border: 'border-border',
     hex: '#DC2626',
-    gradient: 'from-red-500 to-orange-500',
   },
   토: {
     bg: 'bg-element-earth/20',
-    text: 'text-element-earth',
-    border: 'border-element-earth/50',
+    text: 'text-element-earth-ink',
+    border: 'border-border',
     hex: '#D97706',
-    gradient: 'from-yellow-500 to-amber-500',
   },
   금: {
     bg: 'bg-element-metal/20',
-    text: 'text-element-metal',
-    border: 'border-element-metal/50',
+    text: 'text-element-metal-ink',
+    border: 'border-border',
     hex: '#64748B',
-    gradient: 'from-zinc-400 to-gray-400',
   },
   수: {
     bg: 'bg-element-water/20',
-    text: 'text-element-water',
-    border: 'border-element-water/50',
+    text: 'text-element-water-ink',
+    border: 'border-border',
     hex: '#2563EB',
-    gradient: 'from-blue-500 to-cyan-500',
   },
 } as const;
 

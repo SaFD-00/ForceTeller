@@ -102,19 +102,19 @@
 
   /* 오행 배지 (element-* 토큰 = ELEMENT_COLORS 정렬, 블록 톤 채움 15% + 텍스트 + 테두리) */
   .element-wood {
-    @apply bg-element-wood/15 text-element-wood border-element-wood/50;
+    @apply bg-element-wood/15 text-element-wood-ink border-border;
   }
   .element-fire {
-    @apply bg-element-fire/15 text-element-fire border-element-fire/50;
+    @apply bg-element-fire/15 text-element-fire-ink border-border;
   }
   .element-earth {
-    @apply bg-element-earth/15 text-element-earth border-element-earth/50;
+    @apply bg-element-earth/15 text-element-earth-ink border-border;
   }
   .element-metal {
-    @apply bg-element-metal/15 text-element-metal border-element-metal/50;
+    @apply bg-element-metal/15 text-element-metal-ink border-border;
   }
   .element-water {
-    @apply bg-element-water/15 text-element-water border-element-water/50;
+    @apply bg-element-water/15 text-element-water-ink border-border;
   }
 }
 
