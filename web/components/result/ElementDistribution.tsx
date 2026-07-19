@@ -45,6 +45,17 @@ const TEN_GOD_PAIRS = [
   { yin: '상관', yang: '식신', hanja: { yin: '傷官', yang: '食神' } },
 ];
 
+// 십성 순서 및 색상 (도넛·범례 공유)
+const TEN_GOD_ORDER = ['비견', '겁재', '식신', '상관', '편재', '정재', '편관', '정관', '편인', '정인'];
+// 무채 slate 램프 — 쌍=밴드·양간=밝음, 백색 대비 바닥 3.47:1, muted 위 3.13:1
+const TEN_GOD_COLORS: Record<string, string> = {
+  '비견': '#748BAF', '겁재': '#637DA6',   // 비겁 밴드(최명) 3.47 / 4.19:1
+  '식신': '#43587B', '상관': '#3A4D6C',   // 식상 밴드(중)   7.19 / 8.54:1
+  '편재': '#1E293B', '정재': '#131A25',   // 재   밴드(최암) 14.63 / 17.47:1
+  '편관': '#57709A', '정관': '#4D648B',   // 관   밴드(명중) 5.01 / 5.98:1
+  '편인': '#31425C', '정인': '#28364C',   // 인   밴드(암중) 10.17 / 12.19:1
+};
+
 export function ElementDistribution({ distribution, tenGods, dominant }: ElementDistributionProps) {
   const [selectedEntry, setSelectedEntry] = useState<GlossaryEntry | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -98,6 +109,18 @@ export function ElementDistribution({ distribution, tenGods, dominant }: Element
     if (percentage >= 30) return { label: '발달', color: 'text-success-ink' };
     return { label: '', color: '' };
   };
+
+  // 도넛 aria-label (색-단독 인코딩 보완)
+  const elementAriaLabel =
+    '오행 분포: ' +
+    elementOrder
+      .map((element) => `${element} ${getPercentage(distribution[element] || 0, total)}%`)
+      .join(', ');
+  const tenGodAriaLabel =
+    '십성 분포: ' +
+    TEN_GOD_ORDER.filter((god) => getPercentage(tenGods[god] || 0, totalTenGods) > 0)
+      .map((god) => `${god} ${getPercentage(tenGods[god] || 0, totalTenGods)}%`)
+      .join(', ');
 
   return (
     <motion.div
@@ -213,7 +236,7 @@ export function ElementDistribution({ distribution, tenGods, dominant }: Element
             <div className="flex flex-col items-center">
               <span className="text-sm text-muted-foreground mb-2">오행</span>
               <div className="relative w-32 h-32">
-                <svg viewBox="0 0 100 100" className="w-full h-full">
+                <svg viewBox="0 0 100 100" className="w-full h-full" role="img" aria-label={elementAriaLabel}>
                   {(() => {
                     const radius = 40;
                     const circumference = 2 * Math.PI * radius;
@@ -262,7 +285,7 @@ export function ElementDistribution({ distribution, tenGods, dominant }: Element
             <div className="flex flex-col items-center">
               <span className="text-sm text-muted-foreground mb-2">십성</span>
               <div className="relative w-32 h-32">
-                <svg viewBox="0 0 100 100" className="w-full h-full">
+                <svg viewBox="0 0 100 100" className="w-full h-full" role="img" aria-label={tenGodAriaLabel}>
                   {(() => {
                     const radius = 40;
                     const circumference = 2 * Math.PI * radius;
@@ -270,20 +293,11 @@ export function ElementDistribution({ distribution, tenGods, dominant }: Element
                     const startOffset = circumference * 0.25;
                     const GAP = 2;
 
-                    // 십성 순서 및 색상 (무채색 톤, 전부 흰 배경 대비 ≥3.08)
-                    const tenGodOrder = ['비견', '겁재', '식신', '상관', '편재', '정재', '편관', '정관', '편인', '정인'];
-                    const tenGodColors: Record<string, string> = {
-                      '비견': '#55647A', '겁재': '#64748B',
-                      '식신': '#374151', '상관': '#46536B',
-                      '편재': '#76839B', '정재': '#8494AD',
-                      '편관': '#111827', '정관': '#243042',
-                      '편인': '#6E7D95', '정인': '#7E8CA4',
-                    };
-                    const segmentCount = tenGodOrder.filter(
+                    const segmentCount = TEN_GOD_ORDER.filter(
                       (god) => getPercentage(tenGods[god] || 0, totalTenGods) > 0
                     ).length;
 
-                    return tenGodOrder.map((god) => {
+                    return TEN_GOD_ORDER.map((god) => {
                       const value = tenGods[god] || 0;
                       const percentage = getPercentage(value, totalTenGods);
                       const segmentLength = (percentage / 100) * circumference;
@@ -302,7 +316,7 @@ export function ElementDistribution({ distribution, tenGods, dominant }: Element
                           cy="50"
                           r={radius}
                           fill="none"
-                          stroke={tenGodColors[god]}
+                          stroke={TEN_GOD_COLORS[god]}
                           strokeWidth="12"
                           strokeDasharray={dashArray}
                           strokeDashoffset={dashOffset}
@@ -337,6 +351,24 @@ export function ElementDistribution({ distribution, tenGods, dominant }: Element
                   <div className={`w-3 h-3 rounded-sm border-[1.5px] border-border ${ELEMENT_INFO[element].color}`} />
                   <span className="text-muted-foreground font-mono">
                     {element} {percentage}%
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* 십성 범례 */}
+          <div data-legend="ten-gods" className="flex flex-wrap justify-center gap-2">
+            {TEN_GOD_ORDER.map((god) => {
+              const percentage = getPercentage(tenGods[god] || 0, totalTenGods);
+              return (
+                <div key={god} className="flex items-center gap-1 text-xs">
+                  <div
+                    className="w-3 h-3 rounded-sm border-[1.5px] border-border"
+                    style={{ backgroundColor: TEN_GOD_COLORS[god] }}
+                  />
+                  <span className="text-muted-foreground font-mono">
+                    {god} {percentage}%
                   </span>
                 </div>
               );

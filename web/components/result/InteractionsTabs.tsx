@@ -11,16 +11,16 @@ interface InteractionsTabsProps {
 
 // 탭 정보 정의
 const TAB_INFO = [
-  { key: '천간합', label: '천간합', icon: 'solar:link-round-bold', color: 'text-success' },
-  { key: '지지육합', label: '지지육합', icon: 'solar:link-round-bold', color: 'text-success' },
-  { key: '지지삼합', label: '지지삼합', icon: 'solar:link-minimalistic-2-bold', color: 'text-success' },
-  { key: '지지방합', label: '지지방합', icon: 'solar:link-square-bold', color: 'text-success' },
-  { key: '지지반합', label: '지지반합', icon: 'solar:link-broken-bold', color: 'text-success' },
-  { key: '천간충극', label: '천간충극', icon: 'solar:bolt-bold', color: 'text-danger' },
-  { key: '지지충', label: '지지충', icon: 'solar:bolt-circle-bold', color: 'text-danger' },
-  { key: '지지형', label: '지지형', icon: 'solar:danger-triangle-bold', color: 'text-danger' },
-  { key: '지지파', label: '지지파', icon: 'solar:shield-cross-bold', color: 'text-danger' },
-  { key: '지지해', label: '지지해', icon: 'solar:shield-warning-bold', color: 'text-danger' },
+  { key: '천간합', label: '천간합', icon: 'solar:link-round-bold', color: 'text-success-ink' },
+  { key: '지지육합', label: '지지육합', icon: 'solar:link-round-bold', color: 'text-success-ink' },
+  { key: '지지삼합', label: '지지삼합', icon: 'solar:link-minimalistic-2-bold', color: 'text-success-ink' },
+  { key: '지지방합', label: '지지방합', icon: 'solar:link-square-bold', color: 'text-success-ink' },
+  { key: '지지반합', label: '지지반합', icon: 'solar:link-broken-bold', color: 'text-success-ink' },
+  { key: '천간충극', label: '천간충극', icon: 'solar:bolt-bold', color: 'text-danger-ink' },
+  { key: '지지충', label: '지지충', icon: 'solar:bolt-circle-bold', color: 'text-danger-ink' },
+  { key: '지지형', label: '지지형', icon: 'solar:danger-triangle-bold', color: 'text-danger-ink' },
+  { key: '지지파', label: '지지파', icon: 'solar:shield-cross-bold', color: 'text-danger-ink' },
+  { key: '지지해', label: '지지해', icon: 'solar:shield-warning-bold', color: 'text-danger-ink' },
   { key: '공망', label: '공망', icon: 'solar:ghost-bold', color: 'text-muted-foreground' },
 ] as const;
 
