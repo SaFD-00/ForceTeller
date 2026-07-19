@@ -116,11 +116,13 @@ export function ElementDistribution({ distribution, tenGods, dominant }: Element
     elementOrder
       .map((element) => `${element} ${getPercentage(distribution[element] || 0, total)}%`)
       .join(', ');
+  // 오행과 마찬가지로 0%도 포함한다 — aria 는 시각 범례의 대체 채널이라 정보 집합이
+  // 같아야 하고, 이 도메인에서 '없음'은 '부족'이라는 유의미한 신호다.
   const tenGodAriaLabel =
     '십성 분포: ' +
-    TEN_GOD_ORDER.filter((god) => getPercentage(tenGods[god] || 0, totalTenGods) > 0)
-      .map((god) => `${god} ${getPercentage(tenGods[god] || 0, totalTenGods)}%`)
-      .join(', ');
+    TEN_GOD_ORDER.map((god) => `${god} ${getPercentage(tenGods[god] || 0, totalTenGods)}%`).join(
+      ', '
+    );
 
   return (
     <motion.div
