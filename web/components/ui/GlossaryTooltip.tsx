@@ -3,22 +3,19 @@
 import { useState, useRef, useEffect, useId } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mascot } from './Mascot';
-import { getGlossaryEntry, type GlossaryEntry } from '@/data/saju-glossary';
+import { getGlossaryEntry } from '@/data/saju-glossary';
 
 interface GlossaryTooltipProps {
   term: string;
   children: React.ReactNode;
-  onDetailClick?: (entry: GlossaryEntry) => void;
 }
 
-export function GlossaryTooltip({ term, children, onDetailClick }: GlossaryTooltipProps) {
+export function GlossaryTooltip({ term, children }: GlossaryTooltipProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [position, setPosition] = useState<'top' | 'bottom'>('top');
   const triggerRef = useRef<HTMLSpanElement>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-  // Escape로 닫은 직후의 focus 복귀가 handleFocus를 통해 툴팁을 즉시 재열지 못하게 막는 가드.
-  const escapeRef = useRef(false);
   const tooltipId = useId();
 
   const entry = getGlossaryEntry(term);
@@ -33,6 +30,33 @@ export function GlossaryTooltip({ term, children, onDetailClick }: GlossaryToolt
       setPosition(spaceAbove < 150 ? 'bottom' : 'top');
     }
   }, [isOpen]);
+
+  // WCAG 1.4.13 (dismissable): hover로 연 툴팁도 Escape로 닫혀야 한다.
+  // 포커스가 위젯 밖에 있을 수 있으므로 document에서 받는다.
+  // 닫기만 하고 포커스는 옮기지 않는다 — hover로 연 것을 닫으며 포커스를 강탈하면 안 된다.
+  useEffect(() => {
+    if (!isOpen) return;
+    const onDocKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return;
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+      setIsOpen(false);
+    };
+    document.addEventListener('keydown', onDocKeyDown);
+    return () => document.removeEventListener('keydown', onDocKeyDown);
+  }, [isOpen]);
+
+  // 언마운트 후 setState 방지 — hover 지연 타이머가 살아남지 않게 한다.
+  useEffect(
+    () => () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    },
+    []
+  );
 
   const handleMouseEnter = () => {
     if (timeoutRef.current) {
@@ -65,19 +89,8 @@ export function GlossaryTooltip({ term, children, onDetailClick }: GlossaryToolt
     setIsOpen(false);
   };
 
-  const handleClick = () => {
-    if (entry && onDetailClick) {
-      onDetailClick(entry);
-    }
-  };
-
   // 키보드 사용자는 hover가 없다. 포커스로 즉시 열고(지연 없음) 블러로 닫는다.
   const handleFocus = () => {
-    // Escape 처리에서 트리거로 되돌린 포커스는 "열기" 신호가 아니다.
-    if (escapeRef.current) {
-      escapeRef.current = false;
-      return;
-    }
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
@@ -97,34 +110,10 @@ export function GlossaryTooltip({ term, children, onDetailClick }: GlossaryToolt
     setIsOpen(false);
   };
 
-  // 툴팁 내부("자세히 보기")에 포커스가 있어도 Escape가 닿도록 래퍼에서 버블링을 받는다.
-  const handleWrapperKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key !== 'Escape' || !isOpen) return;
-
-    setIsOpen(false);
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
-
-    const trigger = triggerRef.current;
-    // 이미 트리거에 포커스가 있으면 focus 이벤트가 발화하지 않으므로 가드를 세우지 않는다
-    // (세우면 다음 번 정상 포커스가 잘못 삼켜진다).
-    if (trigger && document.activeElement !== trigger) {
-      escapeRef.current = true;
-      trigger.focus();
-    }
-  };
-
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault(); // Space 페이지 스크롤 방지
-      if (!isOpen) {
-        setIsOpen(true);
-      } else if (entry && onDetailClick) {
-        handleClick();
-      } else {
-        setIsOpen(false);
-      }
+      setIsOpen((open) => !open);
     }
   };
 
@@ -133,7 +122,7 @@ export function GlossaryTooltip({ term, children, onDetailClick }: GlossaryToolt
   }
 
   return (
-    <span className="relative inline-block" onBlur={handleWrapperBlur} onKeyDown={handleWrapperKeyDown}>
+    <span className="relative inline-block" onBlur={handleWrapperBlur}>
       <span
         ref={triggerRef}
         tabIndex={0}
@@ -146,7 +135,6 @@ export function GlossaryTooltip({ term, children, onDetailClick }: GlossaryToolt
         onMouseLeave={handleMouseLeave}
         onFocus={handleFocus}
         onKeyDown={handleKeyDown}
-        onClick={handleClick}
       >
         {children}
       </span>
@@ -187,16 +175,6 @@ export function GlossaryTooltip({ term, children, onDetailClick }: GlossaryToolt
 
             {/* 짧은 설명 */}
             <p className="text-sm text-foreground">{entry.shortDesc}</p>
-
-            {/* 더 보기 버튼 */}
-            {onDetailClick && (
-              <button
-                onClick={handleClick}
-                className="mt-2 text-xs text-accent hover:text-accent/80 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-              >
-                자세히 보기 →
-              </button>
-            )}
           </motion.div>
         )}
       </AnimatePresence>
