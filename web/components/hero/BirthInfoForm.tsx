@@ -135,7 +135,7 @@ export function BirthInfoForm() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay: 0.2 }}
     >
-      <GlassCard className="w-full max-w-xl mx-auto p-6 md:p-8 rounded-3xl">
+      <GlassCard className="w-full max-w-xl mx-auto p-6 md:p-8">
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Name */}
           <Input
@@ -224,7 +224,7 @@ export function BirthInfoForm() {
               <div className="absolute z-50 w-full mt-1 bg-surface border border-border rounded-xl shadow-card-hover overflow-hidden max-h-60 overflow-y-auto">
                 {isSearching ? (
                   <div className="px-4 py-3 text-muted-foreground text-center">
-                    <Icon name="solar:refresh-bold" size={16} className="animate-spin inline mr-2" />
+                    <Icon name="solar:refresh-linear" size={16} className="animate-spin inline mr-2" />
                     검색 중...
                   </div>
                 ) : cities.length > 0 ? (
@@ -266,18 +266,18 @@ export function BirthInfoForm() {
                   aria-pressed={selected}
                   className={`focus-ring inline-flex min-h-11 items-center gap-1.5 px-4 rounded-full text-sm border transition-all ${
                     selected
-                      ? 'bg-primary/10 border-primary text-primary font-semibold'
+                      ? 'bg-primary/10 border-accent text-accent font-semibold'
                       : 'bg-surface border-border text-muted-foreground hover:bg-muted'
                   }`}
                   onClick={() => setFormData((prev) => ({ ...prev, gender }))}
                 >
                   <Icon
-                    name={gender === 'male' ? 'solar:men-bold' : 'solar:women-bold'}
+                    name={gender === 'male' ? 'solar:men-linear' : 'solar:women-linear'}
                     size={15}
                   />
                   {gender === 'male' ? '남성' : '여성'}
                   {/* 색 외 선택 신호 (색각 이상·저대비 환경 대비) */}
-                  {selected && <Icon name="solar:check-circle-bold" size={14} />}
+                  {selected && <Icon name="solar:check-circle-linear" size={14} />}
                 </button>
               );
             })}
@@ -292,13 +292,13 @@ export function BirthInfoForm() {
                   aria-pressed={selected}
                   className={`focus-ring inline-flex min-h-11 items-center gap-1.5 px-4 rounded-full text-sm border transition-all ${
                     selected
-                      ? 'bg-primary/10 border-primary text-primary font-semibold'
+                      ? 'bg-primary/10 border-accent text-accent font-semibold'
                       : 'bg-surface border-border text-muted-foreground hover:bg-muted'
                   }`}
                   onClick={() => setFormData((prev) => ({ ...prev, calendar: type }))}
                 >
                   {type === 'solar' ? '양력' : type === 'lunar' ? '음력' : '윤달'}
-                  {selected && <Icon name="solar:check-circle-bold" size={14} />}
+                  {selected && <Icon name="solar:check-circle-linear" size={14} />}
                 </button>
               );
             })}
@@ -312,12 +312,12 @@ export function BirthInfoForm() {
           >
             {isLoading ? (
               <>
-                <Icon name="solar:refresh-bold" size={20} className="animate-spin mr-2" />
+                <Icon name="solar:refresh-linear" size={20} className="animate-spin mr-2" />
                 분석 중...
               </>
             ) : (
               <>
-                <Icon name="solar:stars-bold" size={20} className="mr-2" />
+                <Icon name="solar:stars-linear" size={20} className="mr-2" />
                 사주 분석하기
               </>
             )}

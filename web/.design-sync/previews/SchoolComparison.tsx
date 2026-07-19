@@ -148,7 +148,7 @@ const dividedComparison: SchoolComparisonResult = {
 /** 3개 학파(자평명리·적천수·궁통보감)가 폭넓게 합의하는 고신뢰 비교 해석 — 종합 권장·공통 견해·학파별 탭 전체 노출. */
 export function ConsensusHigh() {
   return (
-    <div style={{ padding: 16, background: "#dfe7ff", width: 760 }}>
+    <div style={{ padding: 16, background: "#ffffff", width: 760 }}>
       <SchoolComparison comparison={fullComparison} />
     </div>
   );
@@ -157,7 +157,7 @@ export function ConsensusHigh() {
 /** 현대명리·신살중심 2개 학파의 용신·직업 해석이 엇갈리는 저신뢰('해석 분분') 케이스 — 공통 견해 없이 차이 위주. */
 export function ConsensusDivided() {
   return (
-    <div style={{ padding: 16, background: "#dfe7ff", width: 760 }}>
+    <div style={{ padding: 16, background: "#ffffff", width: 760 }}>
       <SchoolComparison comparison={dividedComparison} />
     </div>
   );

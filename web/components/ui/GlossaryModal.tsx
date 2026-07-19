@@ -112,7 +112,7 @@ export function GlossaryModal({ entry, isOpen, onClose }: GlossaryModalProps) {
               {/* 짧은 설명 */}
               <div className="mb-4">
                 <p className="text-xs text-muted-foreground mb-1">간단 설명</p>
-                <p className="text-base text-primary font-medium">{entry.shortDesc}</p>
+                <p className="text-base text-accent font-medium">{entry.shortDesc}</p>
               </div>
 
               {/* 상세 설명 */}
@@ -126,7 +126,7 @@ export function GlossaryModal({ entry, isOpen, onClose }: GlossaryModalProps) {
             <div className="px-5 py-4 border-t border-border">
               <button
                 onClick={onClose}
-                className="w-full py-3 bg-primary hover:bg-primary/90 text-white font-medium rounded-lg transition-colors"
+                className="w-full py-3 bg-primary hover:bg-primary/90 text-primary-foreground font-medium rounded-lg transition-colors"
               >
                 닫기
               </button>

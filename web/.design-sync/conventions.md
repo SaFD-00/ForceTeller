@@ -3,29 +3,37 @@
 ForceTeller는 사주명리(만세력) 기반 AI 운세 분석 웹앱이다. 여기 컴포넌트는 앱 `web/components/` 의
 **실제 shipped 컴포넌트**(Next.js 14 + Tailwind CSS v3)다 — 재구현이 아니라 실제 export를 렌더한다.
 
-## 스타일링 — Tailwind v3 유틸리티 + 오행 토큰 (tetris-refined 블록 톤)
+## 스타일링 — Tailwind v3 유틸리티 + 오행 토큰 (Doodle 손그림 톤)
 디자인 토큰은 `tailwind.config.ts` 의 `theme.extend` 에 hex로 정의된다(CSS 변수 아님). 새 마크업을
 작성할 때는 **컴포넌트가 이미 쓰는 유틸리티 클래스**를 재사용하거나 인라인 스타일을 써라(임의 Tailwind
 클래스는 정적 컴파일된 ds-compiled.css에 없을 수 있다).
 
-팔레트(tetris-refined — 쿨블루 surface + 비비드 퍼플 포인트 + 딥네이비 잉크, 하드 오프셋 그림자):
+팔레트(Doodle — 종이 흰 surface + 스카이 크레용 포인트 + 스케치 잉크, 소프트 페이퍼 그림자):
 
-| 역할 | 값 | 유틸리티 |
-|---|---|---|
-| 앱 배경 | `#dfe7ff` | `bg-background` |
-| 본문/잉크 | `#1c202b` | `text-foreground` / `border-border` |
-| 카드/표면 | `#ffffff` | `bg-surface` |
-| muted 면 | `#eef1ff` | `bg-muted` |
-| 주요(비비드 퍼플) | `#7107e7` | `bg-primary` / `text-primary` |
-| 보조(네이비블루) | `#1c398e` | `text-accent` / `bg-accent` |
-| 보조 텍스트 | `#54608a` | `text-muted-foreground` |
-| 상태 | `#16a34a`·`#d97706`·`#dc2626` | `success` / `warning` / `danger` |
-| 그림자(블록) | 3·5·2px 0 오프셋 | `shadow-card` / `shadow-card-hover` / `shadow-block-sm` |
+| 역할 | 값 | 유틸리티 | 흰 배경 대비 |
+|---|---|---|---|
+| 앱 배경(종이) | `#FFFFFF` | `bg-background` | — |
+| 본문/잉크 | `#111827` | `text-foreground` | 17.74:1 |
+| 스케치 잉크(테두리·강조) | `#263D5B` | `border-border` / `text-accent` / `bg-accent` | 11.05:1 |
+| 카드/표면 | `#FFFFFF` | `bg-surface` | — |
+| muted 면 | `#EDF4FA` | `bg-muted` | — |
+| 주요 채움(스카이 크레용) | `#49B6E5` | `bg-primary` **만** | 2.31:1 ⚠ |
+| 보조 텍스트 | `#445A75` | `text-muted-foreground` | 7.08:1 |
+| 상태 | `#16a34a`·`#d97706`·`#dc2626` | `success` / `warning` / `danger` | — |
+| 그림자(페이퍼) | 0 2px 6px · 0 4px 12px · 0 1px 4px | `shadow-card` / `shadow-card-hover` / `shadow-soft` | — |
 
-**블록 규칙**: 카드/입력/버튼/뱃지는 `border-[1.5px] border-border` + 하드 오프셋 그림자 + `rounded-xl`(칩은 `rounded-lg`).
-hover=살짝 들림, 클릭=`.block-press`(눌림), focus=`focus-visible:ring-2 ring-primary`.
+> **⚠ 대비 규칙 (필수)**: `primary`(#49B6E5)는 2.31:1로 AA 텍스트(4.5:1)·non-text(3:1)를 **둘 다 미달한다**.
+> `text-primary` / `ring-primary` / `border-primary` / `stroke-primary` 를 **쓰지 마라** — 전부 `accent`(#263D5B)를 쓴다.
+> primary 채움 위 텍스트는 `text-primary-foreground`(#111827, 7.69:1)이며 `text-white`(2.31:1)를 쓰지 않는다.
 
-**타이포**: 한글/본문 Pretendard(`font-sans`), 라틴 워드마크/대형 헤딩 Bangers(`font-display`), 점수·간지·숫자 JetBrains Mono(`font-mono`).
+**손그림 규칙**: 카드/입력/버튼/뱃지는 `border-[1.5px] border-border` + 소프트 페이퍼 그림자 + 다중값 border-radius
+(`255px 15px 225px 15px / 15px 225px 15px 255px`, `.glass-card`·`.btn-block`에 내장).
+**`rounded-*` 유틸리티를 얹으면 손그림 윤곽이 무효화**되니 붙이지 마라(Tailwind 유틸리티가 `@layer components`를 이긴다).
+hover=미세하게 기울며 커짐(`scale(1.02) rotate(-0.6deg)`), 클릭=`.block-press`(`scale(0.97) rotate(0.5deg)`), focus=`focus-visible:ring-2 ring-accent`.
+
+**타이포**: 한글/본문 Pretendard(`font-sans` — 긴 해석 가독성 위해 손글씨로 바꾸지 않는다),
+디스플레이 `font-display`(라틴 Delius Swash Caps → 한글 Gaegu 자동 폴백, **짧은 강조 전용·`font-bold` 금지**),
+점수·간지·숫자 JetBrains Mono(`font-mono`).
 
 **마스코트**: 브랜드 캐릭터 `Mascot`("별이", 별·달 점성술사) — 채팅 아바타·로딩·설명봇·로고에 재사용(`MascotBubble` 말풍선 헬퍼). 상세 규칙 `guidelines/03-mascot.md`.
 

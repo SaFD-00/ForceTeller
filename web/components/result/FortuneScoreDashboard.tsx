@@ -40,8 +40,8 @@ export function FortuneScoreDashboard({ scores }: FortuneScoreDashboardProps) {
       className="mb-8"
     >
       <div className="flex items-center gap-2 mb-4">
-        <Icon name="solar:chart-2-bold" size={24} className="text-primary" />
-        <h2 className="text-xl font-bold text-foreground">운세 점수</h2>
+        <Icon name="solar:chart-2-bold" size={24} className="text-accent" />
+        <h2 className="font-display text-xl text-foreground">운세 점수</h2>
       </div>
 
       <GlassCard className="p-4 md:p-6 space-y-3">
@@ -54,9 +54,9 @@ export function FortuneScoreDashboard({ scores }: FortuneScoreDashboardProps) {
             <div key={key} className="rounded-lg border-[1.5px] border-border overflow-hidden shadow-block-sm">
               <button
                 onClick={() => setOpenKey(isOpen ? null : key)}
-                className="w-full p-3 flex items-center gap-3 hover:bg-muted/50 transition-colors text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                className="w-full p-3 flex items-center gap-3 hover:bg-muted/50 transition-colors text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
               >
-                <Icon name={meta.icon} size={20} className="text-primary flex-shrink-0" />
+                <Icon name={meta.icon} size={20} className="text-accent flex-shrink-0" />
                 <span className="text-sm font-medium text-foreground w-16 flex-shrink-0">
                   {meta.label}
                 </span>
@@ -93,7 +93,7 @@ export function FortuneScoreDashboard({ scores }: FortuneScoreDashboardProps) {
                         <ul className="space-y-1">
                           {item.advice.map((a, i) => (
                             <li key={i} className="text-sm text-foreground pl-5 relative">
-                              <span className="absolute left-0 text-primary">·</span>
+                              <span className="absolute left-0 text-accent">·</span>
                               {a}
                             </li>
                           ))}

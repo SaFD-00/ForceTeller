@@ -145,7 +145,7 @@ export function ShenshaDetailCard({ shensha, pillars }: ShenshaDetailCardProps) 
         className="mb-8"
       >
         <div className="flex items-center gap-2 mb-4">
-          <Icon name="solar:stars-bold" size={24} className="text-primary" />
+          <Icon name="solar:stars-bold" size={24} className="text-accent" />
           <button
             onClick={() => {
               const entry = getGlossaryEntry('신살');
@@ -154,7 +154,7 @@ export function ShenshaDetailCard({ shensha, pillars }: ShenshaDetailCardProps) 
                 setIsModalOpen(true);
               }
             }}
-            className="text-xl font-bold text-foreground underline decoration-border/30 hover:decoration-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            className="font-display text-xl text-foreground underline decoration-border/30 hover:decoration-accent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
           >
             신살(神煞)
           </button>
@@ -167,9 +167,9 @@ export function ShenshaDetailCard({ shensha, pillars }: ShenshaDetailCardProps) 
         <div className="flex gap-2 mb-4">
           <button
             onClick={() => setViewMode('pillar')}
-            className={`btn-block block-press px-4 py-2 rounded-lg border-[1.5px] border-border text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
+            className={`btn-block block-press px-4 py-2 border-[1.5px] border-border text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
               viewMode === 'pillar'
-                ? 'bg-primary text-white'
+                ? 'bg-primary text-primary-foreground'
                 : 'bg-muted text-muted-foreground hover:bg-muted hover:text-foreground'
             }`}
           >
@@ -177,9 +177,9 @@ export function ShenshaDetailCard({ shensha, pillars }: ShenshaDetailCardProps) 
           </button>
           <button
             onClick={() => setViewMode('type')}
-            className={`btn-block block-press px-4 py-2 rounded-lg border-[1.5px] border-border text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
+            className={`btn-block block-press px-4 py-2 border-[1.5px] border-border text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
               viewMode === 'type'
-                ? 'bg-primary text-white'
+                ? 'bg-primary text-primary-foreground'
                 : 'bg-muted text-muted-foreground hover:bg-muted hover:text-foreground'
             }`}
           >
@@ -287,7 +287,7 @@ export function ShenshaDetailCard({ shensha, pillars }: ShenshaDetailCardProps) 
                             <button
                               key={`${item.name}-${idx}`}
                               onClick={() => handleShenshaClick(item.name)}
-                              className={`btn-block block-press w-full text-left px-2 py-1 rounded-lg border-[1.5px] border-border text-xs ${colors.bg} ${colors.text} hover:brightness-110 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary`}
+                              className={`btn-block block-press w-full text-left px-2 py-1 border-[1.5px] border-border text-xs ${colors.bg} ${colors.text} hover:brightness-110 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent`}
                             >
                               {item.name}
                             </button>
@@ -327,8 +327,8 @@ export function ShenshaDetailCard({ shensha, pillars }: ShenshaDetailCardProps) 
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         onClick={() => handleShenshaClick(item.name)}
-                        className={`btn-block block-press p-4 rounded-xl ${colors.bg} border-[1.5px] border-border
-                          text-left shadow-block-sm transition-all hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary`}
+                        className={`btn-block block-press p-4 ${colors.bg} border-[1.5px] border-border
+                          text-left shadow-block-sm transition-all hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent`}
                       >
                         <div className="flex items-start justify-between mb-2">
                           <div>
@@ -348,7 +348,7 @@ export function ShenshaDetailCard({ shensha, pillars }: ShenshaDetailCardProps) 
                         <p className="text-sm text-muted-foreground line-clamp-2">
                           {item.description}
                         </p>
-                        <div className="mt-2 text-xs text-primary flex items-center gap-1">
+                        <div className="mt-2 text-xs text-accent flex items-center gap-1">
                           <span>자세히 보기</span>
                           <Icon name="solar:arrow-right-linear" size={12} />
                         </div>

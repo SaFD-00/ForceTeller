@@ -93,7 +93,7 @@ export function MessageList({
             <motion.span
               animate={{ opacity: [1, 0] }}
               transition={{ duration: 0.8, repeat: Infinity }}
-              className="inline-block ml-0.5 text-primary"
+              className="inline-block ml-0.5 text-accent"
             >
               ▌
             </motion.span>

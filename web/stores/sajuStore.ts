@@ -38,9 +38,19 @@ export const useSajuStore = create<SajuState>()(
       name: 'saju-storage',
       partialize: (state) => ({ result: state.result }),
       // 복원 성공/실패(저장값 없음·JSON 파손 포함) 어느 쪽이든 게이트를 열어야
-      // 화면이 로딩 상태에 영구히 갇히지 않는다.
-      onRehydrateStorage: () => (state) => {
-        state?.setHasHydrated(true);
+      // 화면이 스피너에 영구히 갇히지 않는다.
+      //
+      // 복원 실패 시 zustand는 state를 undefined 로 넘기므로 state?.setHasHydrated() 로는
+      // 게이트가 열리지 않는다. 이 콜백은 create() 실행 중 동기적으로 돌기 때문에
+      // useSajuStore 를 그 자리에서 참조하면 TDZ ReferenceError 가 난다 —
+      // 그래서 마이크로태스크로 미뤄 스토어 초기화가 끝난 뒤에 게이트를 연다.
+      onRehydrateStorage: () => (state, error) => {
+        if (state) {
+          state.setHasHydrated(true);
+          return;
+        }
+        console.error('[sajuStore] 저장된 사주 결과 복원 실패', error);
+        queueMicrotask(() => useSajuStore.setState({ hasHydrated: true }));
       },
     }
   )

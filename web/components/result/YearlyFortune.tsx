@@ -25,8 +25,8 @@ export function YearlyFortune({ sewun }: YearlyFortuneProps) {
       className="mb-8"
     >
       <div className="flex items-center gap-2 mb-4">
-        <Icon name="solar:calendar-bold" size={24} className="text-primary" />
-        <h2 className="text-xl font-bold text-foreground">세운 (연도별 운세)</h2>
+        <Icon name="solar:calendar-bold" size={24} className="text-accent" />
+        <h2 className="font-display text-xl text-foreground">세운 (연도별 운세)</h2>
       </div>
 
       <GlassCard className="p-4 md:p-6">
@@ -51,7 +51,7 @@ export function YearlyFortune({ sewun }: YearlyFortuneProps) {
                 <div className="flex items-center justify-center gap-1 mb-2">
                   <span className="text-sm font-mono font-semibold text-foreground">{item.year}</span>
                   {isCurrent && (
-                    <span className="text-[10px] px-1.5 py-0.5 rounded-lg bg-primary/20 text-primary">
+                    <span className="text-[10px] px-1.5 py-0.5 rounded-lg bg-primary/20 text-accent">
                       올해
                     </span>
                   )}

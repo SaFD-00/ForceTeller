@@ -88,7 +88,7 @@ export default function ResultPage() {
           <Icon
             name="solar:refresh-bold"
             size={48}
-            className="text-primary animate-spin mx-auto mb-4"
+            className="text-accent animate-spin mx-auto mb-4"
           />
           <p className="text-muted-foreground">사주를 분석하고 있습니다...</p>
         </div>
@@ -108,7 +108,7 @@ export default function ResultPage() {
           <h2 className="text-xl font-bold text-foreground mb-2">오류가 발생했습니다</h2>
           <p className="text-muted-foreground mb-6">{error}</p>
           <Button onClick={() => router.push('/')}>
-            <Icon name="solar:home-2-bold" size={20} className="mr-2" />
+            <Icon name="solar:home-2-linear" size={20} className="mr-2" />
             홈으로 돌아가기
           </Button>
         </GlassCard>
@@ -133,7 +133,7 @@ export default function ResultPage() {
           </p>
           <Link href="/">
             <Button>
-              <Icon name="solar:home-2-bold" size={20} className="mr-2" />
+              <Icon name="solar:home-2-linear" size={20} className="mr-2" />
               홈으로 가기
             </Button>
           </Link>
@@ -286,7 +286,7 @@ export default function ResultPage() {
               </h1>
               {/* 일주 정보 */}
               {result.birth_info.day_ganji_korean && (
-                <p className="text-lg md:text-xl text-primary font-medium mb-2">
+                <p className="text-lg md:text-xl text-accent font-medium mb-2">
                   {result.birth_info.day_ganji_korean}
                   {result.birth_info.day_metaphor && ` (${result.birth_info.day_metaphor})`}
                 </p>
@@ -436,7 +436,7 @@ export default function ResultPage() {
                 className="w-full sm:w-auto lg:hidden"
                 onClick={() => setIsChatOpen(!isChatOpen)}
               >
-                <Icon name="solar:chat-round-dots-bold" size={20} className="mr-2" />
+                <Icon name="solar:chat-round-dots-linear" size={20} className="mr-2" />
                 {isChatOpen ? 'AI 상담 닫기' : 'AI 상담 열기'}
               </Button>
               <Button
@@ -447,7 +447,7 @@ export default function ResultPage() {
                 }}
                 className="w-full sm:w-auto"
               >
-                <Icon name="solar:refresh-bold" size={20} className="mr-2" />
+                <Icon name="solar:refresh-linear" size={20} className="mr-2" />
                 다시 분석하기
               </Button>
             </motion.div>
@@ -467,7 +467,7 @@ export default function ResultPage() {
             <div className="h-full flex flex-col">
               <div className="flex items-center justify-between mb-2">
                 <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
-                  <Icon name="solar:chat-round-dots-bold" size={24} className="text-primary" />
+                  <Icon name="solar:chat-round-dots-bold" size={24} className="text-accent" />
                   AI 상담
                 </h2>
                 <Button
@@ -496,7 +496,7 @@ export default function ResultPage() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setIsChatOpen(true)}
-              className="bg-primary hover:bg-primary/90 text-white p-4 rounded-l-xl border-[1.5px] border-border shadow-card-hover flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground p-4 rounded-l-xl border-[1.5px] border-border shadow-card-hover flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
             >
               <Icon name="solar:chat-round-dots-bold" size={24} />
               <span className="font-medium">AI 상담</span>
@@ -518,7 +518,7 @@ export default function ResultPage() {
             <div className="h-full flex flex-col">
               <div className="flex items-center justify-between p-4 border-b-[1.5px] border-border">
                 <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
-                  <Icon name="solar:chat-round-dots-bold" size={24} className="text-primary" />
+                  <Icon name="solar:chat-round-dots-bold" size={24} className="text-accent" />
                   AI 상담
                 </h2>
                 <Button

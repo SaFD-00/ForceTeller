@@ -28,7 +28,7 @@ export function BottomNav() {
                 aria-current={active ? 'page' : undefined}
                 className={cn(
                   'focus-ring flex h-full min-h-11 w-full flex-col items-center justify-center gap-0.5 transition-colors',
-                  active ? 'text-primary' : 'text-muted-foreground'
+                  active ? 'text-accent' : 'text-muted-foreground'
                 )}
               >
                 <Icon name={item.icon} size={22} />

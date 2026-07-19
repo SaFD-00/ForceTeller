@@ -101,7 +101,7 @@ export function GlossaryTooltip({ term, children, onDetailClick }: GlossaryToolt
         role="button"
         aria-expanded={isOpen}
         aria-label={`${entry.term} 용어 설명`}
-        className="focus-ring cursor-help border-b border-dotted border-muted-foreground hover:border-primary transition-colors"
+        className="focus-ring cursor-help border-b border-dotted border-muted-foreground hover:border-accent transition-colors"
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         onFocus={handleFocus}
@@ -138,7 +138,7 @@ export function GlossaryTooltip({ term, children, onDetailClick }: GlossaryToolt
             {/* 헤더 — 설명봇 별이 */}
             <div className="flex items-center gap-2 mb-2">
               <Mascot mood="curious" size="xs" className="flex-shrink-0" />
-              <span className="text-primary font-bold">{entry.term}</span>
+              <span className="text-accent font-bold">{entry.term}</span>
               <span className="text-muted-foreground text-sm font-mono">{entry.hanja}</span>
             </div>
 
@@ -152,7 +152,7 @@ export function GlossaryTooltip({ term, children, onDetailClick }: GlossaryToolt
             {onDetailClick && (
               <button
                 onClick={handleClick}
-                className="mt-2 text-xs text-primary hover:text-primary/80 transition-colors"
+                className="mt-2 text-xs text-accent hover:text-accent/80 transition-colors"
               >
                 자세히 보기 →
               </button>

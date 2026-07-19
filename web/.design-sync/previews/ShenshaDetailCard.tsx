@@ -63,7 +63,7 @@ const shensha = [
 /** 주별 보기(기본) — 사주팔자 표 위에 년·월·일·시주별 신살을 색상 배지로 배치. */
 export function PillarView() {
   return (
-    <div style={{ padding: 16, background: "#dfe7ff", width: 640 }}>
+    <div style={{ padding: 16, background: "#ffffff", width: 640 }}>
       <ShenshaDetailCard shensha={shensha} pillars={pillars} />
     </div>
   );
@@ -72,7 +72,7 @@ export function PillarView() {
 /** 유형별 보기 — pillars 미제공 시 길신·중성·흉신 카테고리별 카드 그리드로 폴백. */
 export function TypeView() {
   return (
-    <div style={{ padding: 16, background: "#dfe7ff", width: 640 }}>
+    <div style={{ padding: 16, background: "#ffffff", width: 640 }}>
       <ShenshaDetailCard shensha={shensha} />
     </div>
   );
@@ -82,7 +82,7 @@ export function TypeView() {
 export function AuspiciousOnly() {
   const auspicious = shensha.filter((s) => s.type === "길신");
   return (
-    <div style={{ padding: 16, background: "#dfe7ff", width: 480 }}>
+    <div style={{ padding: 16, background: "#ffffff", width: 480 }}>
       <ShenshaDetailCard shensha={auspicious} />
     </div>
   );

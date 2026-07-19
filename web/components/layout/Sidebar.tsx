@@ -33,7 +33,7 @@ export function Sidebar() {
               className={cn(
                 'focus-ring flex h-11 w-11 items-center justify-center rounded-lg transition-all',
                 active
-                  ? 'border-[1.5px] border-border bg-primary/15 text-primary shadow-block-sm'
+                  ? 'border-[1.5px] border-border bg-primary/15 text-accent shadow-block-sm'
                   : 'text-muted-foreground hover:bg-muted hover:text-foreground'
               )}
             >

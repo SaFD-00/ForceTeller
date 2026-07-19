@@ -35,8 +35,8 @@ export function LifetimeReport({ stages, overallSummary }: LifetimeReportProps) 
       className="mb-8"
     >
       <div className="flex items-center gap-2 mb-4">
-        <Icon name="solar:map-arrow-square-bold" size={24} className="text-primary" />
-        <h2 className="text-xl font-bold text-foreground">평생운 흐름 (10년 대운)</h2>
+        <Icon name="solar:map-arrow-square-bold" size={24} className="text-accent" />
+        <h2 className="font-display text-xl text-foreground">평생운 흐름 (10년 대운)</h2>
       </div>
 
       <GlassCard className="p-4 md:p-6">
@@ -60,7 +60,7 @@ export function LifetimeReport({ stages, overallSummary }: LifetimeReportProps) 
                   <div
                     className={`absolute -left-[18px] top-1 w-3 h-3 rounded-full border-2 ${
                       stage.isCurrent
-                        ? 'bg-primary border-primary'
+                        ? 'bg-primary border-accent'
                         : 'bg-background border-border'
                     }`}
                   />
@@ -70,7 +70,7 @@ export function LifetimeReport({ stages, overallSummary }: LifetimeReportProps) 
                     }`}
                   >
                     <div className="flex items-center gap-2 mb-1">
-                      <Icon name={meta.icon} size={16} className="text-primary" />
+                      <Icon name={meta.icon} size={16} className="text-accent" />
                       <span className="text-sm font-mono font-semibold text-foreground">
                         {stage.age}~{stage.age + 9}세
                       </span>
@@ -78,7 +78,7 @@ export function LifetimeReport({ stages, overallSummary }: LifetimeReportProps) 
                         {stage.ganji} · {stage.tenGodGroup}
                       </span>
                       {stage.isCurrent && (
-                        <span className="text-[10px] px-1.5 py-0.5 rounded-lg bg-primary/20 text-primary">
+                        <span className="text-[10px] px-1.5 py-0.5 rounded-lg bg-primary/20 text-accent">
                           현재
                         </span>
                       )}

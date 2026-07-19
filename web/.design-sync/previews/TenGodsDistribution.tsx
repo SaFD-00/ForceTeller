@@ -3,7 +3,7 @@ import { TenGodsDistribution } from "forceteller-web";
 /** 재성(편재·정재)이 주를 이루는 균형 잡힌 십성 분포 */
 export function WealthDominant() {
   return (
-    <div style={{ padding: 16, background: "#dfe7ff", width: 960 }}>
+    <div style={{ padding: 16, background: "#ffffff", width: 960 }}>
       <TenGodsDistribution
         distribution={{
           counts: {
@@ -28,7 +28,7 @@ export function WealthDominant() {
 /** 인성(편인·정인)이 강하고 주 십성이 정인인 학자형 분포 */
 export function ResourceHeavy() {
   return (
-    <div style={{ padding: 16, background: "#dfe7ff", width: 960 }}>
+    <div style={{ padding: 16, background: "#ffffff", width: 960 }}>
       <TenGodsDistribution
         distribution={{
           counts: {
@@ -53,7 +53,7 @@ export function ResourceHeavy() {
 /** 관성(편관·정관) 위주에 일부 십성이 0인 명예지향형 분포 */
 export function PowerFocused() {
   return (
-    <div style={{ padding: 16, background: "#dfe7ff", width: 960 }}>
+    <div style={{ padding: 16, background: "#ffffff", width: 960 }}>
       <TenGodsDistribution
         distribution={{
           counts: {
@@ -78,7 +78,7 @@ export function PowerFocused() {
 /** 주 십성이 없는(primary=null) 고른 분포 — 하단 주 십성 카드 미표시 */
 export function NoPrimary() {
   return (
-    <div style={{ padding: 16, background: "#dfe7ff", width: 960 }}>
+    <div style={{ padding: 16, background: "#ffffff", width: 960 }}>
       <TenGodsDistribution
         distribution={{
           counts: {

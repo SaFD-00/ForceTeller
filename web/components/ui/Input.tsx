@@ -33,7 +33,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             'w-full px-4 py-3 rounded-lg',
             'bg-surface border-[1.5px] border-border',
             'text-foreground placeholder:text-muted-foreground',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus:border-primary',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus:border-accent',
             'transition-all duration-200',
             error && 'border-danger focus-visible:ring-danger',
             className

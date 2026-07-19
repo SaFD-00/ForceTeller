@@ -176,7 +176,7 @@ function FortuneSection({
       <div className="flex items-center justify-between mb-2">
         <button
           onClick={onTitleClick}
-          className="text-lg font-bold text-foreground underline decoration-white/30 hover:decoration-primary transition-colors"
+          className="text-lg font-bold text-foreground underline decoration-white/30 hover:decoration-accent transition-colors"
         >
           {title}
         </button>
@@ -216,7 +216,7 @@ function FortuneSection({
               <div
                 key={index}
                 className={`flex-shrink-0 w-16 text-center ${
-                  item.is_current ? 'ring-2 ring-primary rounded-lg' : ''
+                  item.is_current ? 'ring-2 ring-accent rounded-lg' : ''
                 }`}
               >
                 {/* 나이/연도/월/일 */}
@@ -347,8 +347,8 @@ export function FortuneCycleSlider({
         className="mb-8"
       >
         <div className="flex items-center gap-2 mb-4">
-          <Icon name="solar:calendar-bold" size={24} className="text-primary" />
-          <h2 className="text-xl font-bold text-foreground">운세 흐름</h2>
+          <Icon name="solar:calendar-bold" size={24} className="text-accent" />
+          <h2 className="font-display text-xl text-foreground">운세 흐름</h2>
         </div>
 
         {/* 대운 섹션 */}

@@ -47,7 +47,7 @@ const forwardCycles = [
 /** 대운 10년 주기 타임라인 — 순행 8주기, currentAge 37로 33~42세(乙未) 대운이 현재(★)로 강조. */
 export function CurrentHighlighted() {
   return (
-    <div style={{ padding: 16, background: "#dfe7ff", width: 880 }}>
+    <div style={{ padding: 16, background: "#ffffff", width: 880 }}>
       <FortuneCycleTimeline cycles={forwardCycles} currentAge={37} />
     </div>
   );
@@ -88,7 +88,7 @@ export function ReverseDirection() {
     },
   ];
   return (
-    <div style={{ padding: 16, background: "#dfe7ff", width: 720 }}>
+    <div style={{ padding: 16, background: "#ffffff", width: 720 }}>
       <FortuneCycleTimeline cycles={reverseCycles} />
     </div>
   );
@@ -97,7 +97,7 @@ export function ReverseDirection() {
 /** 첫 대운 강조 — currentAge 5로 3~12세(壬辰) 첫 주기가 현재로 표시되는 순행 흐름. */
 export function FirstCycleCurrent() {
   return (
-    <div style={{ padding: 16, background: "#dfe7ff", width: 880 }}>
+    <div style={{ padding: 16, background: "#ffffff", width: 880 }}>
       <FortuneCycleTimeline cycles={forwardCycles} currentAge={5} />
     </div>
   );

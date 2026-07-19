@@ -107,7 +107,7 @@ export function ElementDistribution({ distribution, tenGods, dominant }: Element
       className="mb-8"
     >
       <div className="flex items-center gap-2 mb-4">
-        <Icon name="solar:pie-chart-2-bold" size={24} className="text-primary" />
+        <Icon name="solar:pie-chart-2-bold" size={24} className="text-accent" />
         <button
           onClick={() => {
             const entry = getGlossaryEntry('오행분포');
@@ -116,7 +116,7 @@ export function ElementDistribution({ distribution, tenGods, dominant }: Element
               setIsModalOpen(true);
             }
           }}
-          className="text-xl font-bold text-foreground underline decoration-border/30 hover:decoration-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+          className="font-display text-xl text-foreground underline decoration-border/30 hover:decoration-accent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
         >
           오행 / 십성 분포
         </button>

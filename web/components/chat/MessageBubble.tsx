@@ -32,7 +32,7 @@ export function MessageBubble({ message, onSuggestedQuestionClick }: MessageBubb
       {/* Avatar */}
       {isUser ? (
         <div className="w-10 h-10 rounded-lg border-[1.5px] border-border bg-primary/15 flex items-center justify-center flex-shrink-0">
-          <Icon name="solar:user-bold" size={20} className="text-primary" />
+          <Icon name="solar:user-bold" size={20} className="text-accent" />
         </div>
       ) : (
         <div className="w-10 h-10 flex items-center justify-center flex-shrink-0">
@@ -52,8 +52,8 @@ export function MessageBubble({ message, onSuggestedQuestionClick }: MessageBubb
         {/* 에이전트 출처·신뢰도 배지 (어시스턴트) */}
         {!isUser && message.agent_display_name && (
           <div className="flex items-center gap-1.5 mb-2 pb-2 border-b border-border">
-            <Icon name="solar:verified-check-bold" size={14} className="text-primary" />
-            <span className="text-xs font-medium text-primary">
+            <Icon name="solar:verified-check-bold" size={14} className="text-accent" />
+            <span className="text-xs font-medium text-accent">
               {message.agent_display_name} 에이전트
             </span>
             {typeof message.confidence === 'number' && (

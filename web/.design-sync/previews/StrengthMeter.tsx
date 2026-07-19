@@ -2,7 +2,7 @@ import { StrengthMeter } from "forceteller-web";
 
 /** 신강 사주: 일간이 강한 케이스(score 72, is_strong true) */
 export const StrongDay = () => (
-  <div style={{ padding: 16, background: "#dfe7ff", width: 720 }}>
+  <div style={{ padding: 16, background: "#ffffff", width: 720 }}>
     <StrengthMeter
       analysis={{
         score: 72,
@@ -17,7 +17,7 @@ export const StrongDay = () => (
 
 /** 신약 사주: 일간이 약한 케이스(score 34, is_strong false) */
 export const WeakDay = () => (
-  <div style={{ padding: 16, background: "#dfe7ff", width: 720 }}>
+  <div style={{ padding: 16, background: "#ffffff", width: 720 }}>
     <StrengthMeter
       analysis={{
         score: 34,
@@ -32,7 +32,7 @@ export const WeakDay = () => (
 
 /** 균형에 가까운 사주: score 50 부근, type/description 생략(옵셔널 필드 미지정) */
 export const Balanced = () => (
-  <div style={{ padding: 16, background: "#dfe7ff", width: 720 }}>
+  <div style={{ padding: 16, background: "#ffffff", width: 720 }}>
     <StrengthMeter
       analysis={{
         score: 51,

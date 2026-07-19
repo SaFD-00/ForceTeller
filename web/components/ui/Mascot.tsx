@@ -9,8 +9,9 @@ import { cn } from '@/lib/utils';
  * 간단한 div/SVG 블록으로 조립한 듀오링고식 마스코트. 둥근 달 얼굴 + 고깔모자 + 별로 구성되며
  * 표정(mood)·크기(size) variant 를 가진다. 채팅봇 아바타·설명봇·빈상태·로딩·로고 등 곳곳에 재사용.
  *
- * 색은 디자인 토큰(딥네이비 #1c202b 윤곽, 비비드 퍼플 #7107e7 모자, 별 옐로우 #ffd23f)을
+ * 색은 디자인 토큰(잉크 네이비 #263D5B 윤곽, 스카이 크레용 #49B6E5 모자, 별 옐로우 #ffd23f)을
  * hex 로 직접 넣어 앱과 design-sync 헤드리스 렌더에서 동일하게 보이게 한다.
+ * path·표정·아이덴티티(달 얼굴 + 고깔모자 + 별)는 불변이고 팔레트만 Doodle 로 정합시킨다.
  */
 
 export type MascotMood =
@@ -40,9 +41,9 @@ const SIZE_PX: Record<MascotSize, number> = {
   xl: 120,
 };
 
-const INK = '#1c202b';
-const PURPLE = '#7107e7';
-const PURPLE_DK = '#4c0a99';
+const INK = '#263D5B';      // 잉크 네이비 윤곽 (= border 토큰)
+const SKY = '#49B6E5';      // 스카이 크레용 모자 (= primary 토큰, 채움 전용)
+const SKY_DK = '#2E8CB5';   // 모자 챙·생각점 — SKY 파생 다크 (백색 대비 3.5:1, non-text AA)
 const STAR = '#ffd23f';
 const MOON = '#ffffff';
 const CHEEK = '#f4a8e8'; // 옅은 핑크 볼
@@ -142,7 +143,7 @@ export function Mascot({
       {/* 고깔모자 */}
       <path
         d="M32 12 L19 30 Q32 25 45 30 Z"
-        fill={PURPLE}
+        fill={SKY}
         stroke={INK}
         strokeWidth={2.4}
         strokeLinejoin="round"
@@ -153,7 +154,7 @@ export function Mascot({
       {/* 모자 챙 */}
       <path
         d="M16 30 Q32 24 48 30 Q32 37 16 30 Z"
-        fill={PURPLE_DK}
+        fill={SKY_DK}
         stroke={INK}
         strokeWidth={2.2}
         strokeLinejoin="round"
@@ -167,14 +168,14 @@ export function Mascot({
       <Mouth mood={mood} />
       {/* thinking: 생각 점들 / sleeping: Z */}
       {mood === 'thinking' && (
-        <g fill={PURPLE}>
+        <g fill={SKY_DK}>
           <circle cx={50} cy={30} r={1.6} />
           <circle cx={54} cy={26} r={2.1} />
           <circle cx={59} cy={21} r={2.7} />
         </g>
       )}
       {mood === 'sleeping' && (
-        <text x={48} y={28} fontFamily="'JetBrains Mono', monospace" fontSize={9} fontWeight={700} fill={PURPLE}>
+        <text x={48} y={28} fontFamily="'JetBrains Mono', monospace" fontSize={9} fontWeight={700} fill={SKY_DK}>
           z
         </text>
       )}

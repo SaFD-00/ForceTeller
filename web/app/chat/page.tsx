@@ -41,7 +41,7 @@ export default function ChatPage() {
           </p>
           <Link href="/">
             <Button>
-              <Icon name="solar:home-2-bold" size={20} className="mr-2" />
+              <Icon name="solar:home-2-linear" size={20} className="mr-2" />
               홈으로 가기
             </Button>
           </Link>
@@ -71,12 +71,12 @@ export default function ChatPage() {
               size="sm"
               onClick={clearChat}
             >
-              <Icon name="solar:refresh-bold" size={16} className="mr-1" />
+              <Icon name="solar:refresh-linear" size={16} className="mr-1" />
               대화 초기화
             </Button>
             <Link href="/result">
               <Button variant="outline" size="sm">
-                <Icon name="solar:chart-2-bold" size={16} className="mr-1" />
+                <Icon name="solar:chart-2-linear" size={16} className="mr-1" />
                 분석 결과
               </Button>
             </Link>

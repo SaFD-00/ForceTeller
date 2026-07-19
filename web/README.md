@@ -5,9 +5,9 @@
 ## 기술 스택
 
 - **프레임워크**: Next.js 14 (App Router)
-- **스타일링**: Tailwind CSS v3 (tetris-refined 블록 톤 — 비비드 컬러 블록 + 하드 오프셋 그림자)
-- **타이포**: Pretendard(본문) + Bangers(라틴 디스플레이) + JetBrains Mono(숫자·간지)
-- **마스코트**: "별이" — 별·달 점성술사 (간단한 SVG 블록으로 조립, 채팅·설명·로딩·로고에 재사용)
+- **스타일링**: Tailwind CSS v3 (Doodle 손그림 톤 — 불규칙 스케치 테두리 + 소프트 페이퍼 그림자)
+- **타이포**: Pretendard(본문) + Delius Swash Caps(라틴 디스플레이) + Gaegu(한글 디스플레이) + JetBrains Mono(숫자·간지)
+- **마스코트**: "별이" — 별·달 점성술사 (간단한 SVG로 조립, 채팅·설명·로딩·로고에 재사용)
 - **상태관리**: Zustand
 - **차트**: Recharts
 - **아이콘**: Iconify (Solar 아이콘셋)
@@ -17,7 +17,7 @@
 ## 주요 기능
 
 ### 1. 히어로 섹션
-- tetris-refined 블록 디자인 — 쿨블루 배경 + 비비드 퍼플 포인트 + 마스코트 "별이" + Bangers 워드마크
+- Doodle 손그림 디자인 — 종이 흰 배경 + 스카이 크레용 포인트 + 마스코트 "별이" + Delius Swash Caps 워드마크
 - Framer Motion 진입 애니메이션
 - 생년월일, 출생시간(시간 모름 옵션), 출생도시(자동완성), 성별, 달력유형(양력/음력/윤달) 입력
 
@@ -128,23 +128,26 @@ NEXT_PUBLIC_API_URL=https://api.example.com
 # API_PROXY_TARGET=http://backend:8000
 ```
 
-## 디자인 시스템 (tetris-refined 블록)
+## 디자인 시스템 (Doodle 손그림)
 
-[typeui.sh `tetris` 디자인 스킬](https://www.typeui.sh/design-skills/tetris) 기반 — 고대비 비비드 컬러 블록 + 하드 오프셋(솔리드) 그림자 + 컴팩트 게임감. 운세 분석 도구다운 신뢰감을 위해 모서리는 살짝 둥글리고(8~12px) 테두리는 1.5px로 절제했다.
+[typeui.sh `doodle` 디자인 스킬](https://www.typeui.sh/design-skills/doodle) 기반 — 손으로 그린 듯한 불규칙한 선 + 종이 질감 + 부드러운 그림자. 사주라는 무거운 주제의 진입 장벽을 낮추는 친근한 톤이 목표다.
 
-| 역할 | 토큰 | hex |
-|---|---|---|
-| 앱 배경(쿨블루) | `bg-background` | `#dfe7ff` |
-| 잉크(제목·본문·테두리) | `text-foreground`/`border-border` | `#1c202b` |
-| 카드/표면 | `bg-surface` | `#ffffff` |
-| 브랜드 강조(비비드 퍼플) | `bg-primary`/`text-primary` | `#7107e7` |
-| 보조 강조(네이비블루) | `accent` | `#1c398e` |
-| 보조 텍스트 | `text-muted-foreground` | `#54608a` |
-| 상태(성공/경고/위험) | `success`/`warning`/`danger` | `#16a34a`·`#d97706`·`#dc2626` |
+| 역할 | 토큰 | hex | 흰 배경 대비 |
+|---|---|---|---|
+| 앱 배경(종이) | `bg-background` | `#FFFFFF` | — |
+| 잉크(제목·본문·테두리) | `text-foreground` | `#111827` | 17.74:1 |
+| 스케치 잉크(테두리·강조) | `border-border`/`text-accent` | `#263D5B` | 11.05:1 |
+| 카드/표면 | `bg-surface` | `#FFFFFF` | — |
+| 브랜드 채움(스카이 크레용) | `bg-primary` | `#49B6E5` | 2.31:1 ⚠ |
+| 보조 텍스트 | `text-muted-foreground` | `#445A75` | 7.08:1 |
+| 상태(성공/경고/위험) | `success`/`warning`/`danger` | `#16a34a`·`#d97706`·`#dc2626` | — |
 
-- **그림자(블록)**: `shadow-card`(3px 3px 0) · `shadow-card-hover`(5px 5px 0) · `shadow-block-sm`(2px 2px 0).
-- **공용 헬퍼**: `.glass-card`(블록 카드) · `.btn-block`(버튼 베이스) · `.block-press`(눌림) · `.gradient-text`.
-- **폰트**: `font-sans`(Pretendard) · `font-display`(Bangers, 라틴) · `font-mono`(JetBrains Mono, 숫자·간지).
+> ⚠ **대비 규칙 (필수)**: `primary`(#49B6E5)는 흰 배경 대비 2.31:1로 WCAG AA 텍스트(4.5:1)·non-text(3:1) 기준을 **둘 다 미달한다**. 따라서 **채움·장식에만** 쓰고, 텍스트·아이콘 강조·포커스 링·선택 테두리는 반드시 `accent`(#263D5B)를 쓴다. primary 채움 위 텍스트는 `text-primary-foreground`(#111827, 7.69:1) — `text-white`(2.31:1)를 쓰지 말 것.
+
+- **그림자(페이퍼)**: `shadow-card`(0 2px 6px) · `shadow-card-hover`(0 4px 12px) · `shadow-soft`(0 1px 4px). 전부 `rgba(38,61,91,*)` 잉크 계열.
+- **형태**: 카드·버튼은 다중값 border-radius(`255px 15px 225px 15px / 15px 225px 15px 255px`)로 손그림 윤곽을 만든다. **컴포넌트에 `rounded-*` 유틸리티를 얹으면 이 형태가 무효화**되므로 주의.
+- **공용 헬퍼**: `.glass-card`(손그림 카드) · `.btn-block`(버튼 베이스) · `.block-press`(눌림) · `.sketch-underline`(물결 밑줄).
+- **폰트**: `font-sans`(Pretendard, 본문) · `font-display`(Delius Swash Caps 라틴 → Gaegu 한글) · `font-mono`(JetBrains Mono, 숫자·간지). 본문은 긴 사주 해석의 가독성을 위해 Pretendard를 유지한다(Doodle 스펙에서 의도적으로 일탈 — 근거는 [DESIGN.md](../DESIGN.md)).
 - **마스코트 "별이"**: `Mascot`/`MascotBubble` — mood(idle/happy/thinking/talking/curious/sleeping)·size(xs~xl) variant.
 
 ## 오행 색상 시스템

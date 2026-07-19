@@ -38,7 +38,7 @@ export function SuggestedQuestions({
             disabled={disabled}
             className={`
               inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border-[1.5px] border-border
-              text-sm transition-all text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary
+              text-sm transition-all text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent
               ${disabled
                 ? 'bg-muted text-muted-foreground cursor-not-allowed'
                 : 'bg-primary/10 text-foreground hover:-translate-x-px hover:-translate-y-px hover:shadow-card-hover cursor-pointer'

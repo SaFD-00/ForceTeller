@@ -15,7 +15,7 @@ function ChipRow({ label, items, icon }: { label: string; items?: string[]; icon
   return (
     <div className="flex flex-wrap items-center gap-2">
       <span className="flex items-center gap-1 text-sm text-muted-foreground">
-        <Icon name={icon} size={16} className="text-primary" />
+        <Icon name={icon} size={16} className="text-accent" />
         {label}
       </span>
       {items.map((item, i) => (
@@ -46,8 +46,8 @@ export function LuckyGuideCard({ recommendations, comparison }: LuckyGuideCardPr
       className="mb-8"
     >
       <div className="flex items-center gap-2 mb-4">
-        <Icon name="solar:magic-stick-3-bold" size={24} className="text-primary" />
-        <h2 className="text-xl font-bold text-foreground">용신 개운법</h2>
+        <Icon name="solar:magic-stick-3-bold" size={24} className="text-accent" />
+        <h2 className="font-display text-xl text-foreground">용신 개운법</h2>
         {methodName && (
           <span className="text-xs px-2 py-0.5 rounded-lg bg-muted text-muted-foreground border-[1.5px] border-border">
             추천: {methodName}
@@ -93,7 +93,7 @@ export function LuckyGuideCard({ recommendations, comparison }: LuckyGuideCardPr
             <ul className="space-y-1">
               {recommendations.lifestyle_tips.map((tip, i) => (
                 <li key={i} className="text-sm text-muted-foreground pl-5 relative">
-                  <span className="absolute left-0 text-primary">•</span>
+                  <span className="absolute left-0 text-accent">•</span>
                   {tip}
                 </li>
               ))}

@@ -5,7 +5,7 @@ const noop = () => {};
 /** 사용자 질문 + AI 답변 — 에이전트 출처·신뢰도 배지와 추천 질문 포함. */
 export function Conversation() {
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 16, width: 560, padding: 16, background: "#dfe7ff" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: 16, width: 560, padding: 16, background: "#ffffff" }}>
       <MessageBubble message={{ role: "user", content: "제 사주에서 직업운은 어떤가요?" }} />
       <MessageBubble
         message={{
@@ -26,7 +26,7 @@ export function Conversation() {
 /** 짧은 단일 답변(출처 배지 없음). */
 export function AssistantOnly() {
   return (
-    <div style={{ width: 560, padding: 16, background: "#dfe7ff" }}>
+    <div style={{ width: 560, padding: 16, background: "#ffffff" }}>
       <MessageBubble
         message={{ role: "assistant", content: "네, 용신(用神)은 **수(水)** 로 보는 것이 타당합니다." }}
       />

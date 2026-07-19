@@ -45,7 +45,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
       const isInline = !className;
       if (isInline) {
         return (
-          <code className="bg-muted px-1.5 py-0.5 rounded-lg border-[1.5px] border-border text-sm font-mono text-primary" {...props}>
+          <code className="bg-muted px-1.5 py-0.5 rounded-lg border-[1.5px] border-border text-sm font-mono text-accent" {...props}>
             {children}
           </code>
         );
@@ -62,7 +62,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
 
     // 인용구
     blockquote: ({ children }) => (
-      <blockquote className="border-l-4 border-primary pl-4 my-3 italic text-muted-foreground">
+      <blockquote className="border-l-4 border-accent pl-4 my-3 italic text-muted-foreground">
         {children}
       </blockquote>
     ),
@@ -86,7 +86,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
         href={href}
         target="_blank"
         rel="noopener noreferrer"
-        className="text-primary hover:opacity-80 underline underline-offset-2"
+        className="text-accent hover:opacity-80 underline underline-offset-2"
       >
         {children}
       </a>

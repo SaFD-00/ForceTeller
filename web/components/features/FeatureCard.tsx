@@ -24,7 +24,7 @@ export function FeatureCard({ icon, title, description, index }: FeatureCardProp
       <GlassCard className="h-full p-6 hover:-translate-x-px hover:-translate-y-px hover:shadow-card-hover transition-all duration-300 group cursor-pointer">
         <div className="flex flex-col items-center text-center">
           <div className="w-14 h-14 rounded-xl border-[1.5px] border-border bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-primary/15 transition-all duration-300">
-            <Icon name={icon} size={28} className="text-primary" />
+            <Icon name={icon} size={28} className="text-accent" />
           </div>
 
           <h3 className="text-lg font-semibold text-foreground mb-2">

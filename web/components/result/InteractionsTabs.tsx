@@ -59,8 +59,8 @@ export function InteractionsTabs({ interactions }: InteractionsTabsProps) {
       className="mb-8"
     >
       <div className="flex items-center gap-2 mb-4">
-        <Icon name="solar:widget-2-bold" size={24} className="text-primary" />
-        <h2 className="text-xl font-bold text-foreground">천간 지지 작용</h2>
+        <Icon name="solar:widget-2-bold" size={24} className="text-accent" />
+        <h2 className="font-display text-xl text-foreground">천간 지지 작용</h2>
       </div>
 
       <GlassCard className="p-4 md:p-6">
@@ -74,16 +74,16 @@ export function InteractionsTabs({ interactions }: InteractionsTabsProps) {
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
-                className={`flex items-center gap-2 px-3 py-2 rounded-lg border-[1.5px] border-border transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary
+                className={`flex items-center gap-2 px-3 py-2 rounded-lg border-[1.5px] border-border transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent
                   ${isActive
-                    ? 'bg-primary/15 text-primary'
+                    ? 'bg-primary/15 text-accent'
                     : 'bg-muted text-muted-foreground hover:bg-muted hover:text-foreground'
                   }`}
               >
-                <Icon name={tab.icon} size={16} className={isActive ? 'text-primary' : tab.color} />
+                <Icon name={tab.icon} size={16} className={isActive ? 'text-accent' : tab.color} />
                 <span className="text-sm font-medium">{tab.label}</span>
                 <span className={`text-xs px-1.5 py-0.5 rounded-lg
-                  ${isActive ? 'bg-primary/30 text-primary' : 'bg-muted text-muted-foreground'}`}>
+                  ${isActive ? 'bg-primary/30 text-accent' : 'bg-muted text-muted-foreground'}`}>
                   {count}
                 </span>
               </button>
@@ -116,7 +116,7 @@ export function InteractionsTabs({ interactions }: InteractionsTabsProps) {
                       <Icon
                         name={activeTabInfo?.icon || 'solar:info-circle-bold'}
                         size={20}
-                        className={activeTabInfo?.color || 'text-primary'}
+                        className={activeTabInfo?.color || 'text-accent'}
                       />
                       <span className="font-medium text-foreground">
                         {item.description}
@@ -152,7 +152,7 @@ export function InteractionsTabs({ interactions }: InteractionsTabsProps) {
                     {item.result && (
                       <div className="mt-2 text-sm">
                         <span className="text-muted-foreground">합화 결과: </span>
-                        <span className="text-primary font-medium">{item.result}</span>
+                        <span className="text-accent font-medium">{item.result}</span>
                       </div>
                     )}
 

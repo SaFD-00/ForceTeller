@@ -3,7 +3,7 @@ import { YongshinCard } from "forceteller-web";
 /** 억부용신 — 신약한 일간을 돕는 인성(印星) 오행으로 수(水)를 용신으로 잡은 경우 */
 export function EokbuYongshin() {
   return (
-    <div style={{ padding: 16, background: "#dfe7ff", width: 520 }}>
+    <div style={{ padding: 16, background: "#ffffff", width: 520 }}>
       <YongshinCard
         type="억부용신"
         element="수"
@@ -17,7 +17,7 @@ export function EokbuYongshin() {
 /** 조후용신 — 한겨울 출생으로 기후를 조절하는 화(火) 오행을 용신으로 잡은 경우 */
 export function JohuYongshin() {
   return (
-    <div style={{ padding: 16, background: "#dfe7ff", width: 520 }}>
+    <div style={{ padding: 16, background: "#ffffff", width: 520 }}>
       <YongshinCard
         type="조후용신"
         element="화"
@@ -31,7 +31,7 @@ export function JohuYongshin() {
 /** 통관용신 — 상충하는 금(金)과 목(木) 사이를 소통시키는 수(水)를 용신으로 잡은 경우 */
 export function TonggwanYongshin() {
   return (
-    <div style={{ padding: 16, background: "#dfe7ff", width: 520 }}>
+    <div style={{ padding: 16, background: "#ffffff", width: 520 }}>
       <YongshinCard
         type="통관용신"
         element="수"
@@ -45,7 +45,7 @@ export function TonggwanYongshin() {
 /** 설명 없는 간결형 — hanja·description 생략 시 오행 기본 한자(土)로 폴백되는 모습 */
 export function YongshinCompact() {
   return (
-    <div style={{ padding: 16, background: "#dfe7ff", width: 320 }}>
+    <div style={{ padding: 16, background: "#ffffff", width: 320 }}>
       <YongshinCard type="병약용신" element="토" />
     </div>
   );

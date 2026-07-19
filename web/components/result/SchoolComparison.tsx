@@ -51,8 +51,8 @@ export function SchoolComparison({ comparison }: SchoolComparisonProps) {
       className="mb-8"
     >
       <div className="flex items-center gap-2 mb-4">
-        <Icon name="solar:scale-bold" size={24} className="text-primary" />
-        <h2 className="text-xl font-bold text-foreground">5학파 비교 해석</h2>
+        <Icon name="solar:scale-bold" size={24} className="text-accent" />
+        <h2 className="font-display text-xl text-foreground">5학파 비교 해석</h2>
         {typeof confidence === 'number' && (
           <span className={`text-xs px-2 py-0.5 rounded-lg ${badge.cls}`}>{badge.label}</span>
         )}
@@ -74,7 +74,7 @@ export function SchoolComparison({ comparison }: SchoolComparisonProps) {
             <ul className="space-y-2">
               {consensus.map((c, i) => (
                 <li key={i} className="flex items-start gap-2 text-sm">
-                  <span className="px-1.5 py-0.5 rounded-lg bg-primary/10 text-primary text-xs flex-shrink-0">
+                  <span className="px-1.5 py-0.5 rounded-lg bg-primary/10 text-accent text-xs flex-shrink-0">
                     {CATEGORY_LABELS[c.category] || c.category}
                   </span>
                   <span className="text-muted-foreground">
@@ -96,9 +96,9 @@ export function SchoolComparison({ comparison }: SchoolComparisonProps) {
                 <button
                   key={interp.school}
                   onClick={() => setActiveSchool(interp.school)}
-                  className={`px-3 py-1.5 rounded-lg border-[1.5px] border-border text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
+                  className={`px-3 py-1.5 rounded-lg border-[1.5px] border-border text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
                     isActive
-                      ? 'bg-primary/15 text-primary'
+                      ? 'bg-primary/15 text-accent'
                       : 'bg-muted text-muted-foreground hover:text-foreground'
                   }`}
                 >
@@ -126,7 +126,7 @@ export function SchoolComparison({ comparison }: SchoolComparisonProps) {
               {aspectRows.map(([label, value]) =>
                 value ? (
                   <div key={label} className="text-sm">
-                    <span className="text-primary font-medium">{label}</span>
+                    <span className="text-accent font-medium">{label}</span>
                     <span className="text-muted-foreground"> · {value}</span>
                   </div>
                 ) : null

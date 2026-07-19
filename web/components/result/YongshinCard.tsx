@@ -49,10 +49,10 @@ export function YongshinCard({ type, element, hanja, description }: YongshinCard
         className="mb-8"
       >
         <div className="flex items-center gap-2 mb-4">
-          <Icon name="solar:star-bold" size={24} className="text-primary" />
+          <Icon name="solar:star-bold" size={24} className="text-accent" />
           <button
             onClick={handleTitleClick}
-            className="text-xl font-bold text-foreground underline decoration-border/30 hover:decoration-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            className="font-display text-xl text-foreground underline decoration-border/30 hover:decoration-accent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
           >
             용신
           </button>

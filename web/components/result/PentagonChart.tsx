@@ -82,8 +82,8 @@ export function PentagonChart({ dayMaster, distribution, tenGodMapping, dayStemK
       className="mb-8"
     >
       <div className="flex items-center gap-2 mb-4">
-        <Icon name="solar:chart-bold" size={24} className="text-primary" />
-        <h2 className="text-xl font-bold text-foreground">나의 오행: {dayStemKorean ? DAY_MASTER_DISPLAY[dayStemKorean] || dayMaster : dayMaster}</h2>
+        <Icon name="solar:chart-bold" size={24} className="text-accent" />
+        <h2 className="font-display text-xl text-foreground">나의 오행: {dayStemKorean ? DAY_MASTER_DISPLAY[dayStemKorean] || dayMaster : dayMaster}</h2>
       </div>
 
       <GlassCard className="p-4 md:p-6">
@@ -185,7 +185,7 @@ export function PentagonChart({ dayMaster, distribution, tenGodMapping, dayStemK
                     cx={pos.x}
                     cy={pos.y}
                     r={35}
-                    className={`${colors.bg} ${isMyElement ? 'stroke-primary stroke-2' : 'stroke-border/30 stroke-1'}`}
+                    className={`${colors.bg} ${isMyElement ? 'stroke-accent stroke-2' : 'stroke-border/30 stroke-1'}`}
                     fill="currentColor"
                     style={{ fill: colors.bg.includes('green') ? 'rgba(34, 197, 94, 0.2)' :
                              colors.bg.includes('red') ? 'rgba(239, 68, 68, 0.2)' :

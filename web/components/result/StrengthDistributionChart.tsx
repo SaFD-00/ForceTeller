@@ -86,10 +86,10 @@ export function StrengthDistributionChart({
       className="mb-8"
     >
       <div className="flex items-center gap-2 mb-4">
-        <Icon name="solar:chart-2-bold" size={24} className="text-primary" />
+        <Icon name="solar:chart-2-bold" size={24} className="text-accent" />
         <button
           onClick={handleTitleClick}
-          className="text-xl font-bold text-foreground underline decoration-border/30 hover:decoration-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+          className="font-display text-xl text-foreground underline decoration-border/30 hover:decoration-accent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
         >
           신강/신약지수
         </button>
@@ -98,7 +98,7 @@ export function StrengthDistributionChart({
       <GlassCard className="p-4 md:p-6">
         {/* 설명 텍스트 */}
         <p className="text-foreground mb-2">
-          {name}님은 <strong className="text-primary">{strengthType}</strong>한 사주입니다.
+          {name}님은 <strong className="text-accent">{strengthType}</strong>한 사주입니다.
         </p>
         {percentile && (
           <p className="text-muted-foreground text-sm mb-4">
@@ -155,7 +155,7 @@ export function StrengthDistributionChart({
                 y={0}
                 width={(300 / 8)}
                 height={100}
-                fill={i % 2 === 0 ? 'rgba(28,32,43,0.03)' : 'rgba(28,32,43,0.06)'}
+                fill={i % 2 === 0 ? 'rgba(38,61,91,0.03)' : 'rgba(38,61,91,0.06)'}
               />
             ))}
 
@@ -163,7 +163,7 @@ export function StrengthDistributionChart({
             <polyline
               points={curvePoints}
               fill="none"
-              stroke="rgba(28,32,43,0.5)"
+              stroke="rgba(38,61,91,0.5)"
               strokeWidth="2"
             />
 
@@ -177,8 +177,8 @@ export function StrengthDistributionChart({
             {/* 그라데이션 정의 */}
             <defs>
               <linearGradient id="curveGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#1c202b" stopOpacity="0.2" />
-                <stop offset="100%" stopColor="#1c202b" stopOpacity="0" />
+                <stop offset="0%" stopColor="#263D5B" stopOpacity="0.2" />
+                <stop offset="100%" stopColor="#263D5B" stopOpacity="0" />
               </linearGradient>
             </defs>
 
@@ -187,15 +187,15 @@ export function StrengthDistributionChart({
               cx={markerX}
               cy={markerY}
               r={6}
-              fill="#7107e7"
-              stroke="#1c202b"
+              fill="#49B6E5"
+              stroke="#263D5B"
               strokeWidth="2"
             />
             <text
               x={markerX}
               y={markerY + 20}
               textAnchor="middle"
-              fill="#1c202b"
+              fill="#263D5B"
               fontSize="10"
             >
               나
@@ -208,7 +208,7 @@ export function StrengthDistributionChart({
                 x={(level.min / 100) * 300 + (300 / 16)}
                 y={115}
                 textAnchor="middle"
-                fill="rgba(84,96,138,0.8)"
+                fill="#263D5B"
                 fontSize="7"
               >
                 {level.label}
