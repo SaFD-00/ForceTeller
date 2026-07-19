@@ -29,15 +29,16 @@ ForceTeller는 사주명리(만세력) 기반 AI 운세 분석 웹앱이다. 디
 ## 손그림 스타일 규칙
 - **형태**: 카드·버튼은 다중값 border-radius(`255px 15px 225px 15px / 15px 225px 15px 255px`)로 손으로 그린 윤곽을 만든다. `.glass-card`·`.btn-block`에 내장돼 있다.
   - **⚠ 컴포넌트에 `rounded-*` 유틸리티를 얹으면 이 형태가 무효화된다** — Tailwind 유틸리티가 `@layer components`를 이긴다. 손그림 윤곽을 원하면 `rounded-*`를 붙이지 마라.
-- **그림자**: 소프트 페이퍼 그림자 — `shadow-card`(0 2px 6px), `shadow-card-hover`(0 4px 12px), `shadow-soft`(0 1px 4px). 전부 `rgba(38,61,91,*)` 잉크 계열. 하드 오프셋 솔리드 그림자는 쓰지 않는다.
+- **그림자**: 소프트 페이퍼 그림자 — `shadow-card`(0 2px 6px), `shadow-card-hover`(0 4px 12px), `shadow-soft`(0 1px 4px). 전부 `rgba(38,61,91,*)` 잉크 계열의 블러 그림자다. 각진 경계의 솔리드 그림자는 쓰지 않는다.
 - **테두리**: 카드·입력·버튼·뱃지는 `border-[1.5px] border-border`(스케치 잉크). divider도 동일 색.
 - **인터랙션**: hover 시 미세하게 기울며 커짐(`scale(1.02) rotate(-0.6deg)`), 클릭 시 눌림(`.block-press` → `scale(0.97) rotate(0.5deg)`). focus는 `focus-visible:ring-2 ring-accent` 로 항상 가시.
 - 공용 헬퍼: `.glass-card`(손그림 카드), `.card-elevated`, `.glass-button`, `.btn-block`(버튼 베이스), `.block-press`(눌림), `.sketch-underline`(물결 밑줄 — h1·h2 시그니처).
 
 ## 레이아웃
-- 앱 셸: 좌측 `Sidebar`(데스크톱 고정, `lg:pl-16`, 로고는 마스코트) + 우측 본문. 모바일은 사이드바 collapse.
+- 앱 셸: 좌측 `Sidebar`(`lg` 이상 고정, `lg:pl-16`, 로고는 마스코트) + 우측 본문. `lg` 미만에서는
+  Sidebar를 완전히 숨기고(`hidden … lg:flex`) 하단 `BottomNav`(`lg:hidden`)로 대체한다.
 - 입력 흐름: `HeroSection`(마스코트 + 워드마크) → `BirthInfoForm`(생년월일·시·성별) → 결과.
-- 결과 화면은 **카드 그리드**. 표·차트·리스트형(예: `PillarTable`, `FiveElementsChart`, `TenGodsDistribution`)은 폭이 넓으니 1열(풀폭) 카드로 배치한다.
+- 결과 화면은 **카드 그리드**. 표·차트·리스트형(예: `PillarTable`, `ElementDistribution`, `InteractionsTabs`)은 폭이 넓으니 1열(풀폭) 카드로 배치한다.
 - 카드는 `GlassCard`(=`.glass-card`)를 기본 컨테이너로 사용.
 
 ## 타이포

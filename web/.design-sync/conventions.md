@@ -43,20 +43,20 @@ hover=미세하게 기울며 커짐(`scale(1.02) rotate(-0.6deg)`), 클릭=`.blo
 |---|---|---|---|
 | 목(木) | 木 | `#16a34a` | `text-element-wood` / `bg-element-wood` / `.element-wood` |
 | 화(火) | 火 | `#dc2626` | `text-element-fire` / `.element-fire` |
-| 토(土) | 土 | `#ca8a04` | `text-element-earth` / `.element-earth` |
-| 금(金) | 金 | `#71717a` | `text-element-metal` / `.element-metal` |
+| 토(土) | 土 | `#d97706` | `text-element-earth` / `.element-earth` |
+| 금(金) | 金 | `#64748b` | `text-element-metal` / `.element-metal` |
 | 수(水) | 水 | `#2563eb` | `text-element-water` / `.element-water` |
 
-공용 클래스: `.glass-card`(블록 카드 — 흰 표면+딥네이비 1.5px 테두리+하드 오프셋 shadow-card, 구
+공용 클래스: `.glass-card`(블록 카드 — 흰 표면+딥네이비 1.5px 테두리+소프트 블러 shadow-card, 구
 glassmorphism 별칭), `.card-elevated`, `.glass-button`, `.btn-block`(버튼 베이스), `.block-press`(눌림),
-`.gradient-text`(퍼플→네이비 그라데이션 텍스트).
+`.gradient-text`(스카이→네이비 그라데이션 텍스트).
 
 ## 컴포넌트 구성
 - `ui/`: Button, Input, GlassCard, Icon(Iconify Solar), ElementBadge, Disclaimer, GlossaryTooltip/Modal, LoadingOverlay, **Mascot/MascotBubble**("별이").
-- `result/`: 사주 결과 시각화 — PillarTable(사주팔자 표), FourPillarsDisplay/PillarCard, FiveElementsChart(오행
-  레이더), PentagonChart, TenGodsDistribution, ElementDistribution, StrengthMeter/StrengthDistributionChart(신강·신약),
-  FortuneCycleTimeline/FortuneCycleSlider/YearlyFortune/LifetimeReport(대운·세운·평생운), YongshinCard/LuckyGuideCard(용신·개운),
-  FortuneScoreDashboard, SchoolComparison(학파 비교), InteractionsTabs(합·충·형·파·해·공망), ShenshaDetailCard(신살).
+- `result/`(13개): PillarTable(사주팔자 표), PentagonChart(오행 강도 오각형), ElementDistribution(오행
+  분포), StrengthDistributionChart(신강·신약), FortuneCycleSlider/YearlyFortune/LifetimeReport(대운·세운·
+  평생운), YongshinCard/LuckyGuideCard(용신·개운), FortuneScoreDashboard, SchoolComparison(학파 비교),
+  InteractionsTabs(합·충·형·파·해·공망), ShenshaDetailCard(신살).
 - `chat/`: AI 상담 — ChatContainer, MessageList, MessageBubble, AgentSelector, ChatInput, SuggestedQuestions.
 - `hero/`: HeroSection, BirthInfoForm(생년월일·시간·도시·성별·달력유형 입력). `features/`: FeatureGrid/FeatureCard.
 

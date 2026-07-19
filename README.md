@@ -490,7 +490,7 @@ NEXT_PUBLIC_API_URL=http://localhost:8000
 
 ### UI 컴포넌트 (`components/ui/`)
 - `Button`, `Input` - 기본 입력
-- `GlassCard` - 블록 카드 (흰 배경 + 딥네이비 1.5px 테두리 + 하드 오프셋 그림자)
+- `GlassCard` - 블록 카드 (흰 배경 + 딥네이비 1.5px 테두리 + 소프트 블러 그림자)
 - `Mascot` / `MascotBubble` - 브랜드 마스코트 "별이"(별·달 점성술사) + 말풍선 헬퍼
 - `Icon` - 아이콘 래퍼
 - `ElementBadge` - 오행 배지
