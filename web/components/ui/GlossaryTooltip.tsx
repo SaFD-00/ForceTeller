@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useId } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mascot } from './Mascot';
 import { getGlossaryEntry, type GlossaryEntry } from '@/data/saju-glossary';
@@ -17,6 +17,7 @@ export function GlossaryTooltip({ term, children, onDetailClick }: GlossaryToolt
   const triggerRef = useRef<HTMLSpanElement>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const tooltipId = useId();
 
   const entry = getGlossaryEntry(term);
 
@@ -76,7 +77,13 @@ export function GlossaryTooltip({ term, children, onDetailClick }: GlossaryToolt
     setIsOpen(true);
   };
 
-  const handleBlur = () => {
+  // 래퍼에서 focusout을 받아, 포커스가 위젯(트리거+툴팁) 안에 남아 있으면 닫지 않는다.
+  // relatedTarget이 null이면(창 전환 등) 닫는다.
+  const handleWrapperBlur = (e: React.FocusEvent<HTMLSpanElement>) => {
+    const next = e.relatedTarget as Node | null;
+    if (next && e.currentTarget.contains(next)) {
+      return;
+    }
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
@@ -86,6 +93,18 @@ export function GlossaryTooltip({ term, children, onDetailClick }: GlossaryToolt
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Escape' && isOpen) {
       setIsOpen(false);
+      return;
+    }
+
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault(); // Space 페이지 스크롤 방지
+      if (!isOpen) {
+        setIsOpen(true);
+      } else if (entry && onDetailClick) {
+        handleClick();
+      } else {
+        setIsOpen(false);
+      }
     }
   };
 
@@ -94,18 +113,18 @@ export function GlossaryTooltip({ term, children, onDetailClick }: GlossaryToolt
   }
 
   return (
-    <span className="relative inline-block">
+    <span className="relative inline-block" onBlur={handleWrapperBlur}>
       <span
         ref={triggerRef}
         tabIndex={0}
         role="button"
         aria-expanded={isOpen}
         aria-label={`${entry.term} 용어 설명`}
+        aria-describedby={isOpen ? tooltipId : undefined}
         className="focus-ring cursor-help border-b border-dotted border-muted-foreground hover:border-accent transition-colors"
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         onFocus={handleFocus}
-        onBlur={handleBlur}
         onKeyDown={handleKeyDown}
         onClick={handleClick}
       >
@@ -116,6 +135,7 @@ export function GlossaryTooltip({ term, children, onDetailClick }: GlossaryToolt
         {isOpen && (
           <motion.div
             ref={tooltipRef}
+            id={tooltipId}
             initial={{ opacity: 0, y: position === 'top' ? 10 : -10, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: position === 'top' ? 10 : -10, scale: 0.95 }}
@@ -152,7 +172,7 @@ export function GlossaryTooltip({ term, children, onDetailClick }: GlossaryToolt
             {onDetailClick && (
               <button
                 onClick={handleClick}
-                className="mt-2 text-xs text-accent hover:text-accent/80 transition-colors"
+                className="mt-2 text-xs text-accent hover:text-accent/80 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
               >
                 자세히 보기 →
               </button>
