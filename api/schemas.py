@@ -7,7 +7,7 @@ from datetime import date, datetime
 from enum import Enum
 from typing import Any
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 # ============== 공통 스키마 ==============
 
@@ -56,8 +56,8 @@ class ManseolRequest(BaseModel):
     longitude: float | None = Field(None, ge=-180, le=180, description="직접 입력 경도")
     apply_time_correction: bool = Field(default=True, description="시간 보정 적용")
 
-    class Config:
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "name": "홍길동",
                 "birth_date": "1990-05-15",
@@ -68,6 +68,7 @@ class ManseolRequest(BaseModel):
                 "jajasi": False,
             }
         }
+    )
 
 
 class ManseolResponse(BaseModel):
@@ -97,8 +98,8 @@ class ChatRequest(BaseModel):
         default=None, description="사용할 OpenRouter 모델 (None이면 서버 기본 모델)"
     )
 
-    class Config:
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "session_id": None,
                 "saju_data": {"meta": {}, "input": {}, "pillars": {}},
@@ -106,6 +107,7 @@ class ChatRequest(BaseModel):
                 "interpretation_type": "full",
             }
         }
+    )
 
 
 class ChatResponse(BaseModel):
@@ -224,14 +226,15 @@ class AnalysisRequest(BaseModel):
         default=None, description="사용할 OpenRouter 모델 (None이면 서버 기본 모델)"
     )
 
-    class Config:
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "session_id": "session-123",
                 "analysis_type": "fortune_general",
                 "message": "올해 운세가 어떤가요?",
             }
         }
+    )
 
 
 class FortuneResult(BaseModel):

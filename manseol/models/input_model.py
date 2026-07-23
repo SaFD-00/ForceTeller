@@ -5,7 +5,7 @@
 from datetime import date, datetime, time
 from enum import Enum
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 class CalendarType(str, Enum):
@@ -86,8 +86,8 @@ class SajuInput(BaseModel):
             "apply_time_correction": self.apply_time_correction,
         }
 
-    class Config:
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "name": "홍길동",
                 "birth_date": "1990-05-15",
@@ -98,3 +98,4 @@ class SajuInput(BaseModel):
                 "jajasi": False,
             }
         }
+    )

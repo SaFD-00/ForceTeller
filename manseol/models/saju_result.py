@@ -5,7 +5,7 @@
 from datetime import datetime
 from typing import Any
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class StemData(BaseModel):
@@ -313,8 +313,8 @@ class SajuResult(BaseModel):
             }
         return result
 
-    class Config:
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "meta": {
                     "version": "1.0.0",
@@ -338,3 +338,4 @@ class SajuResult(BaseModel):
                 },
             }
         }
+    )
