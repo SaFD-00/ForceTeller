@@ -27,7 +27,8 @@ await page.fill('input[type="date"]', '1990-05-15');
 await page.fill('input[type="time"]', '13:30');
 await page.fill('input[placeholder="서울, 도쿄, 뉴욕..."]', '서울');
 await page.waitForTimeout(1800);
-const cityBtns = page.locator('button[type="button"]').filter({ hasText: '서울' });
+// 도시 자동완성은 ARIA combobox → 옵션은 role="option"(구 button[type=button]에서 변경)
+const cityBtns = page.locator('[role="option"]').filter({ hasText: '서울' });
 if ((await cityBtns.count()) === 0) { console.log('도시 드롭다운 항목 없음'); }
 await cityBtns.first().click();
 await page.waitForTimeout(400);

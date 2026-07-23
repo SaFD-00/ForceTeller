@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef, useId } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Button, Input, Icon, GlassCard } from '@/components/ui';
@@ -37,6 +37,11 @@ export function BirthInfoForm() {
   const [cityQuery, setCityQuery] = useState('');
   const [showCityDropdown, setShowCityDropdown] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
+  // 키보드 활성 옵션 인덱스(-1 = 없음). ARIA combobox의 aria-activedescendant를 구동한다.
+  const [activeIndex, setActiveIndex] = useState(-1);
+  const cityListboxId = useId();
+  const cityListRef = useRef<HTMLUListElement>(null);
+  const optionId = (index: number) => `${cityListboxId}-opt-${index}`;
   // 도시 목록이 백엔드가 아닌 오프라인 폴백에서 온 경우 표시(주요 도시만 제공됨을 안내)
   const [citiesFallback, setCitiesFallback] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -70,6 +75,20 @@ export function BirthInfoForm() {
       handleCitySearch('');
     }
   }, [debouncedQuery, showCityDropdown, handleCitySearch]);
+
+  // 결과 집합이 바뀌면 키보드 활성 항목을 초기화(엉뚱한 옵션이 강조된 채 남지 않게)
+  useEffect(() => {
+    setActiveIndex(-1);
+  }, [cities]);
+
+  // 키보드로 이동한 활성 옵션을 항상 보이도록 스크롤
+  useEffect(() => {
+    if (activeIndex < 0 || !cityListRef.current) return;
+    const el = cityListRef.current.querySelector<HTMLElement>(`#${CSS.escape(optionId(activeIndex))}`);
+    el?.scrollIntoView({ block: 'nearest' });
+    // optionId는 cityListboxId만 의존하는 안정 함수라 deps에 넣지 않는다
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeIndex]);
 
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
@@ -128,7 +147,48 @@ export function BirthInfoForm() {
     const displayCountry = city.country_ko || city.country;
     setCityQuery(`${displayCity}, ${displayCountry}`);
     setShowCityDropdown(false);
+    setActiveIndex(-1);
     setErrors((prev) => ({ ...prev, city: '' }));
+  };
+
+  // ARIA combobox 키보드 인터랙션: 방향키로 활성 옵션 이동, Enter 선택, Escape 닫기.
+  // 활성 옵션은 aria-activedescendant로 가리키므로 DOM 포커스는 입력에 머문다 —
+  // 옵션 버튼으로 Tab 이동하면서 onBlur 타이머가 옵션을 언마운트하던 결함을 제거한다.
+  const handleCityKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (!showCityDropdown) {
+        setShowCityDropdown(true);
+        if (cities.length === 0) handleCitySearch('');
+        return;
+      }
+      if (cities.length > 0) {
+        setActiveIndex((prev) => (prev + 1) % cities.length);
+      }
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (cities.length > 0) {
+        setActiveIndex((prev) => (prev <= 0 ? cities.length - 1 : prev - 1));
+      }
+    } else if (e.key === 'Enter') {
+      // 드롭다운이 열려 있으면 폼 제출 대신 옵션 선택으로 가로챈다.
+      if (showCityDropdown && cities.length > 0) {
+        e.preventDefault();
+        if (activeIndex >= 0) handleCitySelect(cities[activeIndex]);
+      }
+    } else if (e.key === 'Escape') {
+      if (showCityDropdown) {
+        e.preventDefault();
+        setShowCityDropdown(false);
+        setActiveIndex(-1);
+      }
+    } else if (e.key === 'Home' && showCityDropdown && cities.length > 0) {
+      e.preventDefault();
+      setActiveIndex(0);
+    } else if (e.key === 'End' && showCityDropdown && cities.length > 0) {
+      e.preventDefault();
+      setActiveIndex(cities.length - 1);
+    }
   };
 
   return (
@@ -199,12 +259,21 @@ export function BirthInfoForm() {
             </p>
           </div>
 
-          {/* City Autocomplete */}
+          {/* City Autocomplete (ARIA combobox + listbox) */}
           <div className="relative">
             <Input
               label="출생 도시"
               placeholder="서울, 도쿄, 뉴욕..."
               value={cityQuery}
+              role="combobox"
+              aria-expanded={showCityDropdown}
+              aria-controls={showCityDropdown ? cityListboxId : undefined}
+              aria-autocomplete="list"
+              aria-activedescendant={
+                showCityDropdown && activeIndex >= 0 ? optionId(activeIndex) : undefined
+              }
+              autoComplete="off"
+              onKeyDown={handleCityKeyDown}
               onChange={(e) => {
                 setCityQuery(e.target.value);
                 setShowCityDropdown(true);
@@ -217,15 +286,19 @@ export function BirthInfoForm() {
                 }
               }}
               onBlur={() => {
-                // 드롭다운 클릭을 위해 약간의 지연
-                setTimeout(() => setShowCityDropdown(false), 200);
+                // 포인터가 옵션을 클릭할 틈을 주려 약간 지연(옵션은 onMouseDown에서
+                // preventDefault로 blur 자체를 막지만, 그 밖으로 blur될 때의 폴백)
+                setTimeout(() => {
+                  setShowCityDropdown(false);
+                  setActiveIndex(-1);
+                }, 200);
               }}
               error={errors.city}
             />
             {showCityDropdown && (
               <div className="absolute z-50 w-full mt-1 bg-surface border border-border rounded-xl shadow-card-hover overflow-hidden max-h-60 overflow-y-auto">
                 {isSearching ? (
-                  <div className="px-4 py-3 text-muted-foreground text-center">
+                  <div className="px-4 py-3 text-muted-foreground text-center" role="status">
                     <Icon name="solar:refresh-linear" size={16} className="animate-spin inline mr-2" />
                     검색 중...
                   </div>
@@ -236,19 +309,38 @@ export function BirthInfoForm() {
                         오프라인 기본 도시 목록입니다 (주요 도시만 제공)
                       </div>
                     )}
-                    {cities.map((city) => (
-                      <button
-                        key={`${city.name}-${city.country}`}
-                        type="button"
-                        className="w-full px-4 py-2 text-left text-foreground hover:bg-muted transition-colors"
-                        onClick={() => handleCitySelect(city)}
-                      >
-                        {city.name_ko || city.name}, {city.country_ko || city.country}
-                      </button>
-                    ))}
+                    <ul
+                      ref={cityListRef}
+                      id={cityListboxId}
+                      role="listbox"
+                      aria-label="출생 도시 검색 결과"
+                    >
+                      {cities.map((city, index) => {
+                        const active = index === activeIndex;
+                        return (
+                          <li
+                            key={`${city.name}-${city.country}`}
+                            id={optionId(index)}
+                            role="option"
+                            aria-selected={active}
+                            data-active={active}
+                            // onMouseDown preventDefault: 클릭 시 입력의 blur(→드롭다운 닫힘)보다
+                            // 먼저 선택이 확정되게 한다
+                            onMouseDown={(e) => e.preventDefault()}
+                            onClick={() => handleCitySelect(city)}
+                            onMouseEnter={() => setActiveIndex(index)}
+                            className={`px-4 py-2 text-left cursor-pointer transition-colors ${
+                              active ? 'bg-muted text-accent font-medium' : 'text-foreground'
+                            }`}
+                          >
+                            {city.name_ko || city.name}, {city.country_ko || city.country}
+                          </li>
+                        );
+                      })}
+                    </ul>
                   </>
                 ) : cityQuery.length > 0 ? (
-                  <div className="px-4 py-3 text-muted-foreground text-center">
+                  <div className="px-4 py-3 text-muted-foreground text-center" role="status">
                     검색 결과가 없습니다
                   </div>
                 ) : null}
