@@ -1,0 +1,51 @@
+{
+  "date": "2026-07-23",
+  "project": "ForceTeller",
+  "category": "devlog",
+  "summary": "서비스 완성 패스 — 프로덕션 완결성 갭 마감: IP별 레이트리밋 미들웨어, 출생 도시 자동완성 ARIA combobox 전환, Pydantic Config→ConfigDict, 미사용 recharts 제거, 구조/보안 문서 동기화",
+  "details": "성숙한 저장소(백엔드 pytest 278·프론트 lint/tsc/vitest·a11y e2e 전부 GREEN)라 '완성'의 남은 축은 품질 게이트가 아니라 제품 완결성 — 실동작 + 공개 배포 차단 요소 제거였다. 정찰 subagent 2종(백엔드/보안·프론트/UX)으로 실재 갭을 병렬 매핑하고, 직접 end-to-end 스모크·실측으로 판정 기준선을 잡았다. 판정 근거는 저장소 스스로 밝힌 미완 지점(README '알려진 한계'·직전 분석 devlog '남은 것')이며, 없는 스코프를 지어내지 않았다. 최우선 차단 요소는 README가 '공개 배포 전 도입 필요'로 지목한 레이트리밋 부재였다 — 익명 사주 앱이라 인증(계정)은 성격상 제외하되, OpenRouter 키를 소비하는 LLM 엔드포인트를 지키는 레이트리밋을 1차 방어선으로 구현했다. 부수적으로 iconify 아이콘의 aria-hidden 실태(장식 21/의미 2 올바른 분리)와 무데이터 직접 진입 시 빈 상태 처리(JS 에러 0)를 실측으로 확인해 두 열린 질문을 해소했다.",
+  "source": {
+    "workflow": "goal",
+    "path": ".claude/devlog/2026-07-23_23-27-19_service-completion-pass.md",
+    "based_on": "standalone (README 알려진 한계 + 2026-07-19 분석 devlog 남은 것)"
+  },
+  "devlog": {
+    "report_path": ".claude/devlog/2026-07-23_23-27-19_service-completion-pass.md",
+    "based_on": [
+      { "item": "레이트리밋 미구현 [stage:prod-readiness] BLOCKER", "source": "README.md 알려진 한계" },
+      { "item": "도시 자동완성 콤보박스 결함 [stage:a11y-reach] IMPORTANT", "source": ".claude/devlog/2026-07-19_18-01-16_analysis-p1-p3-followthrough.md 남은 것" },
+      { "item": "Pydantic class Config deprecation [stage:hygiene] MINOR", "source": "pytest 경고" },
+      { "item": "recharts 미사용 의존성 [stage:hygiene] MINOR", "source": ".claude/devlog/2026-07-19_18-01-16_analysis-p1-p3-followthrough.md 남은 것" }
+    ],
+    "changes": {
+      "files": [
+        "api/rate_limit.py",
+        "api/server.py",
+        "config/settings.py",
+        "api/schemas.py",
+        "manseol/models/input_model.py",
+        "manseol/models/saju_result.py",
+        "tests/unit/api/test_rate_limit.py",
+        "tests/integration/api/test_rate_limit_middleware.py",
+        "web/components/hero/BirthInfoForm.tsx",
+        "web/e2e/a11y-loading.mjs",
+        "web/package.json",
+        "web/package-lock.json",
+        ".env.example",
+        "README.md",
+        "ARCHITECTURE.md"
+      ],
+      "commits": [
+        "5e5f944 feat(api): IP별 레이트리밋 미들웨어 — 공개 배포 남용·비용 방어선",
+        "f4fadd3 fix(a11y): 출생 도시 자동완성을 접근성 ARIA combobox로 전환",
+        "fe7d350 chore(models): Pydantic class-based Config → model_config=ConfigDict",
+        "be280e7 chore(web): 미사용 의존성 recharts 제거",
+        "ebdccc5 docs: 레이트리밋 모듈·recharts 제거를 구조/보안 문서에 반영"
+      ],
+      "diffstat": "15 files, +503 -373",
+      "summary": "인메모리 슬라이딩 윈도우 레이트리밋(전역 60/분·LLM 12/분, /health 면제, CORS 안쪽 배선, X-Forwarded-For 신뢰 게이팅, RATE_LIMIT_* 6종 설정, 테스트 +17), 도시 자동완성을 ARIA combobox로(role/listbox/option, ArrowUp·Down·Home·End·Enter·Escape 키보드, aria-activedescendant로 onBlur 언마운트 결함 제거), Pydantic Config→ConfigDict 5곳(동작 불변, 경고 6→0), recharts 제거(소스 참조 0, 번들 불변), 구조/보안 문서 동기화."
+    },
+    "why": "README '알려진 한계' 헤드라인이 '인증·레이트리밋 미구현 — 공개 배포 전 도입 필요'였다. 익명 사주 앱이라 인증(계정·로그인)은 제품 성격상 두지 않되, 남용·비용 폭주(특히 OpenRouter 키를 소비하는 LLM 엔드포인트)를 막을 레이트리밋이 실질적 1차 방어선이라 완성의 핵심 차단 요소로 최우선 처리했다. 콤보박스는 직전 분석이 코드 추론으로만 남겨 둔 결함으로, 실측 결과 키보드로는 사실상 도시를 선택할 수 없었다(옵션 Tab 진입 → 입력 blur → 200ms 후 옵션 언마운트) — 접근성 기준선(키보드 우선·항상 보이는 포커스)에 정면으로 어긋나 IMPORTANT로 처리.",
+    "verification": "각 변경을 클린 상태에서 직접 재실행·실측으로 확정(에이전트 자가보고 불신). 레이트리밋: pytest 295 passed(신규 17 — 윈도우 슬라이딩·키 격리·경계 만료·메모리 가드 단위 + 429 실발동·버킷 분리·health 면제·비활성 통합), 라이브 서버에서 한도 3의 4번째 HTTP 429 + Retry-After:60 + JSON 본문, /health 5연속 200(면제) 확인. 콤보박스: npm run gate exit 0(lint·tsc·vitest 30·build·css compile), a11y e2e 4종 VERDICT: PASS, selftest 변이 7건 검출, 프로덕션 서버 대상 키보드 내비 라이브 9/9 PASS(role·listbox·ArrowDown→activedescendant·aria-selected·Escape·Enter 선택='서울, 대한민국'). Pydantic: ruff 통과, pytest 295, PydanticDeprecated 경고 6→0. recharts: 전수 검색 소스 참조 0, gate exit 0, 번들 크기 불변. 직접 스모크: 만세력 CLI 사주명식 정상, /api/manseol 14개 데이터 키 반환, /result·/chat 무데이터 진입 빈 상태 + '홈으로 가기'(JS 에러 0), iconify 아이콘 23개 중 21개 aria-hidden=true·2개 aria-label(장식/의미 분리 올바름). 남은 것: 인증 미구현(의도), 레이트리밋 프로세스 로컬(다중 인스턴스는 Redis 후속), 절기 ~9h 오프셋(자기 일관·후속), 스크린리더 수동 낭독(기계 판정 불가), httpx StarletteDeprecation 1건(FastAPI 내부·서드파티)."
+  }
+}
