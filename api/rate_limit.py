@@ -1,14 +1,17 @@
 """
-API 요청 레이트리밋 미들웨어
+API 요청 어드미션 컨트롤 미들웨어 — 본문 크기 상한 + 레이트리밋
 
-인메모리 슬라이딩 윈도우 리미터. 클라이언트 IP 기준으로 시간 창 안의 요청 수를
-제한한다. OpenRouter 키를 소비하는 LLM 엔드포인트(비용·남용 표면)에는 별도의 더
-엄격한 한도를 적용한다.
+두 가지 관문을 제공한다.
+- RequestSizeLimitMiddleware: Content-Length 기준 본문 크기 상한(413). saju_data 등
+  무제한 dict 필드로 대용량 본문을 밀어넣어 OpenRouter 비용·DB 팽창을 유발하는 것을 막는다.
+- RateLimitMiddleware: 인메모리 슬라이딩 윈도우로 클라이언트 IP별 요청 수를 제한(429).
+  OpenRouter 키를 소비하는 LLM 엔드포인트(비용·남용 표면)에는 별도의 더 엄격한 한도를 적용한다.
 
-한계(정직하게): 프로세스 로컬 상태다. 배포에서 인스턴스가 여러 개면 인스턴스마다
+한계(정직하게): 레이트리밋 상태는 프로세스 로컬이다. 인스턴스가 여러 개면 인스턴스마다
 독립 카운터를 갖는다(Railway 무료 티어는 단일 인스턴스라 실무상 충분). 다중 인스턴스
-정밀 제한이 필요하면 Redis 백엔드로 교체한다. CORS 미들웨어보다 안쪽(inner)에 배치해
-429 응답에도 CORS 헤더가 실리도록 한다(server.py 참조).
+정밀 제한이 필요하면 Redis 백엔드로 교체한다. 크기 상한은 Content-Length 헤더에 의존하므로
+청크 전송(헤더 부재)은 이 관문을 우회할 수 있다 — 정상 JSON 클라이언트는 항상 헤더를 보낸다.
+두 미들웨어 모두 CORS보다 안쪽(inner)에 배치해 413/429 응답에도 CORS 헤더가 실리게 한다(server.py 참조).
 """
 
 from __future__ import annotations
@@ -90,6 +93,37 @@ def client_key(request: Request, *, trust_forwarded: bool) -> str:
     if request.client and request.client.host:
         return request.client.host
     return "unknown"
+
+
+class RequestSizeLimitMiddleware(BaseHTTPMiddleware):
+    """Content-Length 기준 본문 크기 상한 미들웨어.
+
+    선언된 Content-Length가 상한을 넘으면 본문을 읽기 전에 413으로 차단한다.
+    레이트리밋보다 바깥(먼저 실행)에 두어, 초과 요청을 레이트 카운터에 계상하지 않고
+    즉시 거른다. RATE_LIMIT_ENABLED와 독립적으로 항상 켠다(비용·팽창 방어는 별개 관문).
+    """
+
+    def __init__(self, app, *, max_body_bytes: int):
+        super().__init__(app)
+        self._max = max_body_bytes
+
+    async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
+        content_length = request.headers.get("content-length")
+        if content_length is not None:
+            try:
+                declared = int(content_length)
+            except ValueError:
+                declared = -1
+            if declared > self._max:
+                return JSONResponse(
+                    status_code=413,
+                    content={
+                        "success": False,
+                        "error": "요청 본문이 너무 큽니다.",
+                        "max_bytes": self._max,
+                    },
+                )
+        return await call_next(request)
 
 
 class RateLimitMiddleware(BaseHTTPMiddleware):

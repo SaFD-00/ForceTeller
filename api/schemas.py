@@ -87,7 +87,7 @@ class ChatRequest(BaseModel):
 
     session_id: str | None = Field(None, description="기존 세션 ID (새 세션은 null)")
     saju_data: dict[str, Any] | None = Field(None, description="새 세션시 사주 데이터")
-    message: str = Field(..., min_length=1, description="사용자 메시지")
+    message: str = Field(..., min_length=1, max_length=4000, description="사용자 메시지")
     interpretation_type: InterpretationType = Field(
         default=InterpretationType.FULL, description="해석 유형"
     )
@@ -221,7 +221,7 @@ class AnalysisRequest(BaseModel):
     schools: list[SchoolCodeType] | None = Field(
         None, description="비교할 유파 목록 (SCHOOL_COMPARE 타입일 때, None이면 전체)"
     )
-    message: str | None = Field(None, description="추가 질문 메시지")
+    message: str | None = Field(None, max_length=4000, description="추가 질문 메시지")
     model: ModelChoice | None = Field(
         default=None, description="사용할 OpenRouter 모델 (None이면 서버 기본 모델)"
     )

@@ -174,7 +174,9 @@ export function BirthInfoForm() {
       // 드롭다운이 열려 있으면 폼 제출 대신 옵션 선택으로 가로챈다.
       if (showCityDropdown && cities.length > 0) {
         e.preventDefault();
-        if (activeIndex >= 0) handleCitySelect(cities[activeIndex]);
+        if (activeIndex >= 0 && activeIndex < cities.length) {
+          handleCitySelect(cities[activeIndex]);
+        }
       }
     } else if (e.key === 'Escape') {
       if (showCityDropdown) {

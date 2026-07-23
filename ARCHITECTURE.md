@@ -382,7 +382,13 @@ def create_llm(model: str | None = None, temperature: float = 0.7) -> BaseChatMo
    CORS보다 안쪽에 배선해 429 응답에도 CORS 헤더가 실린다. 프록시 뒤에서는
    `X-Forwarded-For` 최좌측 IP를 클라이언트 키로 신뢰(`RATE_LIMIT_TRUST_FORWARDED`).
    프로세스 로컬 상태라 다중 인스턴스 정밀 제한은 Redis 백엔드가 후속 과제.
-5. **Input Validation**: Pydantic 스키마 검증
+5. **Input Validation**: Pydantic 스키마 검증. 자유 텍스트 필드는 길이 상한을 둔다
+   (`name` max 50, chat/analysis `message` max 4000자).
+6. **Request Size Limit**: Content-Length 기준 본문 크기 상한(`api/rate_limit.py`
+   `RequestSizeLimitMiddleware`, 기본 512KB, 초과 시 413). `saju_data` 등 무제한 dict 필드로
+   대용량 본문을 밀어넣어 OpenRouter 비용·DB 팽창을 유발하는 것을 막는다. `RATE_LIMIT_ENABLED`와
+   독립(`MAX_REQUEST_BYTES>0`이면 항상 켬). 청크 전송(Content-Length 부재)은 우회 가능하나
+   정상 JSON 클라이언트는 항상 헤더를 보낸다.
 
 ## Dependencies
 

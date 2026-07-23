@@ -66,3 +66,43 @@ class TestRateLimitMiddleware:
         # 비활성화면 한도 1이어도 제한 없음
         for _ in range(5):
             assert client.get("/").status_code == 200
+
+
+class TestRequestSizeLimit:
+    def test_oversized_body_returns_413(self, monkeypatch):
+        # 크기 상한을 아주 낮게(100B) 두고 그보다 큰 본문을 보내면 413
+        client = _make_client(monkeypatch, MAX_REQUEST_BYTES=100, RATE_LIMIT_ENABLED=False)
+        big = {"session_id": "x", "saju_data": {"blob": "A" * 500}, "message": "hi"}
+        resp = client.post("/api/chat", json=big)
+        assert resp.status_code == 413
+        body = resp.json()
+        assert body["success"] is False
+        assert body["max_bytes"] == 100
+
+    def test_within_limit_passes_size_gate(self, monkeypatch):
+        # 상한 내 본문은 크기 관문을 통과(라우트에서 세션 없음 404 — 413이 아님)
+        client = _make_client(monkeypatch, MAX_REQUEST_BYTES=524_288, RATE_LIMIT_ENABLED=False)
+        payload = {"session_id": "nope", "saju_data": {"n": "x"}, "message": "hi"}
+        resp = client.post("/api/chat", json=payload)
+        assert resp.status_code != 413
+
+    def test_size_gate_independent_of_rate_limit(self, monkeypatch):
+        # RATE_LIMIT_ENABLED=False여도 크기 관문은 독립적으로 동작
+        client = _make_client(monkeypatch, MAX_REQUEST_BYTES=100, RATE_LIMIT_ENABLED=False)
+        resp = client.post("/api/chat", json={"saju_data": {"b": "A" * 500}, "message": "x"})
+        assert resp.status_code == 413
+
+    def test_disabled_when_zero(self, monkeypatch):
+        # MAX_REQUEST_BYTES<=0이면 크기 미들웨어 미등록 → 큰 본문도 통과
+        client = _make_client(monkeypatch, MAX_REQUEST_BYTES=0, RATE_LIMIT_ENABLED=False)
+        resp = client.post("/api/chat", json={"saju_data": {"b": "A" * 5000}, "message": "x"})
+        assert resp.status_code != 413
+
+
+class TestMessageLengthValidation:
+    def test_overlong_chat_message_rejected_422(self, monkeypatch):
+        # message는 max_length=4000 — 초과 시 Pydantic 검증 422(크기 상한 512KB 내라 413 아님)
+        client = _make_client(monkeypatch, RATE_LIMIT_ENABLED=False)
+        payload = {"session_id": "s", "saju_data": {"n": "x"}, "message": "가" * 4001}
+        resp = client.post("/api/chat", json=payload)
+        assert resp.status_code == 422

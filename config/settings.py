@@ -67,6 +67,10 @@ class Settings(BaseSettings):
     # 프록시(Railway/Vercel) 뒤에서 True — X-Forwarded-For 최좌측 IP를 클라이언트로 신뢰.
     # API를 직접 노출하면 False로 두어 헤더 스푸핑 우회를 막는다.
     RATE_LIMIT_TRUST_FORWARDED: bool = True
+    # 요청 본문 크기 상한(바이트). Content-Length가 이를 넘으면 413. 실측 saju_data가
+    # ~47KB라 512KB는 10배 여유. saju_data 등 무제한 dict로 대용량 본문을 밀어넣는 것을 막는다.
+    # 0 이하면 크기 제한 비활성화.
+    MAX_REQUEST_BYTES: int = 524_288  # 512 KB
 
     # ===================
     # DB 영속화 (Postgres 배포 + SQLite 로컬, SQLAlchemy 추상화)

@@ -10,7 +10,11 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from api.rate_limit import RateLimitMiddleware, SlidingWindowRateLimiter
+from api.rate_limit import (
+    RateLimitMiddleware,
+    RequestSizeLimitMiddleware,
+    SlidingWindowRateLimiter,
+)
 from api.routes import analysis_router, chat_router, manseol_router
 from api.schemas import HealthResponse
 from config.logging_config import get_logger
@@ -103,6 +107,11 @@ print(chat_response.json()["message"])
             exempt_paths=frozenset({"/health"}),
             trust_forwarded=settings.RATE_LIMIT_TRUST_FORWARDED,
         )
+
+    # 본문 크기 상한 (레이트리밋보다 나중에 등록 → 더 바깥 → 초과 요청을 레이트 카운트 전에 413).
+    # RATE_LIMIT_ENABLED와 독립적으로, MAX_REQUEST_BYTES>0일 때 항상 켠다.
+    if settings.MAX_REQUEST_BYTES > 0:
+        app.add_middleware(RequestSizeLimitMiddleware, max_body_bytes=settings.MAX_REQUEST_BYTES)
 
     # CORS 설정
     # 와일드카드 출처("*")에는 자격증명(쿠키/Authorization)을 허용하지 않는다:

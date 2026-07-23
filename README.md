@@ -429,6 +429,7 @@ RATE_LIMIT_WINDOW_SECONDS=60
 RATE_LIMIT_LLM_REQUESTS=12         # LLM 라우트(/api/chat, /api/chat/stream)는 더 엄격
 RATE_LIMIT_LLM_WINDOW_SECONDS=60
 RATE_LIMIT_TRUST_FORWARDED=true    # 프록시(Railway/Vercel) 뒤 X-Forwarded-For 신뢰. 직접 노출 시 false
+MAX_REQUEST_BYTES=524288           # 요청 본문 크기 상한(512KB). 초과 시 413. 0이면 비활성
 
 # DB 영속화 (선택) — 미설정 시 로컬 SQLite. 배포 시 PostgreSQL 주입
 # DATABASE_URL=postgresql+asyncpg://user:password@host:5432/forceteller
