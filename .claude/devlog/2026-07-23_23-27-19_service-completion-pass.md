@@ -9,7 +9,8 @@
   - `fe7d350` chore(models): Pydantic class-based Config → model_config=ConfigDict
   - `be280e7` chore(web): 미사용 의존성 recharts 제거
   - `ebdccc5` docs: 레이트리밋 모듈·recharts 제거를 구조/보안 문서에 반영
-- diffstat: 15 files, +503 −373
+  - `0d44526` harden(api): 요청 본문 크기 상한 + message 길이 상한 (검증 후속)
+- diffstat: 16 files, +598 −378
 
 ## 접근
 
@@ -67,6 +68,17 @@ README "알려진 한계"의 헤드라인이 "인증·레이트리밋 미구현 
   14개 데이터 키 전체 반환, `/result`·`/chat` 무데이터 직접 진입 시 빈 상태 + "홈으로 가기"
   (JS 에러 0), iconify 아이콘 23개 중 21개 `aria-hidden=true`·2개 `aria-label`(장식/의미 분리
   올바름 — devlog 열린 질문 해소).
+
+## 독립 검증 게이트 (verifier subagent)
+
+완성 판정 전 verifier subagent를 동기 실행해 6커밋을 독립 재검증했다(에이전트 자가보고
+불신, 클린 상태 재실행). 결과: **"Production-complete / shippable — no hard BLOCKERs"**,
+8게이트 GREEN 독립 재확인, 레이트리밋 슬라이딩 윈도우 수학·동시성(Lock, await 없는 임계
+구역)·CORS-on-429 런타임 확인, 콤보박스 ARIA·선택 경로 정상, 시크릿 누출 없음.
+
+지목한 실재 WARNING 1건(LLM 경로 요청 본문 무제한, `api/schemas.py`)을 후속 커밋
+`0d44526`으로 마감했다 — `RequestSizeLimitMiddleware`(Content-Length 512KB 상한, 413) +
+`message` max_length=4000 + 콤보박스 Enter 상한 가드. pytest 300 passed, 라이브 413 확인.
 
 ## 남은 것 (정직하게)
 

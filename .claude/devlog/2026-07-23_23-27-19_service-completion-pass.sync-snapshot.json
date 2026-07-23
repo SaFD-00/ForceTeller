@@ -40,9 +40,10 @@
         "f4fadd3 fix(a11y): 출생 도시 자동완성을 접근성 ARIA combobox로 전환",
         "fe7d350 chore(models): Pydantic class-based Config → model_config=ConfigDict",
         "be280e7 chore(web): 미사용 의존성 recharts 제거",
-        "ebdccc5 docs: 레이트리밋 모듈·recharts 제거를 구조/보안 문서에 반영"
+        "ebdccc5 docs: 레이트리밋 모듈·recharts 제거를 구조/보안 문서에 반영",
+        "0d44526 harden(api): 요청 본문 크기 상한 + message 길이 상한 (검증 후속)"
       ],
-      "diffstat": "15 files, +503 -373",
+      "diffstat": "16 files, +598 -378",
       "summary": "인메모리 슬라이딩 윈도우 레이트리밋(전역 60/분·LLM 12/분, /health 면제, CORS 안쪽 배선, X-Forwarded-For 신뢰 게이팅, RATE_LIMIT_* 6종 설정, 테스트 +17), 도시 자동완성을 ARIA combobox로(role/listbox/option, ArrowUp·Down·Home·End·Enter·Escape 키보드, aria-activedescendant로 onBlur 언마운트 결함 제거), Pydantic Config→ConfigDict 5곳(동작 불변, 경고 6→0), recharts 제거(소스 참조 0, 번들 불변), 구조/보안 문서 동기화."
     },
     "why": "README '알려진 한계' 헤드라인이 '인증·레이트리밋 미구현 — 공개 배포 전 도입 필요'였다. 익명 사주 앱이라 인증(계정·로그인)은 제품 성격상 두지 않되, 남용·비용 폭주(특히 OpenRouter 키를 소비하는 LLM 엔드포인트)를 막을 레이트리밋이 실질적 1차 방어선이라 완성의 핵심 차단 요소로 최우선 처리했다. 콤보박스는 직전 분석이 코드 추론으로만 남겨 둔 결함으로, 실측 결과 키보드로는 사실상 도시를 선택할 수 없었다(옵션 Tab 진입 → 입력 blur → 200ms 후 옵션 언마운트) — 접근성 기준선(키보드 우선·항상 보이는 포커스)에 정면으로 어긋나 IMPORTANT로 처리.",

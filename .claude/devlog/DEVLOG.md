@@ -9,12 +9,14 @@
 end-to-end 실측으로 판정했다. README "알려진 한계"·직전 분석 "남은 것"이 지목한 지점만 닫았다.
 
 - based_on: standalone (goal: 서비스 완성까지 진행, subagent 활용)
-- changes: 15 files, +503 −373 / `5e5f944` `f4fadd3` `fe7d350` `be280e7` `ebdccc5`
+- changes: 16 files, +598 −378 / `5e5f944` `f4fadd3` `fe7d350` `be280e7` `ebdccc5` `0d44526`
 - why: README 헤드라인 미완이 "레이트리밋 미구현 — 공개 배포 전 필수"였다. 익명 사주 앱이라
   인증은 성격상 제외하되, OpenRouter 키 소비 표면을 지키는 레이트리밋을 1차 방어선으로 최우선
-  구현. 콤보박스는 직전 분석이 코드 추론으로 남긴 결함이 실측상 키보드 선택 불가로 확인돼 마감
-- verification: pytest 295(+17) · 라이브 429+Retry-After · a11y e2e 4종 PASS·selftest 변이 7건 ·
-  콤보박스 키보드 라이브 9/9 · Pydantic 경고 6→0 · recharts 번들 불변 · 무데이터 진입 빈 상태 실측
+  구현. 콤보박스는 직전 분석이 코드 추론으로 남긴 결함이 실측상 키보드 선택 불가로 확인돼 마감.
+  독립 verifier subagent가 지목한 요청 본문 무제한 WARNING을 후속으로 마감(크기 상한·길이 상한)
+- verification: pytest 300(+22) · 라이브 429+Retry-After·413 · a11y e2e 4종 PASS·selftest 변이 7건 ·
+  콤보박스 키보드 라이브 9/9 · Pydantic 경고 6→0 · recharts 번들 불변 · 무데이터 진입 빈 상태 실측 ·
+  verifier 독립 판정 "production-complete, no hard BLOCKERs"
 - category: devlog
 - companion: [.claude/devlog/2026-07-23_23-27-19_service-completion-pass.md](./2026-07-23_23-27-19_service-completion-pass.md)
 
