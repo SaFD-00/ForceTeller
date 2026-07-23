@@ -10,6 +10,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
+from api.rate_limit import RateLimitMiddleware, SlidingWindowRateLimiter
 from api.routes import analysis_router, chat_router, manseol_router
 from api.schemas import HealthResponse
 from config.logging_config import get_logger
@@ -82,6 +83,26 @@ print(chat_response.json()["message"])
         docs_url="/docs",
         redoc_url="/redoc",
     )
+
+    # 레이트리밋 미들웨어 (CORS보다 먼저 등록 → CORS가 바깥쪽이 되어 429에도 CORS 헤더가 실린다).
+    # Starlette은 나중에 add한 미들웨어가 바깥(outermost)이므로 등록 순서가 중요하다.
+    if settings.RATE_LIMIT_ENABLED:
+        app.add_middleware(
+            RateLimitMiddleware,
+            default_limiter=SlidingWindowRateLimiter(
+                limit=settings.RATE_LIMIT_REQUESTS,
+                window_seconds=settings.RATE_LIMIT_WINDOW_SECONDS,
+            ),
+            llm_limiter=SlidingWindowRateLimiter(
+                limit=settings.RATE_LIMIT_LLM_REQUESTS,
+                window_seconds=settings.RATE_LIMIT_LLM_WINDOW_SECONDS,
+            ),
+            # LLM(OpenRouter 키 소비) 엔드포인트만 엄격 버킷. 나머지(세션 조회 등)는 전역 버킷.
+            llm_routes={("POST", "/api/chat"), ("POST", "/api/chat/stream")},
+            # 헬스체크·모니터링은 제한하지 않는다.
+            exempt_paths=frozenset({"/health"}),
+            trust_forwarded=settings.RATE_LIMIT_TRUST_FORWARDED,
+        )
 
     # CORS 설정
     # 와일드카드 출처("*")에는 자격증명(쿠키/Authorization)을 허용하지 않는다:

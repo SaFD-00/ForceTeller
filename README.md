@@ -286,7 +286,7 @@ uv run uvicorn api.server:app --reload --host 0.0.0.0 --port 8000
 
 ```bash
 # dev 의존성은 uv sync 시 기본 포함 (프로덕션만 원하면 uv sync --no-dev)
-uv run pytest              # 테스트 실행 (278개)
+uv run pytest              # 테스트 실행 (295개)
 uv run ruff check .        # 린트 (ruff로 일원화)
 uv run ruff format .       # 포맷 (--check로 검사만)
 uv run mypy .              # 타입 체크 (CI 비차단)
@@ -421,6 +421,14 @@ API_HOST=0.0.0.0
 API_PORT=8000
 DEBUG=false                  # true일 때만 예외 상세를 응답에 노출
 CORS_ORIGINS=*               # 콤마 구분 도메인. "*"이면 자격증명(credentials) 차단
+
+# 레이트리밋 (IP별 슬라이딩 윈도우, 인메모리) — 공개 배포 남용·비용 1차 방어선
+RATE_LIMIT_ENABLED=true
+RATE_LIMIT_REQUESTS=60             # 전역 기본: IP당 창별 최대 요청 수
+RATE_LIMIT_WINDOW_SECONDS=60
+RATE_LIMIT_LLM_REQUESTS=12         # LLM 라우트(/api/chat, /api/chat/stream)는 더 엄격
+RATE_LIMIT_LLM_WINDOW_SECONDS=60
+RATE_LIMIT_TRUST_FORWARDED=true    # 프록시(Railway/Vercel) 뒤 X-Forwarded-For 신뢰. 직접 노출 시 false
 
 # DB 영속화 (선택) — 미설정 시 로컬 SQLite. 배포 시 PostgreSQL 주입
 # DATABASE_URL=postgresql+asyncpg://user:password@host:5432/forceteller
@@ -618,7 +626,8 @@ docker run -p 8000:8000 \
 
 ## 알려진 한계
 
-- **인증·레이트리밋 미구현**: 현재 API는 인증 및 요청 제한이 없다. 공개 배포 전 도입 필요.
+- **인증 미구현**: 익명 사용을 전제한 서비스라 계정·로그인은 두지 않았다. 레이트리밋(아래)이 남용·비용 1차 방어선이며, 사용자별 쿼터·감사 로그가 필요해지면 인증 도입을 검토한다.
+- **레이트리밋은 프로세스 로컬**: IP별 슬라이딩 윈도우를 인메모리로 강제한다(전역 60/분, LLM `/api/chat*` 12/분 기본, `RATE_LIMIT_*`로 조정). 단일 인스턴스(Railway 무료 티어)에는 충분하나, 인스턴스를 수평 확장하면 인스턴스마다 독립 카운터를 가지므로 정밀 제한이 필요하면 Redis 백엔드로 교체해야 한다.
 - **절기 경계 판정의 시스템 오프셋**: 천문 계산에 쓰는 ephem이 naive datetime을 UTC로 해석하므로, 엔진이 KST로 다루는 시각과 사이에 약 9시간의 오프셋이 존재한다. 절기 경계 부근(예: 입춘·소한) 출생·현행 시각에서 간지 판정이 어긋날 수 있다. 다만 출생 계산과 현행(current_fortune) 계산이 **동일한 규약**을 쓰므로 서비스 내부적으로는 자기 일관적이며, 절대 정합화는 후속 과제다.
 - **지장간은 월률분야 표준표 채택**: 지장간(여기·중기·본기) 및 각 분야 배분은 여러 유파 표가 존재하나 본 프로젝트는 월률분야 표준표를 단일 기준으로 채택한다(왕지 자·묘·유는 여기+본기 2개).
 

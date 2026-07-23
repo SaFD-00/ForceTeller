@@ -55,6 +55,20 @@ class Settings(BaseSettings):
     )
 
     # ===================
+    # 레이트리밋 (IP별 슬라이딩 윈도우, 인메모리)
+    # ===================
+    # 공개 배포 시 남용·비용 폭주를 막는 1차 방어선. LLM 엔드포인트(/api/chat*)는
+    # OpenRouter 키를 소비하므로 별도의 더 엄격한 한도를 둔다.
+    RATE_LIMIT_ENABLED: bool = True
+    RATE_LIMIT_REQUESTS: int = 60  # 전역 기본: IP당 창(window)별 최대 요청 수
+    RATE_LIMIT_WINDOW_SECONDS: int = 60
+    RATE_LIMIT_LLM_REQUESTS: int = 12  # LLM 라우트: 더 엄격
+    RATE_LIMIT_LLM_WINDOW_SECONDS: int = 60
+    # 프록시(Railway/Vercel) 뒤에서 True — X-Forwarded-For 최좌측 IP를 클라이언트로 신뢰.
+    # API를 직접 노출하면 False로 두어 헤더 스푸핑 우회를 막는다.
+    RATE_LIMIT_TRUST_FORWARDED: bool = True
+
+    # ===================
     # DB 영속화 (Postgres 배포 + SQLite 로컬, SQLAlchemy 추상화)
     # ===================
     # 미설정 시 로컬 SQLite 파일. 배포 시 "postgresql+asyncpg://user:pass@host/db" 주입.
