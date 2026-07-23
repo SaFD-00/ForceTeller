@@ -19,6 +19,7 @@ ForceTeller는 정확한 만세력 계산과 AI 해석을 결합한 사주팔자
 │   ├── dependencies.py           # 의존성 주입
 │   ├── errors.py                 # 오류 응답 헬퍼 (예외 상세 DEBUG 게이팅)
 │   ├── formatters.py             # 응답 포맷팅
+│   ├── rate_limit.py             # IP별 슬라이딩 윈도우 레이트리밋 미들웨어
 │   ├── schemas.py                # Pydantic 데이터 모델
 │   └── server.py                 # FastAPI 앱 설정
 │
@@ -173,7 +174,6 @@ ForceTeller는 정확한 만세력 계산과 AI 해석을 결합한 사주팔자
 | TypeScript | 5.0 | 타입 안전성 |
 | Tailwind CSS | 3.4 | 스타일링 |
 | Zustand | 4.5 | 상태관리 |
-| Recharts | 2.14 | 데이터 시각화 |
 | Framer Motion | 11.0 | 애니메이션 |
 | Iconify (@iconify/react) | 5.0 | 아이콘셋 |
 | React Markdown | 10.1 | 마크다운 렌더링 (remark-gfm) |

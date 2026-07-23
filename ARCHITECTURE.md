@@ -133,7 +133,8 @@ api/
 │   ├── manseol.py    # 사주 계산 엔드포인트
 │   └── analysis.py   # 분석 엔드포인트
 ├── schemas.py        # Pydantic 모델
-└── server.py         # FastAPI 앱
+├── rate_limit.py     # IP별 슬라이딩 윈도우 레이트리밋 미들웨어
+└── server.py         # FastAPI 앱 (미들웨어 배선: RateLimit → CORS)
 ```
 
 **Endpoints:**
@@ -376,7 +377,11 @@ def create_llm(model: str | None = None, temperature: float = 0.7) -> BaseChatMo
 3. **Error Detail Gating**: 예외 상세(str(exc)/트레이스백)는 서버 로그에만 남기고,
    클라이언트에는 일반화 메시지만 반환한다. `settings.DEBUG=True`일 때만 상세 노출
    (`api/errors.py`).
-4. **Rate Limiting**: API 요청 제한 (미구현)
+4. **Rate Limiting**: IP별 슬라이딩 윈도우(인메모리, `api/rate_limit.py`). 전역 기본 60/분,
+   LLM 엔드포인트(`/api/chat`·`/api/chat/stream`)는 12/분으로 더 엄격. `/health` 면제.
+   CORS보다 안쪽에 배선해 429 응답에도 CORS 헤더가 실린다. 프록시 뒤에서는
+   `X-Forwarded-For` 최좌측 IP를 클라이언트 키로 신뢰(`RATE_LIMIT_TRUST_FORWARDED`).
+   프로세스 로컬 상태라 다중 인스턴스 정밀 제한은 Redis 백엔드가 후속 과제.
 5. **Input Validation**: Pydantic 스키마 검증
 
 ## Dependencies
