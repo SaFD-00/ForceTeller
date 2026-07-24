@@ -66,16 +66,11 @@ async def supervisor_node(state: AgentState, config: RunnableConfig) -> dict:
     # 완료된 해석 목록
     completed = list(state.get("interpretations", {}).keys())
 
+    # 선택 규칙은 ORCHESTRATOR_SYSTEM_PROMPT에 이미 있으므로 여기서 반복하지 않는다.
     system_content = f"""{ORCHESTRATOR_SYSTEM_PROMPT}
 
 ## 사용 가능한 에이전트
-{chr(10).join(available_agents)}
-
-## 선택 규칙
-1. 사용자 질문에 가장 적합한 에이전트를 선택하세요.
-2. 이미 완료된 에이전트는 다시 선택하지 마세요.
-3. 필요한 해석이 모두 완료되면 'synthesis'를 선택하세요.
-4. 종합 해석까지 완료되면 'FINISH'를 선택하세요."""
+{chr(10).join(available_agents)}"""
 
     human_content = (
         f"현재까지 완료된 해석: {', '.join(completed) if completed else '없음'}\n\n"
@@ -128,9 +123,9 @@ async def route_question(question: str, model: str | None = None) -> str:
 ## 사용 가능한 에이전트
 {chr(10).join(available_agents)}
 
-## 선택 규칙
-사용자 질문에 가장 적합한 에이전트 하나를 선택하세요.
-synthesis나 FINISH는 선택하지 마세요."""
+## 이번 호출의 특별 규칙 (기본 선택 규칙보다 우선)
+이번 호출은 반복 없는 단발 분류입니다.
+위 목록의 해석 에이전트 중 하나만 선택하고, synthesis와 FINISH는 이번 선택지에서 제외합니다."""
 
     llm = create_structured_llm(RouterDecision, model=model)
     messages = [
@@ -176,9 +171,11 @@ async def interpreter_node(
             user_question = msg.content
             break
 
+    # 사주 정보와 사용자 질문은 태그로 감싸 지시가 아닌 데이터임을 명시한다.
+    # (시스템 프롬프트의 '입력 처리 원칙'과 짝을 이루는 인젝션 방어)
     human_content = (
-        f"{saju_context}\n\n"
-        f"## 사용자 질문\n{user_question}\n\n"
+        f"<saju_data>\n{saju_context}\n</saju_data>\n\n"
+        f"## 사용자 질문\n<user_question>\n{user_question}\n</user_question>\n\n"
         f"## 요청\n{agent_config.interpretation_focus}에 대해 상세히 해석해 주세요."
     )
     messages = [
@@ -245,7 +242,7 @@ async def synthesis_node(state: AgentState, config: RunnableConfig) -> dict:
     saju_context = format_saju_context(state["saju_data"])
 
     human_content = (
-        f"{saju_context}\n\n"
+        f"<saju_data>\n{saju_context}\n</saju_data>\n\n"
         f"## 각 전문 에이전트의 해석\n{interpretations_summary}\n\n"
         "## 요청\n위 해석들을 종합하여 일관성 있고 균형 잡힌 통합 해석을 제공해 주세요."
     )
