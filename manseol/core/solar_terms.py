@@ -1,11 +1,18 @@
 """
 24절기 계산 모듈
 태양 황경 기반 절기 계산
+
+시각 규약: 절기 시각은 해당 시점의 '한국 표준시 벽시계'(era wall clock,
+서머타임 제외)로 반환한다. 현행(1961.08.10~)은 KST(UTC+9)로 KASI 공표
+시각과 일치하고, 1908~1911·1954~1961의 UTC+8:30 시기는 당시 역서 공표
+관례대로 30분을 빼서 당시 표준시로 맞춘다. 출생 입력도 당시 벽시계이므로
+경계 비교가 동일 시간대에서 이뤄진다.
 """
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from config.constants import SOLAR_TERMS
+from manseol.data.kst_history import KSTHistory
 
 from .astronomical import AstronomicalCalculator
 
@@ -30,7 +37,7 @@ class SolarTermsCalculator:
         Returns:
             (절기명, 절기 인덱스)
         """
-        sun_lon = self.astro.get_sun_longitude(dt)
+        sun_lon = self.astro.get_sun_longitude(self._local_to_kst(dt))
 
         # 황경을 절기 인덱스로 변환
         # 춘분(0도) 기준, 15도마다 절기 변경
@@ -83,7 +90,25 @@ class SolarTermsCalculator:
         else:
             start = datetime(year - 1, 12, 20)
 
-        return self.astro.find_sun_longitude_time(target_lon, start)
+        jeolgi_kst = self.astro.find_sun_longitude_time(target_lon, start)
+        return self._kst_to_local(jeolgi_kst)
+
+    @staticmethod
+    def _kst_to_local(dt: datetime) -> datetime:
+        """KST(UTC+9) → 해당 시점의 한국 표준시 벽시계 (서머타임 제외)
+
+        UTC+8:30 시기(1908~1911, 1954.03.21~1961.08.09)는 30분을 뺀다.
+        검증: 1955 입춘 22:48 / 1960 입춘 03:54 (당시 역서 공표값, KST로는
+        각각 23:18 / 04:24) — bebeyam 역대 입춘 절입시각 모음.
+        """
+        offset_hours = KSTHistory.get_utc_offset(dt)
+        return dt - timedelta(hours=9.0 - offset_hours)
+
+    @staticmethod
+    def _local_to_kst(dt: datetime) -> datetime:
+        """해당 시점의 한국 표준시 벽시계 → KST(UTC+9)"""
+        offset_hours = KSTHistory.get_utc_offset(dt)
+        return dt + timedelta(hours=9.0 - offset_hours)
 
     def get_all_jeolgi_for_year(self, year: int) -> list[dict]:
         """
