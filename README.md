@@ -286,7 +286,7 @@ uv run uvicorn api.server:app --reload --host 0.0.0.0 --port 8000
 
 ```bash
 # dev 의존성은 uv sync 시 기본 포함 (프로덕션만 원하면 uv sync --no-dev)
-uv run pytest              # 테스트 실행 (333개)
+uv run pytest              # 테스트 실행 (351개)
 uv run ruff check .        # 린트 (ruff로 일원화)
 uv run ruff format .       # 포맷 (--check로 검사만)
 uv run mypy .              # 타입 체크 (CI 비차단)
