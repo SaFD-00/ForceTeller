@@ -1,0 +1,39 @@
+{
+  "date": "2026-07-24",
+  "project": "ForceTeller",
+  "category": "devlog",
+  "summary": "만세력·채팅 프롬프트 인터넷 대조 검증 패스 — 절기 ~9h 오프셋 절대 정합화(UTC/KST 변환 누락 + J2000 분점 오류 합성 규명), 프롬프트 도메인 오류 정정·안전 가드레일·인젝션 방어",
+  "details": "검증 subagent 2종을 Workflow로 병렬 실행(Agent 툴이 tmux pane 오류로 스폰 불가). 만세력: README 알려진 한계였던 절기 오프셋이 단일 −9h가 아니라 UTC/KST 변환 누락(−9h)과 ephem.Ecliptic의 J2000 분점 황경(세차 드리프트, 연도별 −3.2h~+7.8h)의 합성임을 규명 — 2024년엔 두 오차가 상쇄돼 −1.2h로 보였다. 수정 후 KASI/역서 공표 절입 시각 12건 전건 ±0.7분 이내, 기준 명식 9케이스·일진 앵커 7건 일치, 1954-1961 UTC+8:30 시기는 당시 표준시 벽시계로 반환. 프롬프트: 화극수→화다수건(火多水乾) 역극 정정, 수신(讐神)→구신(仇神)+한신 추가, COMMON_GUARDRAILS 신설(오락 목적 고지·전문가 안내·109 위기 안내 등) 8개 에이전트 부착, saju_data/user_question 태그 격리로 인젝션 방어 3면, 채팅 경로 응답 방식 절 추가. 게이트·핵심 diff·경계 케이스는 메인 세션이 직접 재검증.",
+  "source": {
+    "workflow": "standalone",
+    "path": ".claude/devlog/2026-07-24_10-52-36_manseol-prompt-verification.md",
+    "based_on": "사용자 요청 (만세력 계산·채팅 프롬프트 검증·업데이트, 인터넷 검색 필요, subagent 활용)"
+  },
+  "devlog": {
+    "report_path": ".claude/devlog/2026-07-24_10-52-36_manseol-prompt-verification.md",
+    "based_on": [
+      { "item": "절기 경계 ~9h 시스템 오프셋 [stage:correctness] IMPORTANT", "source": "README.md 알려진 한계 (후속 과제로 명시돼 있던 것)" },
+      { "item": "채팅 프롬프트 도메인·안전·인젝션 미검증 [stage:prod-readiness] IMPORTANT", "source": "사용자 요청" }
+    ],
+    "changes": {
+      "files": [
+        "manseol/core/astronomical.py",
+        "manseol/core/solar_terms.py",
+        "tests/unit/manseol/test_solar_terms_absolute.py",
+        "README.md",
+        "agents/prompts/system_prompts.py",
+        "agents/nodes.py",
+        "api/routes/chat.py",
+        "tests/unit/agents/test_system_prompts.py"
+      ],
+      "commits": [
+        "a8984ff fix(manseol): 절기 시각을 KASI 공표값과 절대 정합화 — ~9h 오프셋 해소",
+        "f433ceb harden(agents): 채팅 프롬프트 도메인 정확성·안전 가드레일·인젝션 방어"
+      ],
+      "diffstat": "8 files, +381 -52",
+      "summary": "절기 계산을 naive-KST 규약 + of-date 분점 황경으로 정합화(KASI 공표값 ±0.7분, 회귀 28건), UTC+8:30 시기 당시 표준시 반환, README 알려진 한계 해결 개정 + 진태양시 유파 규약 명문화. 프롬프트 도메인 오류 2건 정정, COMMON_GUARDRAILS 8개 에이전트 부착, saju_data/user_question 태그 격리 인젝션 방어, 라우팅 모순·중복 지시 정리, 채팅 응답 방식 절 추가, 불변식 테스트 5건."
+    },
+    "why": "사용자가 만세력 계산과 채팅 프롬프트를 인터넷 기준과 대조 검증·업데이트하도록 명시 요청했다. 만세력의 절기 오프셋은 README가 후속 과제로 남긴 유일한 정합성 결함이었고, 실측 결과 상수 −9h가 아니라 연도 가변(−12.3h~−1.2h)이라 절기 경계 부근 출생의 년·월주가 실제로 틀리고 있었다(1990-02-04 10:00 → 경오·무인으로 오판). 프롬프트는 도메인 오류(존재하지 않는 화극수 등)와 안전·인젝션 공백이 리서치 기준(OWASP·Anthropic 모범사례) 대비 실측됐다.",
+    "verification": "메인 세션 직접 재검증: uv run pytest 333 passed(기존 300 + 신규 33), ruff check/format 전건 통과, 입춘 절입 4개 연도(1955/1990/2000/2024) 공표값 ±1분 실측, 1990-02-04 10:00 CLI 명식 년주 기사(己巳) 확인, 전체 diff 육안 검수. subagent 검증: KASI/역서 절입 12건·기준 명식 9케이스·일진 앵커 7건 대조(출처 URL 기록), 표준시 변천·서머타임은 위키백과 대조로 kst_history.py 정확성 확인(수정 불요). 남은 것: 진태양시 절입 경계 규약은 유파 차이로 보류(README 명문화), health 프롬프트의 통용 해석(금 과다→폭력성 등)은 오류 단정 불가로 보존."
+  }
+}
