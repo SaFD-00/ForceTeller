@@ -3,7 +3,7 @@ JSON 출력 모듈
 사주 계산 결과를 JSON 형식으로 변환
 """
 
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import Any
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
@@ -22,6 +22,7 @@ from manseol.calculator.ten_gods import TenGodsCalculator
 from manseol.calculator.twelve_phases import TwelvePhasesCalculator
 from manseol.core.calendar_converter import CalendarConverter
 from manseol.core.time_correction import TimeCorrector
+from manseol.data.kst_history import KSTHistory
 from manseol.models.input_model import SajuInput
 from manseol.models.saju_result import (
     BranchData,
@@ -93,7 +94,11 @@ class JsonExporter:
         except (ZoneInfoNotFoundError, ValueError) as e:
             raise ValueError(f"알 수 없는 시간대입니다: {tz_name}") from e
 
-        korean = dt.replace(tzinfo=tz).astimezone(ZoneInfo(KOREA_TIMEZONE)).replace(tzinfo=None)
+        # 해외 쪽(현지→UTC)만 IANA를 쓰고, UTC→한국 벽시계는 엔진 SSOT인
+        # KSTHistory로 구성한다. IANA Asia/Seoul을 쓰면 전환일 granularity와
+        # 1908 이전(LMT +8:28 vs 엔진 폴백 +9h)에서 엔진 타임라인과 어긋난다.
+        utc_naive = dt.replace(tzinfo=tz).astimezone(UTC).replace(tzinfo=None)
+        korean = KSTHistory.utc_to_wall_clock(utc_naive)
         return korean, tz_name
 
     def generate_result(self) -> SajuResult:

@@ -122,6 +122,28 @@ class KSTHistory:
         return 0
 
     @staticmethod
+    def utc_to_wall_clock(utc_naive: datetime) -> datetime:
+        """UTC 순간을 해당 시점의 한국 벽시계(당시 표준시 + DST 포함)로 변환.
+
+        엔진 전체가 이 클래스의 규약(시대별 오프셋·DST 기간, 날짜 granularity,
+        1908 이전은 +9h 폴백)을 전제하므로, 외부 시간대에서 온 시각을 한국
+        타임라인에 올릴 때 IANA Asia/Seoul이 아니라 이 함수를 써야 전환일
+        granularity·1908 이전 LMT 차이로 어긋나지 않는다.
+
+        오프셋·DST가 벽시계 기준으로 정의돼 있어 근사 벽시계로 조회 후
+        확정한다(전환 순간 ±30분 안에서만 근사 오차 가능, 결정론적).
+        """
+        base = KSTHistory.get_utc_offset(utc_naive + timedelta(hours=9))
+        standard = utc_naive + timedelta(hours=base)
+        base = KSTHistory.get_utc_offset(standard)
+        standard = utc_naive + timedelta(hours=base)
+
+        # DST 기간 판정은 DST가 반영된 벽시계 기준
+        if KSTHistory.is_dst_period(standard + timedelta(hours=1)):
+            return standard + timedelta(hours=1)
+        return standard
+
+    @staticmethod
     def adjust_for_dst(dt: datetime) -> datetime:
         """
         일광절약시간 보정 적용

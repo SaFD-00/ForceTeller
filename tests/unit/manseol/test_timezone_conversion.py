@@ -105,6 +105,43 @@ class TestForeignBirthConversion:
         assert _pillars(r)["day"] == "신사"
 
 
+class TestUtcToKoreanWallClock:
+    """UTC→한국 벽시계 변환이 엔진 SSOT(KSTHistory) 규약을 따르는지 시대별 고정.
+
+    IANA Asia/Seoul 대신 KSTHistory로 변환해야 전환일 granularity와
+    1908 이전(IANA는 LMT +8:28, 엔진은 +9h 폴백)에서 엔진 타임라인과 일치한다.
+    """
+
+    from datetime import datetime as _dt
+
+    @pytest.mark.parametrize(
+        ("utc", "expected_wall", "era"),
+        [
+            (_dt(2024, 1, 1, 3, 0), _dt(2024, 1, 1, 12, 0), "현행 UTC+9"),
+            (_dt(1987, 7, 1, 2, 0), _dt(1987, 7, 1, 12, 0), "1987 서머타임 UTC+10"),
+            (_dt(1959, 1, 15, 3, 30), _dt(1959, 1, 15, 12, 0), "1954~61 UTC+8:30"),
+            (_dt(1955, 7, 1, 2, 30), _dt(1955, 7, 1, 12, 0), "1955 UTC+8:30 + DST"),
+            (_dt(1910, 1, 1, 3, 30), _dt(1910, 1, 1, 12, 0), "1908~11 UTC+8:30"),
+            (_dt(1900, 1, 1, 3, 0), _dt(1900, 1, 1, 12, 0), "1908 이전 +9h 폴백"),
+        ],
+    )
+    def test_era_offsets(self, utc, expected_wall, era):
+        from manseol.data.kst_history import KSTHistory
+
+        assert KSTHistory.utc_to_wall_clock(utc) == expected_wall, era
+
+    def test_foreign_birth_in_1955_era(self):
+        """1955년 뉴욕 출생: 현지 12:00 EDT = 16:00 UTC → 당시 한국 벽시계
+        (UTC+8:30 + DST +1h) 기준 다음날 01:30. IANA Asia/Seoul을 쓰면
+        전환·DST 표기 차이로 엔진 타임라인과 어긋날 수 있는 시대 케이스다."""
+        r = _result(
+            city="New York City",
+            birth_date=date(1955, 7, 1),
+            birth_time=time(12, 0),
+        )
+        assert r.adjusted_time.korean_time == "1955-07-02 01:30:00"
+
+
 class TestCityTimezoneData:
     def test_get_timezone_matches_coordinates_city(self):
         """get_timezone은 get_coordinates와 같은 도시를 가리켜야 한다."""
