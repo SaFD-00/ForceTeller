@@ -5,6 +5,7 @@ JSON 출력 모듈
 
 from datetime import datetime
 from typing import Any
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from config.constants import BRANCHES, STEM_ELEMENT_COLORS, STEMS
 from manseol.calculator.current_fortune import (
@@ -42,6 +43,10 @@ from manseol.models.saju_result import (
     UsefulGodAnalysis,
 )
 
+# 엔진 내부 규약 시간대. 이 시간대(및 한국 도시)는 환산 없이 그대로 계산한다 —
+# 1954~1961 UTC+8:30 등 역사적 표준시 변천은 KSTHistory가 다루는 영역이다.
+KOREA_TIMEZONE = "Asia/Seoul"
+
 
 class JsonExporter:
     """JSON 출력 변환 클래스"""
@@ -53,6 +58,43 @@ class JsonExporter:
         """
         self.input = saju_input
         self.pillar_engine = PillarEngine()
+
+    def _resolve_birth_timezone(self) -> str | None:
+        """출생지 시간대 결정: 명시 입력 > 도시 조회.
+
+        경도만 단독 지정한 경우 city는 기본값 Seoul이라 Asia/Seoul로 조회돼
+        변환이 일어나지 않는다 — 직접 경도 입력의 KST 입력 규약이 자연히 유지된다.
+        """
+        if self.input.timezone:
+            return self.input.timezone
+        from manseol.data.city_coordinates import CityCoordinates
+
+        return CityCoordinates.get_timezone(self.input.city)
+
+    def _to_korean_wall_clock(self, dt: datetime) -> tuple[datetime, str | None]:
+        """해외 출생의 현지 시각을 한국 벽시계로 환산한다.
+
+        엔진 전체(절기 시각·일주 경계·표준자오선·DST 이력)가 한국 벽시계를
+        전제하므로, 해외 출생은 이 환산이 없으면 (현지경도 − 한국 자오선)×4분
+        이라는 무의미한 보정을 받는다(뉴욕 −836분 ≈ −13.9h). 환산 후에는
+        기존 진태양시 보정 (현지경도 − 135°)×4분이 수학적으로 현지 시태양시와
+        정확히 일치하므로, 시주·일주는 현지 태양시 기준으로 서고 절기 판정은
+        절대 동시성(KST 절입 시각) 기준으로 이뤄진다.
+
+        Returns:
+            (한국 벽시계 시각, 적용된 IANA 시간대) — 한국이면 (원본, None)
+        """
+        tz_name = self._resolve_birth_timezone()
+        if not tz_name or tz_name == KOREA_TIMEZONE:
+            return dt, None
+
+        try:
+            tz = ZoneInfo(tz_name)
+        except (ZoneInfoNotFoundError, ValueError) as e:
+            raise ValueError(f"알 수 없는 시간대입니다: {tz_name}") from e
+
+        korean = dt.replace(tzinfo=tz).astimezone(ZoneInfo(KOREA_TIMEZONE)).replace(tzinfo=None)
+        return korean, tz_name
 
     def generate_result(self) -> SajuResult:
         """
@@ -66,7 +108,11 @@ class JsonExporter:
         calc_datetime = None
 
         if self.input.birth_datetime:
-            calc_datetime = self.input.birth_datetime
+            # 해외 출생이면 현지 시각을 한국 벽시계로 먼저 환산한다.
+            # 시간대 정규화는 진태양시 유파 선택(apply_time_correction)과 무관한
+            # 타임라인 정합 문제라 보정 비활성 시에도 적용한다.
+            calc_datetime, birth_timezone = self._to_korean_wall_clock(self.input.birth_datetime)
+            korean_time = calc_datetime if birth_timezone else None
 
             if self.input.apply_time_correction:
                 corrector = TimeCorrector(
@@ -84,6 +130,8 @@ class JsonExporter:
                     total_correction_minutes=round(corrections["total_minutes"], 2),
                     standard_meridian=corrections["standard_meridian"],
                     birth_longitude=corrections["birth_longitude"],
+                    birth_timezone=birth_timezone,
+                    korean_time=korean_time.strftime("%Y-%m-%d %H:%M:%S") if korean_time else None,
                 )
         else:
             # 시간 미상 - 날짜만 사용

@@ -37,6 +37,11 @@ console = Console()
 @click.option("--gender", "-g", type=click.Choice(["male", "female"]), required=True, help="성별")
 @click.option("--jajasi", is_flag=True, default=False, help="야자시/조자시 적용")
 @click.option("--longitude", type=float, default=None, help="직접 입력 경도 (city 대신 사용)")
+@click.option(
+    "--timezone",
+    default=None,
+    help="출생지 IANA 시간대 (예: America/New_York). 미지정이면 city로 자동 결정",
+)
 @click.option("--no-time-correction", is_flag=True, default=False, help="시간 보정 비활성화")
 @click.option("--output", "-o", type=click.Path(), default=None, help="출력 파일 경로 (JSON)")
 @click.option(
@@ -51,6 +56,7 @@ def main(
     gender: str,
     jajasi: bool,
     longitude: float | None,
+    timezone: str | None,
     no_time_correction: bool,
     output: str | None,
     format: str,
@@ -85,6 +91,7 @@ def main(
             gender=Gender(gender),
             jajasi=jajasi,
             longitude=longitude,
+            timezone=timezone,
             apply_time_correction=not no_time_correction,
         )
 

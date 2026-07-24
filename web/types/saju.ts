@@ -312,6 +312,7 @@ export interface ManseolRequest {
   gender: Gender;
   jajasi?: boolean;
   longitude?: number;
+  timezone?: string;
   apply_time_correction?: boolean;
 }
 

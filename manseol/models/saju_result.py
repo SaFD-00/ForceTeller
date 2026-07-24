@@ -61,6 +61,12 @@ class TimeCorrection(BaseModel):
     total_correction_minutes: float = Field(..., description="총 보정 (분)")
     standard_meridian: float = Field(..., description="기준 자오선 경도")
     birth_longitude: float = Field(..., description="출생지 경도")
+    birth_timezone: str | None = Field(
+        None, description="출생지 IANA 시간대 (해외 출생으로 한국 시각 환산이 적용된 경우)"
+    )
+    korean_time: str | None = Field(
+        None, description="한국 벽시계로 환산한 출생 시각 (해외 출생인 경우)"
+    )
 
 
 class DayMasterAnalysis(BaseModel):

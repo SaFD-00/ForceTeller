@@ -46,6 +46,13 @@ class SajuInput(BaseModel):
         default=None, ge=-180.0, le=180.0, description="직접 입력 경도 (city 대신 사용)"
     )
 
+    timezone: str | None = Field(
+        default=None,
+        max_length=64,
+        description="출생지 IANA 시간대 (예: America/New_York). 해외 출생 시 현지 시각을 "
+        "한국 벽시계로 환산하는 데 쓴다. 미지정이면 city로 조회하고, 한국이면 변환 없음",
+    )
+
     apply_time_correction: bool = Field(default=True, description="시간 보정 적용 여부")
 
     @field_validator("birth_date")
@@ -83,6 +90,7 @@ class SajuInput(BaseModel):
             "gender": self.gender.value,
             "jajasi": self.jajasi,
             "longitude": self.longitude,
+            "timezone": self.timezone,
             "apply_time_correction": self.apply_time_correction,
         }
 

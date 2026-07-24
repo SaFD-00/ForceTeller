@@ -141,7 +141,14 @@ export function BirthInfoForm() {
   };
 
   const handleCitySelect = (city: City) => {
-    setFormData((prev) => ({ ...prev, city: city.name })); // 영어 이름으로 API 전송
+    // 선택한 도시의 경도·시간대를 명시 전송한다 — 백엔드가 이름으로 재조회할 때
+    // 동명(同名) 도시로 어긋나는 것을 막고, 해외 출생의 현지→한국 시각 환산을 보장한다.
+    setFormData((prev) => ({
+      ...prev,
+      city: city.name, // 영어 이름으로 API 전송
+      longitude: city.longitude,
+      timezone: city.timezone,
+    }));
     // 한글 이름 우선 표시 (없으면 영어)
     const displayCity = city.name_ko || city.name;
     const displayCountry = city.country_ko || city.country;
@@ -279,7 +286,13 @@ export function BirthInfoForm() {
               onChange={(e) => {
                 setCityQuery(e.target.value);
                 setShowCityDropdown(true);
-                setFormData((prev) => ({ ...prev, city: '' }));
+                // 선택이 해제되면 좌표·시간대도 함께 비운다 (이전 도시 값 잔류 방지)
+                setFormData((prev) => ({
+                  ...prev,
+                  city: '',
+                  longitude: undefined,
+                  timezone: undefined,
+                }));
               }}
               onFocus={() => {
                 setShowCityDropdown(true);

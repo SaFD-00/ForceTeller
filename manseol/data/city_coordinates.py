@@ -147,6 +147,21 @@ class CityCoordinates:
         return default
 
     @staticmethod
+    def get_timezone(city_name: str) -> str | None:
+        """도시의 IANA 시간대 반환 (예: 'Asia/Seoul', 'America/New_York').
+
+        get_coordinates와 동일한 매칭 규칙(search_city limit=1)을 재사용해
+        경도와 시간대가 항상 같은 도시를 가리키게 한다.
+        """
+        if not city_name:
+            return None
+
+        matches = CityCoordinates.search_city(city_name, limit=1)
+        if matches:
+            return matches[0].get("timezone")
+        return None
+
+    @staticmethod
     def get_latitude(city_name: str, default: float = 37.5665) -> float:
         """도시의 위도 반환 (기본값: 서울)"""
         coords = CityCoordinates.get_coordinates(city_name)
@@ -183,6 +198,7 @@ class CityCoordinates:
                     "countrycode": country_code,
                     "latitude": city["latitude"],
                     "longitude": city["longitude"],
+                    "timezone": city.get("timezone"),
                     "population": city.get("population", 0),
                 }
             )
@@ -286,6 +302,7 @@ class CityCoordinates:
                         "countrycode": country_code,
                         "latitude": city["latitude"],
                         "longitude": city["longitude"],
+                        "timezone": city.get("timezone"),
                         "population": city.get("population", 0),
                     }
                 )
@@ -324,6 +341,7 @@ class CityCoordinates:
                     "countrycode": country_code,
                     "latitude": city["latitude"],
                     "longitude": city["longitude"],
+                    "timezone": city.get("timezone"),
                 }
 
         # 부분 매칭 (인구 기준 상위)
@@ -348,6 +366,7 @@ class CityCoordinates:
                 "countrycode": country_code,
                 "latitude": city["latitude"],
                 "longitude": city["longitude"],
+                "timezone": city.get("timezone"),
             }
 
         return None

@@ -54,6 +54,12 @@ class ManseolRequest(BaseModel):
     gender: Gender = Field(..., description="성별")
     jajasi: bool = Field(default=False, description="야자시/조자시 적용")
     longitude: float | None = Field(None, ge=-180, le=180, description="직접 입력 경도")
+    timezone: str | None = Field(
+        None,
+        max_length=64,
+        description="출생지 IANA 시간대 (예: America/New_York). 해외 출생 시 현지 시각을 "
+        "한국 시각으로 환산. 미지정이면 city로 자동 결정",
+    )
     apply_time_correction: bool = Field(default=True, description="시간 보정 적용")
 
     model_config = ConfigDict(

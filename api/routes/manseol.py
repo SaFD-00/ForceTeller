@@ -55,6 +55,7 @@ async def calculate_saju(request: ManseolRequest) -> ManseolResponse:
             gender=Gender(request.gender.value),
             jajasi=request.jajasi,
             longitude=request.longitude,
+            timezone=request.timezone,
             apply_time_correction=request.apply_time_correction,
         )
 
@@ -168,4 +169,5 @@ async def get_city_info(city_name: str):
         "country": city_info["country"],
         "latitude": city_info["latitude"],
         "longitude": city_info["longitude"],
+        "timezone": city_info.get("timezone"),
     }

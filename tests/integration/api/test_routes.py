@@ -77,6 +77,46 @@ class TestManseolRoutes:
         assert isinstance(data["sewun"], list)
         assert data["sewun"]
 
+    def test_calculate_saju_foreign_city_converts_timezone(self, test_client):
+        """해외 출생(뉴욕 + IANA timezone)은 현지 시각을 한국 시각으로 환산해
+        계산하고, 환산 정보를 time_correction에 노출한다."""
+        resp = test_client.post(
+            "/api/manseol",
+            json={
+                "name": "테스트",
+                "birth_date": "1990-05-15",
+                "birth_time": "14:30",
+                "gender": "male",
+                "city": "New York City",
+                "timezone": "America/New_York",
+                "longitude": -74.006,
+                "calendar": "solar",
+            },
+        )
+
+        assert resp.status_code == 200
+        data = resp.json()["data"]
+
+        tc = data["adjusted_time"]
+        assert tc["birth_timezone"] == "America/New_York"
+        assert tc["korean_time"] == "1990-05-16 03:30:00"
+        # 시주는 현지 시태양시(≈13:37) 기준 미시 — 환산 누락 시절엔 자시였다
+        assert data["pillars"]["hour"]["ganji_korean"] == "계미"
+
+    def test_calculate_saju_unknown_timezone_returns_400(self, test_client):
+        resp = test_client.post(
+            "/api/manseol",
+            json={
+                "name": "테스트",
+                "birth_date": "1990-05-15",
+                "birth_time": "14:30",
+                "gender": "male",
+                "timezone": "Mars/Olympus_Mons",
+            },
+        )
+
+        assert resp.status_code == 400
+
     def test_quick_calculate_returns_data(self, test_client):
         """POST /api/manseol/quick (Query 파라미터) → 200."""
         resp = test_client.post(
